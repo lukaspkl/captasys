@@ -1,0 +1,41 @@
+# dependencies
+**/node_modules/
+**/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+**/coverage/
+
+# next.js
+**/.next/
+**/out/
+
+# production
+**/build/
+
+# misc
+.DS_Store
+*.pem
+.env*
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Agent logs/backups
+.agent/logs/
+.agent/temp/
+_git_backup/
+.git_backup/
+**/_web_git_backup/
+**/web/.git_backup/

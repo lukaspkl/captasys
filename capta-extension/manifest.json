@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "CaptaSaaS Motor de Varredura",
+  "version": "1.0",
+  "description": "Automatiza pesquisas via Google Dorks e coleta leads para o CaptaSaaS Web localmente, de forma 100% invisível.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://*.google.com/*",
+    "https://*.google.com.br/*",
+    "http://localhost:*/*",
+    "http://127.0.0.1:*/*",
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.google.com/search*",
+        "https://www.google.com.br/search*",
+        "https://www.google.com/maps*",
+        "https://www.google.com.br/maps*"
+      ],
+      "js": ["content.js"]
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["bridge.js"]
+    }
+  ],
+  "action": {
+    "default_title": "CaptaSaaS Motor Ativo"
+  }
+}
