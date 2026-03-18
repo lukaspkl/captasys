@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export const config = {
   matcher: [
@@ -15,37 +15,87 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request: req })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({ request: req })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // 1. Refresh session
+  const { data: { user } } = await supabase.auth.getUser()
+
   const url = req.nextUrl;
-
-  // Obter o hostname (ex: villa-bistro.localhost:3000 ou villa-bistro.captasites.com.br)
   const hostname = req.headers.get('host') || 'localhost:3000';
-
-  // Definir os domínios base (root)
   const rootDomains = ['localhost:3000', 'captasites.com.br', 'capta-sites.vercel.app'];
-  
-  // Limpar o hostname para verificar se é um root domain
   const searchDomain = rootDomains.find(d => hostname.includes(d));
-  
-  // Se for um domínio raiz (sem subdomínio), deixa passar para a home/dashboard
-  if (!searchDomain || rootDomains.includes(hostname)) {
-    return NextResponse.next();
+  const isRootDomain = !searchDomain || rootDomains.includes(hostname);
+
+  // 2. Auth & RBAC Protection
+  if (isRootDomain) {
+    const isLoginPage = url.pathname.startsWith('/login');
+    const isRegisterPage = url.pathname.startsWith('/register');
+    const isAuthRoute = url.pathname.startsWith('/auth');
+
+    if (!user && !isLoginPage && !isRegisterPage && !isAuthRoute) {
+      return NextResponse.redirect(new URL('/login', req.url))
+    }
+
+    if (user) {
+      // Get role from public.profiles with metadata fallback
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      // Fallback hierarchy: Database Profile -> Auth User Metadata -> Default 'CLIENT'
+      const role = profile?.role || (user.app_metadata?.role as string) || (user.user_metadata?.role as string) || 'CLIENT';
+
+      console.log(`[Middleware] User: ${user.email} | Detected Role: ${role}`);
+
+      // Redirect if logged in and trying to access /login OR the root path /
+      const isRootPath = url.pathname === '/';
+      if (isLoginPage || isRootPath) {
+        if (role === 'ADMIN') return NextResponse.redirect(new URL('/admin/core', req.url));
+        if (role === 'PARTNER') return NextResponse.redirect(new URL('/partner/hub', req.url));
+        return NextResponse.redirect(new URL('/dashboard/my-site', req.url));
+      }
+
+      // Route Protection
+      // Allow ADMIN to see everything. If they are ADMIN, bypass the CLIENT/PARTNER blocks.
+      if (url.pathname.startsWith('/admin') && role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/dashboard/my-site', req.url));
+      }
+      if (url.pathname.startsWith('/partner') && role !== 'PARTNER' && role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/dashboard/my-site', req.url));
+      }
+    }
   }
 
-  // Extrair o slug do subdomínio
-  // Ex: villa-bistro.localhost:3000 -> villa-bistro
-  const slug = hostname.replace(`.${searchDomain}`, '');
-
-  // IMPORTANTE: Evitar re-escrita se já estivermos na rota de sites
-  if (url.pathname.startsWith(`/sites/`)) {
-    return NextResponse.next();
+  // 3. Subdomain Logic (Multi-tenant)
+  if (!isRootDomain) {
+    const slug = hostname.replace(`.${searchDomain}`, '');
+    if (!url.pathname.startsWith(`/sites/`)) {
+      return NextResponse.rewrite(
+        new URL(`/sites/${slug}${url.pathname === '/' ? '' : url.pathname}`, req.url)
+      );
+    }
   }
 
-  console.log(`[Middleware] Redirecionando Tenant: ${slug} -> /sites/${slug}${url.pathname}`);
-
-  // Re-escrever a URL internamente para a pasta de sites
-  // O usuário continua vendo villa-bistro.localhost:3000/contato
-  // Mas o Next.js renderiza app/sites/[slug]/contato/page.tsx
-  return NextResponse.rewrite(
-    new URL(`/sites/${slug}${url.pathname === '/' ? '' : url.pathname}`, req.url)
-  );
+  return supabaseResponse
 }

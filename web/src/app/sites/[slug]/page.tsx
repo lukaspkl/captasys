@@ -2,7 +2,8 @@
 
 import React, { use } from 'react';
 import { notFound } from 'next/navigation';
-import { Utensils, MapPin, Phone, Instagram, Clock, Star, ChevronRight, MessageSquare } from 'lucide-react';
+import { MapPin, Phone, Instagram, Clock, Star, ChevronRight, MessageSquare } from 'lucide-react';
+import Image from "next/image";
 
 /**
  * MOCK DATABASE (FASE 1 - MVP)
@@ -49,11 +50,11 @@ const MOCK_CLIENTS: any = {
 };
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 export default function TenantPage({ params }: PageProps) {
-  const { slug } = use(params);
+  const { slug } = params; // Changed from use(params) to direct destructuring
   const client = MOCK_CLIENTS[slug];
 
   if (!client || client.status !== 'active') {
@@ -67,8 +68,13 @@ export default function TenantPage({ params }: PageProps) {
       {/* ─── HEADER ─── */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
-           <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 flex-shrink-0">
-             <img src={config.logo_url} alt={client.nome} className="w-full h-full object-cover" />
+           <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0 relative">
+              <Image 
+                src={config.logo_url} 
+                alt={client.nome} 
+                fill 
+                className="object-cover" 
+              />
            </div>
            <span className="font-bold text-lg tracking-tight">{client.nome}</span>
         </div>
