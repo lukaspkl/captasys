@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { 
   Globe, Database, Activity, Target, X, 
   ExternalLink, Trash2, Zap, Sparkles,
-  LayoutDashboard, Settings, MapPin, Package, MessageSquare, Send,
-  ShieldOff, ShieldAlert, RotateCcw, Plus, Rocket, RefreshCw, Home
+  LayoutDashboard, Settings, MapPin, MessageSquare, Send, Archive,
+  ShieldOff, ShieldAlert, RotateCcw, Plus, Sparkles, Home
 } from 'lucide-react';
 import { updateProjectStatus } from "@/app/actions/nodes";
 
@@ -205,6 +205,7 @@ export default function DashboardPage() {
    const [progress, setProgress] = useState(0);
    const [statusText, setStatusText] = useState("Vessel em Espera...");
    const [leads, setLeads] = useState<any[]>([]);
+   const [vaultLeads, setVaultLeads] = useState<any[]>([]);
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(null);
    const [selectedLeadDetails, setSelectedLeadDetails] = useState<any>(null);
@@ -398,6 +399,14 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
         setLeads(JSON.parse(savedLeads));
       } catch (e) {
         console.error("Erro ao carregar leads", e);
+      }
+    }
+    const savedVault = localStorage.getItem("capta_leads_vault_cache");
+    if (savedVault) {
+      try {
+        setVaultLeads(JSON.parse(savedVault));
+      } catch (e) {
+        console.error("Erro ao carregar cofre", e);
       }
     }
 
@@ -875,6 +884,26 @@ ${socialBlock}
 
   const handleDeleteLead = (url: string) => {
     setLeads(prev => prev.filter(l => l.url !== url));
+    const cached = JSON.parse(localStorage.getItem("capta_leads_cache") || "[]");
+    localStorage.setItem("capta_leads_cache", JSON.stringify(cached.filter((l: any) => l.url !== url)));
+  };
+
+  const addToVault = (lead: any) => {
+    if (vaultLeads.some(l => l.url === lead.url)) {
+      setStatusText("Lead já está no cofre!");
+      return;
+    }
+    const updated = [...vaultLeads, { ...lead, savedAt: new Date().toISOString() }];
+    setVaultLeads(updated);
+    localStorage.setItem("capta_leads_vault_cache", JSON.stringify(updated));
+    setStatusText("Lead guardado no cofre!");
+    setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
+  };
+
+  const removeFromVault = (url: string) => {
+    const updated = vaultLeads.filter(l => l.url !== url);
+    setVaultLeads(updated);
+    localStorage.setItem("capta_leads_vault_cache", JSON.stringify(updated));
   };
 
   const savePreview = () => {
@@ -942,7 +971,17 @@ ${socialBlock}
     setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
   };
 
-  const filteredLeads = leads.filter(lead => {
+  const sortedLeads = useMemo(() => {
+    return [...leads].sort((a, b) => {
+      const priority = { 'Quente': 3, 'Morno': 2, 'Frio': 1 };
+      const aP = priority[a.temperature as keyof typeof priority] || 0;
+      const bP = priority[b.temperature as keyof typeof priority] || 0;
+      if (aP !== bP) return bP - aP;
+      return (b.score || 0) - (a.score || 0);
+    });
+  }, [leads]);
+
+  const filteredLeads = sortedLeads.filter(lead => {
     if (filterMode === 'no-site') return !lead.url || lead.url.includes("google.com");
     if (filterMode === 'no-pixel') return lead.perceptions?.some((p: string) => p.toLowerCase().includes("sem pixels"));
     if (filterMode === 'no-mobile') return lead.perceptions?.some((p: string) => p.toLowerCase().includes("não é amigável para celular"));
@@ -1110,7 +1149,7 @@ ${socialBlock}
           { id: "dashboard", icon: LayoutDashboard, label: "SYS_DASH" },
           { id: 'templates', icon: MessageSquare, label: 'TEMPLATES' },
           { id: 'active-sites', icon: Globe, label: 'NET_SITES' },
-          { id: 'plans', icon: Package, label: 'BIZ_MODELS' },
+          { id: 'vault', icon: Archive, label: 'COFRE_LEADS' },
           { id: "crm", icon: Database, label: "CORE_LEADS" },
           { id: "settings", icon: Settings, label: "CONFIG" },
         ].map((item) => (
@@ -1353,8 +1392,11 @@ ${socialBlock}
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button onClick={(e) => { e.stopPropagation(); openLeadDetails(lead); }} className="w-8 h-8 flex items-center justify-center border border-cyan-400/30 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all" title="READ_DOSSIER"><Activity className="w-3.5 h-3.5" /></button>
+                                {lead.mapsUrl && (
+                                  <button onClick={(e) => { e.stopPropagation(); window.open(lead.mapsUrl, "_blank"); }} className="w-8 h-8 flex items-center justify-center border border-yellow-500/30 text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all" title="MAPS_PROFILE"><MapPin className="w-3.5 h-3.5" /></button>
+                                )}
                                 <button onClick={(e) => { e.stopPropagation(); setSelectedLeadIndex(idx); }} className="w-8 h-8 flex items-center justify-center border border-pink-400/30 text-pink-400 hover:bg-pink-500 hover:text-black transition-all" title="MARK_TARGET"><Sparkles className="w-3.5 h-3.5" /></button>
-                                <button onClick={(e) => { e.stopPropagation(); window.open(lead.url, "_blank"); }} className="w-8 h-8 flex items-center justify-center border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all" title="OPEN_GATEWAY"><ExternalLink className="w-3.5 h-3.5" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); addToVault(lead); }} className="w-8 h-8 flex items-center justify-center border border-[#06b6d4]/30 text-[#06b6d4] hover:bg-[#06b6d4] hover:text-black transition-all" title="SAVE_TO_VAULT"><Archive className="w-3.5 h-3.5" /></button>
                                 <button onClick={(e) => { e.stopPropagation(); handleDeleteLead(lead.url); }} className="w-8 h-8 flex items-center justify-center border border-pink-600/30 text-pink-600 hover:bg-pink-600 hover:text-white transition-all" title="PURGE_RECORD"><Trash2 className="w-3.5 h-3.5" /></button>
                               </div>
                             </TableCell>
@@ -1439,166 +1481,7 @@ ${socialBlock}
                 )}
               </div>
             </div>
-          ) : currentView === 'plans' ? (
-            <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 px-6 pb-20">
-               <div className="flex flex-col md:flex-row items-end justify-between gap-6">
-                 <div className="space-y-4">
-                  <h2 className="font-hacker text-5xl font-black text-cyan-400 uppercase tracking-tighter hacker-glow">MONETIZATION_STRAT_v5.0</h2>
-                  <p className="text-pink-500 font-black uppercase text-[10px] tracking-[0.5em] font-mono leading-none">RECURRING_ECONOMY_CORE_ACTIVE</p>
-                 </div>
-                 <div className="bg-cyan-500/10 border border-cyan-400/20 px-6 py-3 flex items-center gap-4">
-                    <div className="w-2 h-2 bg-pink-500 animate-pulse rounded-full shadow-[0_0_8px_#ec4899]" />
-                    <span className="text-[10px] font-black uppercase text-cyan-400 font-mono tracking-widest">
-                      GATEWAY_PROMO: MIGRATION_LEGACY | <span className="text-pink-500">-30%_DISCOUNT_APPLIED</span>
-                    </span>
-                 </div>
-               </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                 {/*🥉 BRONZE ENTRY */}
-                 <Card className="bg-[#0a0a0a] border border-cyan-400/20 rounded-none relative overflow-hidden group hover:border-[#cd7f32] transition-all">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                      <Target className="w-24 h-24 text-[#cd7f32]" />
-                    </div>
-                   <CardHeader className="p-8 border-b border-cyan-400/10 bg-[#cd7f32]/5">
-                     <Badge className="bg-[#cd7f32] text-black font-black uppercase rounded-none self-start mb-6 font-mono tracking-widest text-[9px]">BRONZE_ENTRY_v1</Badge>
-                     <CardTitle className="font-hacker text-4xl font-black text-white uppercase tracking-tighter italic leading-none">PLANO_SIMPLES</CardTitle>
-                     <p className="text-[#cd7f32] text-[9px] font-black uppercase mt-2 font-mono tracking-[0.2em]">Entrada e Desempenho_</p>
-                   </CardHeader>
-                   <CardContent className="p-8 space-y-8">
-                     <div className="flex items-baseline gap-2">
-                       <span className="text-cyan-900 text-xs font-black uppercase tracking-widest font-mono">BRL</span>
-                       <h3 className="text-6xl font-black text-[#cd7f32] italic tracking-tighter font-hacker drop-shadow-md">80</h3>
-                       <span className="text-[#cd7f32] text-[10px] font-black uppercase tracking-widest font-mono">/MONTHLY</span>
-                     </div>
-                     <ul className="space-y-4 pt-8 border-t border-cyan-400/10">
-                       {["Single Page Architecture", "Template Fixo V1", "SEO Básico Otimizado", "Zero Setup Fee"].map((item, i) => (
-                         <li key={i} className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-                           <div className="w-1.5 h-1.5 bg-[#cd7f32] shadow-[0_0_5px_#cd7f32]"></div>
-                           {item}
-                         </li>
-                       ))}
-                     </ul>
-                   </CardContent>
-                 </Card>
-
-                 {/*🥈 SILVER STANDARD */}
-                 <Card className="bg-[#0a0a0a] border-2 border-slate-400 rounded-none relative overflow-hidden group shadow-[0_0_30px_rgba(148,163,184,0.15)] scale-105 z-10">
-                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                      <Zap className="w-24 h-24 text-slate-400" />
-                    </div>
-                   <CardHeader className="p-8 border-b border-white/10 bg-slate-400/10">
-                     <Badge className="bg-slate-400 text-black font-black uppercase rounded-none self-start mb-6 font-mono tracking-widest text-[9px]">SILVER_STANDARD_v2</Badge>
-                     <CardTitle className="font-hacker text-4xl font-black text-white uppercase tracking-tighter italic leading-none">HACKER_MAIN_CORE</CardTitle>
-                     <p className="text-slate-500 text-[9px] font-black uppercase mt-2 font-mono tracking-[0.2em] italic underline">OPÇÃO_MAIS_VENDIDA_HUB</p>
-                   </CardHeader>
-                   <CardContent className="p-8 space-y-8">
-                     <div className="flex items-baseline gap-2">
-                       <span className="text-cyan-900 text-xs font-black uppercase tracking-widest font-mono">BRL</span>
-                       <h3 className="text-6xl font-black text-white italic tracking-tighter font-hacker hacker-glow drop-shadow-md">120</h3>
-                       <span className="text-slate-400 text-[10px] font-black uppercase tracking-widest font-mono">/MONTHLY</span>
-                     </div>
-                     <ul className="space-y-4 pt-8 border-t border-white/10">
-                       {["Múltiplas Seções Sincronizadas", "Paleta de Cores Custom", "Setup de SEO Avançado", "Full Performance Analysis"].map((item, i) => (
-                         <li key={i} className="flex items-center gap-3 text-[10px] font-bold text-white uppercase tracking-widest font-mono">
-                           <Activity className="w-3 h-3 text-cyan-400" />
-                           {item}
-                         </li>
-                       ))}
-                     </ul>
-                   </CardContent>
-                 </Card>
-
-                 {/*🥇 GOLD PREMIUM */}
-                 <Card className="bg-[#0a0a0a] border border-amber-500/30 rounded-none relative overflow-hidden group hover:border-amber-500 transition-all">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                      <Sparkles className="w-24 h-24 text-amber-500" />
-                    </div>
-                   <CardHeader className="p-8 border-b border-amber-500/10 bg-amber-500/5">
-                     <Badge className="bg-amber-500 text-black font-black uppercase rounded-none self-start mb-6 font-mono tracking-widest text-[9px]">GOLD_PREMIUM_v3</Badge>
-                     <CardTitle className="font-hacker text-4xl font-black text-white uppercase tracking-tighter italic leading-none">PREMIUM_ELITE+</CardTitle>
-                     <p className="text-amber-700 text-[9px] font-black uppercase mt-2 font-mono tracking-[0.2em]">Automação Injetada_</p>
-                   </CardHeader>
-                   <CardContent className="p-8 space-y-8">
-                     <div className="flex items-baseline gap-2">
-                       <span className="text-cyan-900 text-xs font-black uppercase tracking-widest font-mono">BRL</span>
-                       <h3 className="text-6xl font-black text-amber-500 italic tracking-tighter font-hacker drop-shadow-md">180</h3>
-                       <span className="text-amber-500 text-[10px] font-black uppercase tracking-widest font-mono">/MONTHLY</span>
-                     </div>
-                     <ul className="space-y-4 pt-8 border-t border-amber-500/10">
-                       {["Arquitetura Modular Livre", "Personalização Estética Total", "Fluxos Auto_WhatsApp (1,2,3)", "Valor Perceptível Real"].map((item, i) => (
-                         <li key={i} className="flex items-center gap-3 text-[10px] font-bold text-amber-100 uppercase tracking-widest font-mono">
-                           <Zap className="w-3 h-3 text-amber-500" />
-                           {item}
-                         </li>
-                       ))}
-                     </ul>
-                   </CardContent>
-                 </Card>
-
-                 {/*🚀 ROCKET ELITE */}
-                 <Card className="bg-[#0a0a0a] border border-emerald-500/30 rounded-none relative overflow-hidden group hover:border-emerald-500 transition-all">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                      <Rocket className="w-24 h-24 text-emerald-500" />
-                    </div>
-                   <CardHeader className="p-8 border-b border-emerald-500/10 bg-emerald-500/5">
-                     <Badge className="bg-emerald-500 text-black font-black uppercase rounded-none self-start mb-6 font-mono tracking-widest text-[9px]">ROCKET_ELITE_PRO</Badge>
-                     <CardTitle className="font-hacker text-4xl font-black text-white uppercase tracking-tighter italic leading-none">AUTO_MASTER_GRID</CardTitle>
-                     <p className="text-emerald-700 text-[9px] font-black uppercase mt-2 font-mono tracking-[0.2em]">Margem e Integrações_</p>
-                   </CardHeader>
-                   <CardContent className="p-8 space-y-8">
-                     <div className="flex items-baseline gap-2">
-                       <span className="text-cyan-900 text-xs font-black uppercase tracking-widest font-mono">BRL</span>
-                       <h3 className="text-6xl font-black text-emerald-500 italic tracking-tighter font-hacker drop-shadow-md">250</h3>
-                       <span className="text-emerald-500 text-[10px] font-black uppercase tracking-widest font-mono">/MONTHLY</span>
-                     </div>
-                     <ul className="space-y-4 pt-8 border-t border-emerald-500/10">
-                       {["Agendamento Integrado", "Fluxos de Automação IA", "Integrações CRM/Zapier", "Margem Estelar de Lucro"].map((item, i) => (
-                         <li key={i} className="flex items-center gap-3 text-[10px] font-bold text-emerald-100 uppercase tracking-widest font-mono">
-                           <div className="w-1.5 h-1.5 bg-emerald-500 shadow-[0_0_5px_#10b981]"></div>
-                           {item}
-                         </li>
-                       ))}
-                     </ul>
-                   </CardContent>
-                 </Card>
-
-                 {/*🎄 SEASONAL FESTIVE */}
-                 <Card className="bg-[#0a0a0a] border border-pink-500/30 rounded-none relative overflow-hidden group hover:border-pink-500 transition-all">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                      <Globe className="w-24 h-24 text-pink-500" />
-                    </div>
-                   <CardHeader className="p-8 border-b border-pink-500/10 bg-pink-500/5">
-                     <Badge className="bg-pink-500 text-black font-black uppercase rounded-none self-start mb-6 font-mono tracking-widest text-[9px]">SEASONAL_FESTIVE_v4</Badge>
-                     <CardTitle className="font-hacker text-4xl font-black text-white uppercase tracking-tighter italic leading-none">PRODUCT_MARKETING</CardTitle>
-                     <p className="text-pink-700 text-[9px] font-black uppercase mt-2 font-mono tracking-[0.2em]">Campanhas e Natal_</p>
-                   </CardHeader>
-                   <CardContent className="p-8 space-y-8">
-                     <div className="flex items-baseline gap-2">
-                       <span className="text-cyan-900 text-xs font-black uppercase tracking-widest font-mono">BRL</span>
-                       <h3 className="text-6xl font-black text-pink-500 italic tracking-tighter font-hacker drop-shadow-md">150</h3>
-                       <span className="text-pink-500 text-[10px] font-black uppercase tracking-widest font-mono">/EVENT</span>
-                     </div>
-                     <p className="text-[10px] text-slate-500 font-mono uppercase border-t border-pink-500/10 pt-6 leading-relaxed">
-                       SITES SAZONAIS PARA CAMPANHAS ESPECÍFICAS. REVERTE PARA PLANO PADRÃO APÓS ENCERRAMENTO DO EVENTO.
-                     </p>
-                   </CardContent>
-                 </Card>
-
-                 {/* 🔄 MIGRATION DISCOUNT BOARD */}
-                 <div className="xl:col-span-1 bg-cyan-950/20 border border-cyan-400/20 p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <RefreshCw className="w-12 h-12 text-cyan-400 mb-6 animate-spin-slow" />
-                    <h3 className="font-hacker text-2xl font-black text-white uppercase italic mb-4">MIGRATION_OFFENSIVE</h3>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] leading-relaxed max-w-xs">
-                       PEGUE O CLIENTE DA CONCORRÊNCIA COM ARGUMENTO DE UPGRADE.
-                       <br/><br/>
-                       <span className="text-pink-500 font-black">-30% DISCOUNT NO SETUP PARA MIGRACÃO_</span>
-                    </p>
-                 </div>
-              </div>
-            </div>
-) : currentView === 'templates' ? (
+          ) : currentView === 'templates' ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 h-[calc(100vh-250px)] animate-in fade-in slide-in-from-bottom-4 px-6 pb-20">
               {/* Painel Esquerdo: Seletor de Leads & Configuração */}
               <div className="lg:col-span-1 bg-[#0a0a0a]/80 border border-cyan-400/10 p-6 flex flex-col gap-6 hacker-grid-bg">
@@ -1739,6 +1622,67 @@ ${socialBlock}
                   </div>
                 </div>
               ))}
+            </div>
+          ) : currentView === 'vault' ? (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+              <div className="flex items-center justify-between border-b border-cyan-400/20 pb-4">
+                <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 bg-cyan-500/10 border border-cyan-400 flex items-center justify-center">
+                     <Archive className="w-6 h-6 text-cyan-400" />
+                   </div>
+                   <div>
+                     <h3 className="font-hacker text-3xl font-black text-cyan-400 uppercase tracking-widest hacker-glow">VAULT_LEADS_CACHED</h3>
+                     <p className="text-[10px] text-cyan-700 font-mono font-black uppercase tracking-widest">REGISTROS_PROTEGIDOS_EM_STORAGE_LOCAL</p>
+                   </div>
+                </div>
+                <Button variant="ghost" className="text-[9px] text-pink-500 font-black hover:text-white font-mono tracking-widest" onClick={() => { localStorage.removeItem("capta_leads_vault_cache"); setVaultLeads([]); }}>WIPE_VAULT_DEEP_MEMORY</Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 {vaultLeads.map((lead, idx) => (
+                   <Card key={idx} className="bg-[#0a0a0a] border border-cyan-400/20 rounded-none group hover:border-cyan-400 transition-all relative overflow-hidden h-full flex flex-col">
+                      <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => removeFromVault(lead.url)} className="text-pink-500 hover:text-white transition-colors" title="REMOVE_FROM_VAULT"><X className="w-4 h-4" /></button>
+                      </div>
+                      <CardHeader className="border-b border-cyan-400/5 bg-cyan-950/5">
+                        <CardTitle className="text-xs font-black text-cyan-400 uppercase font-mono truncate">{lead.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-6 flex-1">
+                        <div className="flex items-center gap-3 mb-4">
+                          <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-400/20 rounded-none text-[8px] font-black">{lead.temperature || 'Morno'}</Badge>
+                          <span className="text-[10px] font-black text-white/40 font-mono tracking-tighter">SCORE::{lead.score}%</span>
+                        </div>
+                        <p className="text-[10px] text-cyan-900 font-mono leading-relaxed line-clamp-3 mb-4 italic uppercase">&quot;{lead.snippet}&quot;</p>
+                        
+                        <div className="space-y-2 pt-4 border-t border-cyan-400/10">
+                           {lead.phone && (
+                             <div className="flex items-center gap-2">
+                               <Zap className="w-3 h-3 text-[#06b6d4]" />
+                               <span className="text-[10px] font-black text-cyan-400 font-mono">{lead.phone}</span>
+                             </div>
+                           )}
+                           <div className="flex items-center gap-2">
+                             <Globe className="w-3 h-3 text-slate-700" />
+                             <span className="text-[10px] font-black text-slate-600 font-mono truncate max-w-[200px]">{lead.url || '—'}</span>
+                           </div>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="bg-black/40 border-t border-cyan-400/5 p-4 flex gap-2">
+                        <Button onClick={() => openLeadDetails(lead)} className="flex-1 bg-cyan-500 text-black hover:bg-pink-500 font-mono font-black text-[9px] rounded-none h-10 tracking-widest">OPEN_DOSSIER</Button>
+                        {lead.mapsUrl && (
+                          <Button onClick={() => window.open(lead.mapsUrl, "_blank")} className="w-10 h-10 bg-transparent border border-white/10 text-white hover:bg-white/10 p-0 flex items-center justify-center rounded-none"><MapPin className="w-4 h-4" /></Button>
+                        )}
+                      </CardFooter>
+                   </Card>
+                 ))}
+                 {vaultLeads.length === 0 && (
+                   <div className="col-span-full h-[40vh] border-2 border-dashed border-cyan-400/10 flex flex-col items-center justify-center">
+                      <Archive className="w-12 h-12 text-cyan-950 mb-4" />
+                      <p className="font-hacker text-xl font-black text-cyan-900 uppercase tracking-widest">VAULT_EMPTY</p>
+                      <p className="text-[10px] text-cyan-950 font-black mt-2 uppercase tracking-tighter">Salve leads promissores para visualiz&aacute;-los aqui posteriormente.</p>
+                   </div>
+                 )}
+              </div>
             </div>
           ) : (
             <div className="h-[60vh] flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-none">
@@ -2252,7 +2196,6 @@ ${socialBlock}
       )}
         {/* Modal pulse line fix */}
         <div className="fixed top-0 left-0 w-full h-[1px] bg-[#06b6d4] opacity-10 animate-pulse z-[200] no-print" />
-      </div>
 
       {/*      MODAL DE AUDITORIA (PDF STYLE) */}
       {isAuditModalOpen && selectedLeadDetails && (
@@ -2789,8 +2732,9 @@ ${socialBlock}
           }
         }
       `}</style>
-    </>
-  );
+        </div>
+      </>
+    );
 }
 
 

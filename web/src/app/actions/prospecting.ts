@@ -1,0 +1,107 @@
+'use server'
+
+import { createClient } from '@/utils/supabase/server'
+
+export async function saveHotLeadsToVault(leads: any[], niche: string, city: string) {
+    const supabase = await createClient()
+
+    // Só salvamos leads com score relevante (acima de 40 ou temperatura não-fria)
+    const topLeads = leads.filter(l => l.score >= 40 || l.temperature === 'Quente');
+    
+    if (topLeads.length === 0) return { success: true, saved: 0 };
+
+    const formatted = topLeads.map(l => ({
+        title: l.title,
+        address: l.address,
+        phone: l.phone,
+        website: l.url,
+        maps_url: l.mapsUrl,
+        rating: l.rating,
+        review_count: l.reviews,
+        category: l.category,
+        niche: niche.toUpperCase(),
+        city: city.toUpperCase(),
+        score: l.score,
+        temperature: l.temperature,
+        classification_motivity: l.classificationMotivity
+    }));
+
+    const { error } = await supabase
+        .from('prospecting_leads')
+        .upsert(formatted, { 
+            onConflict: 'title,city,address',
+            ignoreDuplicates: false 
+        });
+
+    if (error) {
+        console.error('[PROSPECTING_VAULT_ERROR]', error);
+        return { error: error.message };
+    }
+
+    return { success: true, saved: formatted.length };
+}
+
+export async function getLeadsFromVault(niche: string, city: string) {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('prospecting_leads')
+        .select('*')
+        .eq('niche', niche.toUpperCase())
+        .eq('city', city.toUpperCase())
+        .order('score', { ascending: false });
+
+    if (error) {
+        console.error('[PROSPECTING_FETCH_ERROR]', error);
+        return [];
+    }
+
+    // Mapear de volta para o formato esperado pelo frontend
+    return (data || []).map(l => ({
+        title: l.title,
+        address: l.address,
+        phone: l.phone,
+        url: l.website,
+        mapsUrl: l.maps_url,
+        rating: l.rating,
+        reviews: l.review_count,
+        category: l.category,
+        score: l.score,
+        temperature: l.temperature,
+        classificationMotivity: l.classification_motivity,
+        city: l.city,
+        analysisStatus: "RESTORED_FROM_VAULT"
+    }));
+}
+
+export async function getAllLeadsFromVault() {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('prospecting_leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('[PROSPECTING_FETCH_ALL_ERROR]', error);
+        return [];
+    }
+
+    return (data || []).map(l => ({
+        title: l.title,
+        address: l.address,
+        phone: l.phone,
+        url: l.website,
+        mapsUrl: l.maps_url,
+        rating: l.rating,
+        reviews: l.review_count,
+        category: l.category,
+        score: l.score,
+        temperature: l.temperature,
+        classificationMotivity: l.classification_motivity,
+        city: l.city,
+        niche: l.niche,
+        createdAt: l.created_at,
+        analysisStatus: "FROM_VAULT"
+    }));
+}

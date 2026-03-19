@@ -26,7 +26,12 @@ export async function login(formData: FormData) {
     .eq('id', user?.id)
     .single()
 
-  const role = profile?.role || 'CLIENT'
+  // Fallback hierarchy: Database Profile -> Auth User Metadata -> Default 'CLIENT'
+  const role =
+    profile?.role ||
+    (user?.app_metadata?.role as string) ||
+    (user?.user_metadata?.role as string) ||
+    'CLIENT'
 
   revalidatePath('/', 'layout')
   
