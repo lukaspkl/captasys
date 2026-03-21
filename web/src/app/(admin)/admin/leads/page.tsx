@@ -1128,20 +1128,24 @@ ${socialBlock}
     return prompt;
   };
 
-  const handleDeleteLead = (url: string) => {
-    setLeads((prev) => prev.filter((l) => l.url !== url));
+  const handleDeleteLead = (leadOrUrl: any) => {
+    const key = typeof leadOrUrl === "string" ? leadOrUrl : (leadOrUrl.mapsUrl || leadOrUrl.url || leadOrUrl.title);
+    
+    setLeads((prev) => prev.filter((l) => (l.mapsUrl || l.url || l.title) !== key));
     const cached = JSON.parse(
       localStorage.getItem("capta_leads_cache") || "[]",
     );
     localStorage.setItem(
       "capta_leads_cache",
-      JSON.stringify(cached.filter((l: any) => l.url !== url)),
+      JSON.stringify(cached.filter((l: any) => (l.mapsUrl || l.url || l.title) !== key)),
     );
   };
 
   const addToVault = (lead: any) => {
-    if (vaultLeads.some((l) => l.url === lead.url)) {
+    const key = lead.mapsUrl || lead.title || lead.url;
+    if (vaultLeads.some((l) => (l.mapsUrl || l.title || l.url) === key)) {
       setStatusText("Lead já está no cofre!");
+      handleDeleteLead(key); // Força limpeza da matriz principal se já estiver salvo
       return;
     }
     const updated = [
@@ -1150,12 +1154,17 @@ ${socialBlock}
     ];
     setVaultLeads(updated);
     localStorage.setItem("capta_leads_vault_cache", JSON.stringify(updated));
-    setStatusText("Lead guardado no cofre!");
+    
+    // Purificar da main stream (Mover em vez de Duplicar)
+    handleDeleteLead(key);
+    
+    setStatusText("Lead Extraído para o COFRE_LEADS!");
     setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
   };
 
-  const removeFromVault = (url: string) => {
-    const updated = vaultLeads.filter((l) => l.url !== url);
+  const removeFromVault = (leadOrUrl: any) => {
+    const key = typeof leadOrUrl === "string" ? leadOrUrl : (leadOrUrl.mapsUrl || leadOrUrl.title || leadOrUrl.url);
+    const updated = vaultLeads.filter((l) => (l.mapsUrl || l.url || l.title) !== key);
     setVaultLeads(updated);
     localStorage.setItem("capta_leads_vault_cache", JSON.stringify(updated));
   };
@@ -1840,7 +1849,7 @@ ${socialBlock}
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleDeleteLead(lead.url);
+                                      handleDeleteLead(lead);
                                     }}
                                     className="w-8 h-8 flex items-center justify-center border border-pink-600/30 text-pink-600 hover:bg-pink-600 hover:text-white transition-all"
                                     title="PURGE_RECORD"
@@ -2255,7 +2264,7 @@ ${socialBlock}
                     >
                       <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => removeFromVault(lead.url)}
+                          onClick={() => removeFromVault(lead)}
                           className="text-pink-500 hover:text-white transition-colors"
                           title="REMOVE_FROM_VAULT"
                         >
@@ -2356,7 +2365,7 @@ ${socialBlock}
       </div>
 
       {isDetailsModalOpen && selectedLeadDetails && (
-        <div className="fixed inset-0 bg-[#020617]/90 backdrop-blur-3xl z-150 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#020617]/90 backdrop-blur-3xl z-150 flex items-center justify-center p-4 print:hidden">
           <div className="bg-[#0f172a] border border-white/10 w-full max-w-6xl h-[90vh] flex flex-col relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
 
@@ -3029,7 +3038,18 @@ ${socialBlock}
       {isAuditModalOpen && selectedLeadDetails && (
         <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:inset-auto print:bg-white print:text-black print:p-0 print:block print:overflow-visible print:backdrop-blur-none print:backdrop-filter-none modal-print-container overflow-y-auto w-full h-full">
           <div className="bg-white text-slate-900 w-full max-w-4xl flex flex-col relative shadow-[0_0_150px_rgba(6,182,212,0.4)] border border-white/10 print:shadow-none print:w-full print:max-w-none print:border-none print:m-0 print:p-0 print:block rounded-none overflow-hidden print:overflow-visible">
-            <header className="bg-slate-950 p-10 flex justify-between items-start border-b border-cyan-500/20 relative overflow-hidden print:bg-white print:border-b-4 print:border-cyan-500">
+            <style dangerouslySetInnerHTML={{ __html: `
+              .cyber-grid-print {
+                background-image: 
+                  linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+                  linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+                background-size: 20px 20px;
+              }
+            `}} />
+            <header className="bg-slate-950 p-10 flex justify-between items-start border-b border-[#00ffff]/20 relative overflow-hidden print:bg-white print:border-b-4 print:border-[#00ffff]">
+              <div className="absolute top-4 right-10 text-[8px] text-[#00ffff] font-black tracking-widest text-right hidden print:block">
+                 [ ID_7A9F // V3.0 // CONFIDENTIAL ]
+              </div>
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50 print:hidden" />
               <div className="relative z-10 w-full">
                 <div className="flex items-center gap-3 mb-4">
@@ -3048,14 +3068,17 @@ ${socialBlock}
               </div>
             </header>
 
-            <div className="flex-1 p-10 space-y-10 overflow-y-auto font-mono text-[11px] text-slate-700">
+            <div className="flex-1 p-10 space-y-10 overflow-y-auto font-mono text-[11px] text-slate-700 relative cyber-grid-print">
               {/* Diagnóstico HUD */}
-              <section className="bg-slate-50 p-6 border-l-4 border-cyan-500 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10">
+              <section className="bg-white shadow-[10px_10px_0_#f1f5f9] border border-slate-200 border-l-4 border-[#00ffff] p-6 relative overflow-hidden group">
+                <div className="absolute top-1 left-2 text-[6px] text-slate-300 font-black tracking-widest select-none">
+                  [////] SYS.SCAN_INIT // DATA_STREAM_OPEN
+                </div>
+                <div className="absolute top-0 right-0 p-4 opacity-5">
                   <Activity className="w-12 h-12" />
                 </div>
-                <p className="text-2xl font-black text-slate-900 border-b-2 border-cyan-100 pb-2 mb-4 uppercase tracking-tighter italic">
-                  {selectedLeadDetails.title}
+                <p className="text-2xl font-black text-slate-900 border-b-2 border-[#00ffff]/20 pb-2 mb-4 mt-2 uppercase tracking-tighter italic">
+                  [::] {selectedLeadDetails.title}
                 </p>
                 <div className="flex flex-wrap gap-6">
                   <p className="flex items-center gap-2 text-slate-500 font-bold uppercase">
@@ -3069,19 +3092,20 @@ ${socialBlock}
                 </div>
               </section>
 
-              <section className="bg-slate-900 p-10 text-white border-b-8 border-cyan-500 flex justify-between items-center shadow-2xl">
-                <div className="space-y-4">
-                  <p className="text-[10px] text-cyan-400 font-black uppercase tracking-[0.4em]">
-                    SCORE_DE_OPORTUNIDADE_IA
+              <section className="bg-[#050505] p-10 text-white border-b-8 border-[#00ffff] flex justify-between items-center shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,transparent_0%,#00ffff_100%)] pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <p className="text-[10px] text-[#00ffff] font-black uppercase tracking-[0.4em]">
+                    [///] SCORE_DE_OPORTUNIDADE_IA
                   </p>
-                  <p className="text-8xl font-black italic tracking-tighter leading-none">
+                  <p className="text-8xl font-black italic tracking-tighter leading-none drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]">
                     {selectedLeadDetails.score || "98"}%
                   </p>
-                  <Badge className="bg-cyan-500 text-black font-black text-[10px] px-3 py-1 rounded-none border-none">
+                  <Badge className="bg-[#00ffff] text-black font-black text-[10px] px-3 py-1 rounded-none border-none animate-pulse">
                     ALTA_VALORIZAÇÃO_REBITDA
                   </Badge>
                 </div>
-                <div className="text-right space-y-2">
+                <div className="text-right space-y-2 relative z-10">
                   <p className="text-[10px] text-white/40 font-bold uppercase">
                     Status Local:
                   </p>
@@ -3105,31 +3129,37 @@ ${socialBlock}
                 </div>
 
                 <div className="grid grid-cols-2 gap-12">
-                  <div className="space-y-4">
+                  <div className="space-y-4 border border-slate-200 bg-white p-6 shadow-[5px_5px_0_#f1f5f9] relative">
+                    <div className="absolute top-0 right-4 -translate-y-1/2 bg-white px-2">
+                       <span className="text-[8px] text-rose-500 font-black tracking-widest">[ VULNERABILITY_FOUND ]</span>
+                    </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-slate-100 flex items-center justify-center text-red-500 font-black">
+                      <div className="w-8 h-8 bg-rose-500 flex items-center justify-center text-white font-black">
                         01
                       </div>
                       <p className="text-[11px] font-black uppercase text-slate-900 tracking-wider">
-                        PRESENÇA_MOBILE_REATIVA (FALHA)
+                        PRESENÇA_MOBILE_REATIVA <span className="text-rose-500">(FALHA)</span>
                       </p>
                     </div>
-                    <p className="text-[10px] text-slate-500 leading-relaxed italic border-l-2 border-red-100 pl-4">
+                    <p className="text-[10px] text-slate-500 leading-relaxed italic border-l-2 border-rose-200 pl-4">
                       &quot;O tempo de carregamento e a falta de botões de
                       &quot;Call to Action&quot; imediatos no dispositivo móvel
                       reduzem a retenção de leads qualificados em até 65%.&quot;
                     </p>
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-4 border border-slate-200 bg-white p-6 shadow-[5px_5px_0_#f1f5f9] relative">
+                    <div className="absolute top-0 right-4 -translate-y-1/2 bg-white px-2">
+                       <span className="text-[8px] text-[#ff00ff] font-black tracking-widest">[ AI_GAP_DETECTED ]</span>
+                    </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-slate-100 flex items-center justify-center text-cyan-500 font-black">
+                      <div className="w-8 h-8 bg-[#ff00ff] flex items-center justify-center text-white font-black">
                         02
                       </div>
                       <p className="text-[11px] font-black uppercase text-slate-900 tracking-wider">
-                        CONVERSÃO_VIA_IA_BOT (AUSENTE)
+                        CONVERSÃO_VIA_IA_BOT <span className="text-[#ff00ff]">(AUSENTE)</span>
                       </p>
                     </div>
-                    <p className="text-[10px] text-slate-500 leading-relaxed italic border-l-2 border-cyan-100 pl-4">
+                    <p className="text-[10px] text-slate-500 leading-relaxed italic border-l-2 border-[#ff00ff]/30 pl-4">
                       &quot;A ausência de um atendimento automatizado 24h força
                       o cliente a esperar pela resposta humana, resultando em
                       perda de prospectos para concorrentes mais ágeis.&quot;
@@ -3139,7 +3169,7 @@ ${socialBlock}
               </section>
 
               {/* ROI Calculadora Master */}
-              <section className="grid grid-cols-2 gap-10">
+              <section className="grid grid-cols-2 gap-10 break-inside-avoid print:break-inside-avoid">
                 <div className="bg-cyan-50 p-10 border border-cyan-100 relative overflow-hidden">
                   <div className="absolute -bottom-10 -right-10 opacity-5">
                     <Globe className="w-40 h-40" />
@@ -3241,32 +3271,32 @@ ${socialBlock}
                           (auditConversion / 100)
                         ).toLocaleString("pt-BR")}
                       </p>
-                      <p className="text-[9px] text-slate-500 font-black uppercase mt-4">
-                        *Simulação de perda baseada na ausência de IA
-                        Conversion.
-                      </p>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <footer className="pt-20 flex justify-between items-end border-t-2 border-slate-100">
+              <footer className="pt-20 flex justify-between items-end border-t-2 border-slate-200 relative">
+                <div className="absolute top-4 right-0 text-[8px] text-slate-400 font-mono tracking-widest text-right">
+                  [ TERMINAL_SPOOL::OUT ]<br/>
+                  CLASSIFIED // SITEPROX_PROTOCOL
+                </div>
                 <div className="flex gap-12 items-end">
-                  <div className="bg-slate-900 w-36 h-36 flex items-center justify-center rotate-2 border-8 border-white shadow-2xl relative">
-                    <Zap className="w-16 h-16 text-cyan-400 fill-cyan-400/20" />
-                    <div className="absolute -top-3 -right-3 bg-red-500 text-[9px] text-white font-black px-2 py-1 rotate-12">
+                  <div className="bg-[#050505] w-36 h-36 flex items-center justify-center rotate-2 border-8 border-white shadow-2xl relative">
+                    <Zap className="w-16 h-16 text-[#00ffff] fill-[#00ffff]/20" />
+                    <div className="absolute -top-3 -right-3 bg-[#ff00ff] text-[9px] text-white font-black px-2 py-1 rotate-12">
                       TOP_CERTIFIED
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h5 className="text-3xl font-black text-slate-900 border-b-8 border-[#06b6d4] inline-block pr-12 uppercase italic tracking-tighter">
+                    <h5 className="text-3xl font-black text-slate-900 border-b-8 border-[#00ffff] inline-block pr-12 uppercase italic tracking-tighter">
                       LUCAS | AI_STRATEGIST
                     </h5>
                     <div className="flex gap-6">
                       <p className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">
                         SITEPROX_V4.0_PROTOCOL
                       </p>
-                      <p className="text-[10px] font-mono font-black text-cyan-500 uppercase tracking-widest">
+                      <p className="text-[10px] font-mono font-black text-[#00ffff] uppercase tracking-widest">
                         VERIFIED_SPECIALIST
                       </p>
                     </div>
@@ -3274,7 +3304,7 @@ ${socialBlock}
                 </div>
                 <div className="text-right space-y-1">
                   <p className="text-4xl font-black text-slate-900 italic tracking-tighter leading-none">
-                    SITE<span className="text-[#06b6d4]">PROX</span>
+                    SITE<span className="text-[#00ffff]">PROX</span>
                   </p>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em]">
                     RESIDUOS_ZERO_IA
@@ -3283,18 +3313,21 @@ ${socialBlock}
               </footer>
             </div>
 
-            <footer className="no-print p-8 bg-slate-50 border-t border-slate-200 flex justify-end gap-4">
+            <footer className="no-print p-8 bg-slate-50 border-t border-slate-200 flex justify-end gap-4 relative overflow-hidden">
+              <div className="absolute top-1/2 -translate-y-1/2 left-8 flex gap-2">
+                {[...Array(20)].map((_,i) => <div key={i} className="w-2 h-6 bg-slate-200 skew-x-12"></div>)}
+              </div>
               <Button
                 onClick={() => setIsAuditModalOpen(false)}
-                className="bg-slate-200 text-slate-600 px-8 py-6 rounded-none font-black text-[10px] uppercase tracking-widest"
+                className="bg-white border border-slate-200 text-slate-600 px-8 py-6 rounded-none font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 relative z-10"
               >
-                VOLTAR
+                ABORT_SEQUENCE
               </Button>
               <Button
                 onClick={() => window.print()}
-                className="bg-cyan-500 text-white px-10 py-6 rounded-none font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/20"
+                className="bg-[#ff00ff] text-white px-10 py-6 rounded-none font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-[#ff00ff]/20 hover:bg-black relative z-10 transition-colors"
               >
-                IMPRIMIR_PDF (A4)
+                [SPOOL_TO_DATA_DRIVE]
               </Button>
             </footer>
           </div>
