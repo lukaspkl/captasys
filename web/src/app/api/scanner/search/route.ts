@@ -5,23 +5,62 @@ export async function POST(req: Request) {
     const { keyword, cities } = await req.json();
     const apiKey = process.env.SERPER_API_KEY;
 
+    const searchCities = Array.isArray(cities) ? cities : [cities];
+    let query = keyword;
+
+    // LÓGICA DE RESOLUÇÃO DE LINK CURTO / URL
+    let isDirectLink = false;
+    if (keyword.includes("maps.app.goo.gl") || keyword.includes("goo.gl/maps") || keyword.includes("google.com/maps")) {
+      isDirectLink = true;
+      console.log(`[SCANNER_API] Detectado link direto/curto do Maps: ${keyword}`);
+      try {
+        const res = await fetch(keyword, { 
+          method: 'GET', 
+          redirect: 'follow',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          }
+        });
+        const finalUrl = res.url;
+        
+        if (finalUrl !== keyword && finalUrl.includes('/place/')) {
+          const parts = finalUrl.split('/place/');
+          query = decodeURIComponent(parts[1].split('/')[0].replace(/\+/g, ' '));
+        } else {
+          // FALLBACK TÁTICO: Se não resolveu, pergunta pro Google Search quem é esse link
+          const traceRes = await fetch("https://google.serper.dev/search", {
+            method: "POST",
+            headers: { "X-API-KEY": apiKey as string, "Content-Type": "application/json" },
+            body: JSON.stringify({ q: keyword })
+          });
+          const traceData = await traceRes.json();
+          if (traceData.organic && traceData.organic.length > 0) {
+            const rawTitle = traceData.organic[0].title;
+            query = rawTitle.split(' - ')[0].split(' | ')[0].trim();
+          }
+        }
+      } catch (err) {
+        console.error("[SCANNER_API] Erro no resolutor:", err);
+      }
+    }
+
     if (!apiKey || apiKey === "SUA_CHAVE_AQUI") {
       return NextResponse.json({ error: "Chave do Serper não configurada." }, { status: 500 });
     }
 
-    const searchCities = Array.isArray(cities) ? cities : [cities];
     let allLeads: any[] = [];
+    
+    // Se for link direto, fazemos apenas UMA busca global (sem cidade fixa)
+    const citiesToSearch = isDirectLink ? [""] : searchCities;
 
-    console.log(`[SCANNER_BULK] Iniciando varredura em ${searchCities.length} cidades para: ${keyword}`);
-
-    for (const city of searchCities) {
-      const searchQuery = `${keyword} em ${city}`;
+    for (const city of citiesToSearch) {
+      const searchQuery = city ? `${query} em ${city}` : query;
       
       try {
         const response = await fetch("https://google.serper.dev/maps", {
           method: "POST",
           headers: {
-            "X-API-KEY": apiKey,
+            "X-API-KEY": apiKey as string,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br" }),
