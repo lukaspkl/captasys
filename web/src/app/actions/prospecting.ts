@@ -2,7 +2,21 @@
 
 import { createClient } from '@/utils/supabase/server'
 
-export async function saveHotLeadsToVault(leads: any[], niche: string, city: string) {
+interface Lead {
+  score: number;
+  temperature: string;
+  title: string;
+  address: string;
+  phone: string;
+  url: string;
+  mapsUrl: string;
+  rating: number;
+  reviews: number;
+  category: string;
+  classificationMotivity: string;
+}
+
+export async function saveHotLeadsToVault(leads: Lead[], niche: string, city: string) {
     const supabase = await createClient()
 
     // Só salvamos leads com score relevante (acima de 40 ou temperatura não-fria)

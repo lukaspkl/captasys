@@ -39,7 +39,7 @@ export default async function LeadsManagementPage({ searchParams }: { searchPara
 
       <div className="space-y-4">
         {leads.length > 0 ? (
-          leads.map((lead: any) => (
+        leads.map((lead: { id: string; name: string; phone: string; email?: string; created_at: string; status: string; message?: string }) => (
             <div key={lead.id} className="bg-slate-950/40 border border-white/5 p-6 hud-panel group hover:border-pink-500/30 transition-all">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-start gap-4">

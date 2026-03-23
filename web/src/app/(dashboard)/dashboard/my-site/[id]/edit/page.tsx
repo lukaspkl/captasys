@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -45,8 +46,8 @@ export default function EditSitePage() {
     if (id) fetchSite();
   }, [id, supabase, router]);
 
-  const handleUpdateContent = (field: string, value: any) => {
-    setContent((prev: any) => ({
+  const handleUpdateContent = (field: string, value: unknown) => {
+    setContent((prev: Record<string, unknown> | null) => ({
       ...prev,
       [field]: value
     }));
@@ -181,7 +182,7 @@ export default function EditSitePage() {
                 <div className="w-1 h-1 bg-pink-500"></div> GRID_DE_SERVIÇOS
               </h3>
               <div className="space-y-4">
-                {content.services.map((service: any, index: number) => (
+                {(content?.services as Array<{ title: string; desc: string }>)?.map((service, index: number) => (
                   <div key={index} className="bg-white/[0.02] border border-white/5 p-6 space-y-4 group hover:border-pink-500/20 transition-all">
                     <div className="flex justify-between items-center">
                        <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest">#00{index + 1}</span>

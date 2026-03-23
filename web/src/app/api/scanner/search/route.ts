@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Chave do Serper não configurada." }, { status: 500 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let allLeads: any[] = [];
     
     // Se for link direto, fazemos apenas UMA busca global (sem cidade fixa)
@@ -72,7 +73,8 @@ export async function POST(req: Request) {
         const results = data.places || data.maps || [];
 
         if (results.length > 0) {
-          const formatted = results.map((place: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const formatted = results.map((place: any) => {
             let score = 40; 
             const reasons: string[] = [];
             
@@ -134,7 +136,7 @@ export async function POST(req: Request) {
         totalFound: allLeads.length,
         debugToken: `SAT_HACK_FIXED_${Date.now()}`
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[SCANNER_ERROR]", error);
     return NextResponse.json({ error: "Falha na operação técnica do scanner." }, { status: 500 });
   }

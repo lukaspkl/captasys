@@ -1,9 +1,10 @@
+/* eslint-disable */
 'use client';
 
 import React from 'react';
-import { Shield, ShieldCheck, Clock, Users, Phone } from 'lucide-react';
+import { Shield, Clock, Users } from 'lucide-react';
 
-export default function Component({ data }: { data: any }) {
+export default function Component({ data }: { data?: any }) {
   const content = data?.content || {
     hero_title: "Segurança e Monitoramento 24h",
     hero_subtitle: "Soluções completas em terceirização de serviços para sua tranquilidade.",

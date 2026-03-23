@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Phone, MapPin, Clock, Instagram, Zap, ShieldCheck, Settings } from "lucide-react";
+import { MapPin, Clock, Instagram, Zap, ShieldCheck, Settings } from "lucide-react";
 import LeadContactForm from "../[slug]/_components/contact-form";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function MecanicaSlickV2({ site }: { site: any }) {
   const config = site.content || {};
   const themeColor = config.theme_color || '#ef4444';

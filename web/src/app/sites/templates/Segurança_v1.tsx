@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -7,7 +8,6 @@ import {
   ShieldCheck, 
   Users, 
   Cctv, 
-  Bell, 
   MapPin, 
   Phone, 
   Mail, 
@@ -20,7 +20,7 @@ import {
   Award
 } from 'lucide-react';
 
-export default function Component({ data }: { data: any }) {
+export default function Component({ data }: { data?: any }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

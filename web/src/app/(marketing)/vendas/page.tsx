@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { 
   ShieldCheck, 
   Rocket, 
@@ -12,7 +11,6 @@ import {
   Star,
   AlertOctagon,
   History,
-  Zap,
 } from 'lucide-react';
 import { Sora, Inter, Silkscreen } from 'next/font/google';
 

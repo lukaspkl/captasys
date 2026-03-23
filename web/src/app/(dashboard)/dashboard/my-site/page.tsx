@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Globe, BarChart, Settings, MousePointerClick, Plus, ExternalLink, ShieldAlert, Cpu, HeartPulse, UserCheck } from "lucide-react";
+import { Globe, Settings, Plus, ExternalLink, ShieldAlert, Cpu, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";

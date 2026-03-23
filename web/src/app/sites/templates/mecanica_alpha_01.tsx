@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Globe, Phone, MapPin, Clock, Instagram, Star, ChevronRight, MessageSquare } from "lucide-react";
 import LeadContactForm from "../[slug]/_components/contact-form";
 

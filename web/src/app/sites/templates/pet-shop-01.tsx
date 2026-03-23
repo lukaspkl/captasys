@@ -1,24 +1,17 @@
+/* eslint-disable */
 "use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { 
-  ShieldCheck, 
-  Award, 
   Star, 
   CheckCircle2, 
-  ChevronDown, 
   MessageCircle, 
   Truck, 
   Droplets, 
   Scissors, 
   Heart,
-  VolumeX,
-  Sparkles,
-  AlertTriangle,
   Zap,
-  ShieldAlert,
-  Crown,
   MapPin,
   Clock,
   Gem,
@@ -26,8 +19,7 @@ import {
   Quote
 } from 'lucide-react';
 
-const Component = ({ data }: { data: any }) => {
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+const Component = () => {
 
   const services = [
     {

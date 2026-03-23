@@ -4,18 +4,16 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Layout, Plus, Trash2, Globe, Search, Loader2, Sparkles, FolderTree, FlaskConical, Code2, Copy, Save, Check, Zap } from "lucide-react";
+import { Layout, Plus, Trash2, Globe, Loader2, Sparkles, FolderTree, FlaskConical, Code2, Copy, Check, Zap, UploadCloud, X } from "lucide-react";
 import { addTemplate, deleteTemplate, generateStitchPreview } from "@/app/actions/templates";
 import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
 import { createClient } from "@/utils/supabase/client";
-import { UploadCloud, X } from "lucide-react";
 
 const SEGMENTS = ['mecanica', 'saude', 'vendas', 'geral'];
 
 export default function AdminTemplatesPage() {
   const [activeTab, setActiveTab] = useState<'library' | 'lab'>('library');
-  const [templates, setTemplates] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<{ id: string; name: string; segment: string; theme_id: string; preview_url?: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
@@ -54,6 +52,7 @@ export default function AdminTemplatesPage() {
 
   useEffect(() => {
     fetchTemplates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMagicPreview = async () => {

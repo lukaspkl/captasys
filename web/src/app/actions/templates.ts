@@ -71,7 +71,8 @@ export async function getTemplatesBySegment(segment: string) {
     return data || []
 }
 
-export async function generateStitchPreview(segment: string, name: string) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function generateStitchPreview(segment: string, name?: string) {
   // Simulação de chamada ao Stitch via IA
   // No futuro, isso usaria mcp_StitchMCP_generate_screen_from_text para gerar a imagem real
   const themes: Record<string, string> = {

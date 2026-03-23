@@ -87,7 +87,7 @@ export default async function PropostaPage({ params }: { params: Promise<{ slug:
                 <p>Notamos que a estrutura da empresa se apoia quase totalmente apenas no Instagram/Facebook ou Linktree genérico.</p>
                 <div className="mt-4 bg-rose-950/30 p-3 rounded-lg border border-rose-900/30">
                   <span className="text-rose-300 font-semibold block text-xs uppercase tracking-wider mb-1">Risco</span>
-                  Quando clientes de {cityName} pesquisam no Google pelo seu serviço, o "concorrente A" aparece com um site profissional e fica com a venda quente. Algorítmo de rede social limita seu alcance diário.
+                  Quando clientes de {cityName} pesquisam no Google pelo seu serviço, o &quot;concorrente A&quot; aparece com um site profissional e fica com a venda quente. Algorítmo de rede social limita seu alcance diário.
                 </div>
               </CardContent>
             </Card>
@@ -116,7 +116,7 @@ export default async function PropostaPage({ params }: { params: Promise<{ slug:
            <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-blue-900/20 via-[#0a101a]/0 to-transparent pointer-events-none"></div>
            
            <h2 className="text-3xl font-semibold text-white relative z-10">O Plano de Aceleração</h2>
-           <p className="text-slate-400 relative z-10 max-w-2xl">Não estou aqui para te vender um "sitezinho". Isso os curiosos fazem. O plano abaixo blinda o seu processo comercial conectando Autoridade com Escala.</p>
+           <p className="text-slate-400 relative z-10 max-w-2xl">Não estou aqui para te vender um &quot;sitezinho&quot;. Isso os curiosos fazem. O plano abaixo blinda o seu processo comercial conectando Autoridade com Escala.</p>
            
            <div className="grid md:grid-cols-2 gap-6 mt-8 relative z-10">
               <div className="bg-[#0b101b] border border-slate-800 p-6 rounded-2xl flex gap-4 items-start hover:border-blue-500/50 transition-colors">

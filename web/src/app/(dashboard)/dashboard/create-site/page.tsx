@@ -34,7 +34,7 @@ export default function CreateSiteWizard() {
   const [step, setStep] = useState(1);
   const [segment, setSegment] = useState('');
   const [themeId, setThemeId] = useState('');
-  const [availableTemplates, setAvailableTemplates] = useState<any[]>([]);
+  const [availableTemplates, setAvailableTemplates] = useState<{ id: string; name: string; theme_id: string; preview_url?: string }[]>([]);
   const [subdomain, setSubdomain] = useState('');
   const [isCheckingSubdomain, setIsCheckingSubdomain] = useState(false);
   const [isSubdomainAvailable, setIsSubdomainAvailable] = useState<boolean | null>(null);
@@ -227,7 +227,8 @@ export default function CreateSiteWizard() {
                             themeId === t.theme_id ? 'border-cyan-400' : 'border-white/5 hover:border-white/20'
                           }`}
                         >
-                          <img src={t.preview_url || '/placeholder-template.png'} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity" />
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={t.preview_url || '/placeholder-template.png'} alt={t.name} className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity" />
                           <div className="absolute inset-x-0 bottom-0 bg-black/80 p-3 flex justify-between items-center">
                              <span className="text-[10px] font-black text-white uppercase truncate">{t.name}</span>
                              <Layout className="w-3 h-3 text-cyan-400" />

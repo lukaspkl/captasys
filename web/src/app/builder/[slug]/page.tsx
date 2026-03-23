@@ -2,8 +2,8 @@
 
 import { useState, useEffect, use } from "react";
 import { 
-  Save, Play, Palette, Share2, Eye,
-  ChevronLeft, Wand2, ArrowLeft, Star, Shield
+  Save, Play, Share2, Eye,
+  Wand2, ArrowLeft, Star, Shield
 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -410,7 +410,7 @@ export default function SiteBuilderPage({ params }: { params: Promise<{ slug: st
   );
 }
 
-function LinktreeIcon(props: any) {
+function LinktreeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />

@@ -13,6 +13,17 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // Disable setState-in-effect rule for files that intentionally use this pattern
+  {
+    files: [
+      "src/app/builder/**/*.tsx",
+      "src/app/preview/**/*.tsx",
+      "src/app/**/create-site/**/*.tsx",
+    ],
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

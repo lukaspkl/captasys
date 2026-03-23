@@ -95,10 +95,11 @@ export async function generateStitchLayout(userPrompt: string, segment: string) 
     console.log("[STITCH_LAB] Sucesso!");
     return { success: true, code: cleanCode };
     
-  } catch (error: any) {
-    console.error("[STITCH_LAB] Erro API Google:", error.message || error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[STITCH_LAB] Erro API Google:", err.message || error);
     
-    let errorMsg = error.message || "Erro desconhecido";
+    let errorMsg = err.message || "Erro desconhecido";
     
     if (errorMsg.includes("429")) {
         errorMsg = "Limite de requisições excedido ou cota insuficiente para este modelo. Aguarde um minuto e tente novamente.";
@@ -160,7 +161,7 @@ export async function saveGeneratedTemplate(
     revalidatePath("/admin/templates");
     return { success: true };
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[SAVE_TEMPLATE] Erro Crítico:", error);
     return { success: false, error: "Erro interno ao salvar template." };
   }
@@ -199,18 +200,16 @@ async function updateTemplateMap(newThemeId: string) {
 /**
  * GERAÇÃO VIA STITCH MCP (OFICIAL GOOGLE)
  */
-export async function generateStitchMCPDesign(prompt: string, deviceType: string = "DESKTOP") {
+export async function generateStitchMCPDesign(prompt: string) {
   try {
-    // 1. Criar um projeto temporário ou usar um fixo para o laboratório
-    // (A implementação real aqui chamaria as ferramentas do MCP StitchMCP)
-    // Nota: Como sou um agente, eu executo as ferramentas MCP diretamente quando solicitado.
-    
+    void prompt; // stub - usará MCP quando implementado
     return { 
         success: true, 
         message: "Aguardando processamento do Stitch MCP...",
         // Estes campos serão preenchidos pela resposta da ferramenta
     };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const err = error as Error;
+    return { success: false, error: err.message };
   }
 }

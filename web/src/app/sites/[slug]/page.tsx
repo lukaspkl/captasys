@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TEMPLATE_MAP: Record<string, any> = {
   'segurança-v2': SegurancaV2,
 
