@@ -22,8 +22,10 @@ export default async function middleware(req: NextRequest) {
     "localhost:3000",
     "captasites.com.br",
     "capta-sites.vercel.app",
-    "captasys.net"
-  ];
+    "captasys.net",
+    "captasys.vercel.app",
+    process.env.NEXT_PUBLIC_ROOT_DOMAIN || ""
+  ].filter(Boolean);
   
   const isRootDomain = rootDomains.includes(hostname);
 
