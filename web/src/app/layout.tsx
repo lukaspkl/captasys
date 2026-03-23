@@ -20,8 +20,11 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "CaptaSaaS | Hacker HUD v1.0",
-  description: "Terminal de prospecção retro-futurista de alta performance.",
+  title: "SiteProx - No caos da web, nós somos a lei",
+  description: "Estratégias de Elite para Negócios Locais - Aceleramos seu faturamento com tecnologia de ponta.",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
