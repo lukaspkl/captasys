@@ -21,6 +21,7 @@ export default async function middleware(req: NextRequest) {
   const rootDomains = [
     "localhost:3000",
     "captasites.com.br",
+    "siteprox.com.br",
     "capta-sites.vercel.app",
     "captasys.net",
     "captasys.vercel.app",
