@@ -1,25 +1,18 @@
 "use client";
 
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { 
-  Zap, 
   ShieldCheck, 
   Rocket, 
-  Target, 
   MessageCircle, 
   Check, 
-  Cpu, 
-  ArrowRight,
-  MapPin,
-  Sparkles,
-  AlertOctagon,
-  Trophy,
-  History,
-  Fingerprint,
-  Monitor,
   CheckCircle2,
-  Star
+  Star,
+  AlertOctagon,
+  History,
+  Zap,
 } from 'lucide-react';
 import { Sora, Inter, Silkscreen } from 'next/font/google';
 
@@ -81,7 +74,15 @@ const AnimatedGrid = () => (
   </div>
 );
 
-const PlanCard = ({ plan }: { plan: any }) => (
+interface Plan {
+  name: string;
+  price: string;
+  tag: string;
+  features: string[];
+  featured: boolean;
+}
+
+const PlanCard = ({ plan }: { plan: Plan }) => (
   <motion.div 
     whileHover={{ y: -10 }}
     className={`relative p-10 rounded-[2.5rem] border backdrop-blur-3xl transition-all duration-700 flex flex-col justify-between group ${plan.featured ? 'bg-white text-black border-white shadow-[0_0_80px_rgba(236,72,153,0.1)] scale-105 z-20' : 'bg-black/40 border-white/10 text-white'}`}
@@ -119,10 +120,32 @@ const PlanCard = ({ plan }: { plan: any }) => (
 
 const SiteProxPage = () => {
   const plansData = [
-    { name: "Start", price: "80", tag: "Foco em Volume", features: ["Site One-Page", "Template Core v1", "Whats Premium", "SEO Beta", "Subdomínio"], featured: false },
-    { name: "Plus", price: "120", tag: "Best Seller", features: ["Multi-Seções", "DNA Visual Cyber", "Galeria Elite", "Troca Cores IA", "No Branding"], featured: true },
-    { name: "Pro", price: "180", tag: "Automação", features: ["Fluxo Whats 1,2,3", "Inteligência IA", "Dashboard Leads", "Layout Flex", "Prioridade"], featured: false },
-    { name: "Business", price: "250", tag: "Enterprise", features: ["Agendamento", "Webhooks CRM", "Fluxos Avançados", "DNA Branding 2.0", "Suporte VIP"], featured: false }
+    { 
+      name: "Plano Presença", 
+      price: "100", 
+      tag: "Entrada Digital", 
+      features: [
+        "Site One-Page Moderno", 
+        "Foco em Leads WhatsApp", 
+        "Stack Vessel 2025 (Next.js)", 
+        "Domínio / SSL Incluso", 
+        "Hospedagem Gerenciada"
+      ], 
+      featured: false 
+    },
+    { 
+      name: "Plano Autoridade", 
+      price: "150", 
+      tag: "O Mais Escolhido", 
+      features: [
+        "Site Multi-Page Completo", 
+        "Galeria de Fotos/Portfólio", 
+        "Páginas de Serviços Elite", 
+        "SEO Local Otimizado", 
+        "Suporte Prioritário Whats"
+      ], 
+      featured: true 
+    }
   ];
 
   return (
@@ -185,14 +208,15 @@ const SiteProxPage = () => {
            </div>
 
            <FadeIn delay={0.8}>
-             <div className="flex flex-col sm:flex-row gap-6 justify-center mt-12">
-                <button className="group relative overflow-hidden bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] px-14 py-6 rounded-2xl font-black text-xs uppercase tracking-widest shadow-[0_0_40px_rgba(139,92,246,0.5)] active:scale-95 transition-all">
-                   <span className="relative z-10">Criar_Meu_Site_Em_Minutos</span>
+             <div className="flex justify-center mt-12">
+                <a 
+                  href="https://wa.me/5531982188309"
+                  target="_blank"
+                  className="group relative overflow-hidden bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] px-20 py-7 rounded-2xl font-black text-sm uppercase tracking-widest shadow-[0_0_50px_rgba(139,92,246,0.6)] active:scale-95 transition-all flex items-center justify-center min-w-[320px]"
+                >
+                   <span className="relative z-10 font-bold">Quero meu site agora</span>
                    <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                </button>
-                <button className="px-14 py-6 rounded-2xl border border-white/20 bg-white/5 font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all">
-                  Ver Prova Real
-                </button>
+                </a>
              </div>
            </FadeIn>
         </div>
@@ -307,12 +331,48 @@ const SiteProxPage = () => {
             ))}
          </div>
       </section>
+ 
+      {/* --- SEASONALITY PITCH --- */}
+      <section className="py-20 z-10 relative">
+        <div className="container mx-auto px-6">
+           <div className="bg-linear-to-r from-purple-900/20 to-pink-900/20 border border-white/5 rounded-[3rem] p-10 md:p-20 relative overflow-hidden group">
+              <div className="relative z-10 flex flex-col md:flex-row items-center gap-16">
+                 <div className="space-y-8 flex-1">
+                    <h2 className={`text-4xl md:text-6xl font-black tracking-tighter uppercase italic leading-[0.85] ${sora.className}`}>
+                       Sem Site <span className="text-pink-500 underline decoration-wavy">Engessado.</span> <br/>
+                       Design Vivo para o Ano Todo.
+                    </h2>
+                    <p className="text-xl text-slate-400 leading-relaxed font-medium">
+                       Na SiteProx, seu site não fica parado. Nossa equipe de especialistas renova o seu visual para **Natal, Black Friday e Festividades Nacionais** por uma taxa simbólica de **R$ 50**. 
+                    </p>
+                    <div className="flex gap-4">
+                       <div className="px-6 py-3 bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-xl">Upgrade Sazonal</div>
+                       <div className="px-6 py-3 bg-pink-500/10 border border-pink-500/30 text-pink-500 text-[10px] font-black uppercase tracking-widest rounded-xl">Taxa Fixa R$ 50</div>
+                    </div>
+                 </div>
+                 <div className="w-full md:w-1/3 grid grid-cols-2 gap-4">
+                    {[
+                      { icon: Check, t: "NATAL" },
+                      { icon: Check, t: "BLACK FRIDAY" },
+                      { icon: Check, t: "CARNAVAL" },
+                      { icon: Check, t: "FESTAS LOCAIS" }
+                    ].map((item, i) => (
+                      <div key={i} className="p-6 bg-black/40 border border-white/5 rounded-3xl text-center group-hover:border-pink-500/30 transition-all">
+                        <item.icon className="w-6 h-6 text-pink-500 mx-auto mb-3" />
+                        <p className="text-[9px] font-black uppercase tracking-widest">{item.t}</p>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
 
       {/* --- PLANS --- */}
       <section className="py-40 z-10 relative">
         <div className="container mx-auto px-6 text-center space-y-32">
            <h2 className={`text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-none ${sora.className}`}>Escolha Sua <span className="text-[#ec4899]">Arma.</span></h2>
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
              {plansData.map((plan, idx) => ( <PlanCard key={idx} plan={plan} /> ))}
            </div>
         </div>

@@ -41,8 +41,14 @@ import {
   Plus,
   Sparkles,
   Home,
+  Check,
+  Library,
+  Layers,
+  Loader2,
+  Copy,
 } from "lucide-react";
 import { updateProjectStatus } from "@/app/actions/nodes";
+import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
 
 /**
  *          DESIGN COMMITMENT: NEON HUD ENGINE (Localizada & Funcional)
@@ -253,30 +259,14 @@ export default function DashboardPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [citySearch, setCitySearch] = useState("");
 
-  // --- IBGE API ---
-  useEffect(() => {
-    if (estado && estado.length === 2) {
-      fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estado}/municipios`)
-        .then((res) => res.json())
-        .then((data) => {
-          const formatted = data.map((c: any) => ({ nome: c.nome }));
-          setCidadesList(formatted);
-          if (formatted.length > 0 && !formatted.find((c: any) => c.nome === cidade)) {
-            setCidade(formatted[0].nome);
-          }
-        })
-        .catch((err) => console.error("Erro IBGE:", err));
-    } else {
-      setCidadesList([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [estado]);
+  // --- IBGE API (Moved/Consolidated) ---
 
   const [isSearching, setIsSearching] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("Vessel em Espera...");
   const [leads, setLeads] = useState<any[]>([]);
   const [vaultLeads, setVaultLeads] = useState<any[]>([]);
+  const [swipeLeads, setSwipeLeads] = useState<any[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(
     null,
@@ -294,12 +284,18 @@ export default function DashboardPage() {
   const [landingPageUrl, setLandingPageUrl] = useState("");
   const [leadAnalysis, setLeadAnalysis] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isPromptCopied, setIsPromptCopied] = useState(false);
+  const [stitchStatuses, setStitchStatuses] = useState<Record<string, 'idle' | 'generating' | 'completed' | 'error'>>({});
+  const [isStitchConfigOpen, setIsStitchConfigOpen] = useState(false);
+  const [stitchConfig, setStitchConfig] = useState({ name: '', themeId: '', segment: 'geral', lead: null as any });
   const [filterMode, setFilterMode] = useState("all"); // all, no-site, no-pixel, no-mobile, low-rating
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [ticketMedio, setTicketMedio] = useState<number>(500);
   const [fluxoMensal, setFluxoMensal] = useState<number>(60);
   const [auditConversion, setAuditConversion] = useState<number>(30);
   const [roiVisibility, setRoiVisibility] = useState(false);
+  const [isSiteOutdated, setIsSiteOutdated] = useState(false);
+  const [isRenewalModalOpen, setIsRenewalModalOpen] = useState(false);
   const [isLovableModalOpen, setIsLovableModalOpen] = useState(false);
   const [lovablePromptText, setLovablePromptText] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
@@ -524,6 +520,14 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
         console.error("Erro ao carregar cofre", e);
       }
     }
+    const savedSwipe = localStorage.getItem("capta_swipe_leads");
+    if (savedSwipe) {
+      try {
+        setSwipeLeads(JSON.parse(savedSwipe));
+      } catch (e) {
+        console.error("Erro ao carregar swipe file", e);
+      }
+    }
 
     const savedProjects = localStorage.getItem("capta_active_projects");
     let projectsToSet = [];
@@ -626,47 +630,31 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
 
   useEffect(() => {
     let active = true;
-    if (!estado) {
+    if (!estado || estado.length !== 2) {
       setCidadesList([]);
       return;
     }
-    const ufTokens: Record<string, number> = {
-      AC: 12,
-      AL: 27,
-      AP: 16,
-      AM: 13,
-      BA: 29,
-      CE: 23,
-      DF: 53,
-      ES: 32,
-      GO: 52,
-      MA: 21,
-      MT: 51,
-      MS: 50,
-      MG: 31,
-      PA: 15,
-      PB: 25,
-      PR: 41,
-      PE: 26,
-      PI: 22,
-      RJ: 33,
-      RN: 24,
-      RS: 43,
-      RO: 11,
-      RR: 14,
-      SC: 42,
-      SP: 35,
-      SE: 28,
-      TO: 17,
-    };
+    
+    // A API do IBGE aceita tanto o ID numérico quanto a Sigla (UF).
+    // Usar a Sigla diretamente é mais robusto e elimina a necessidade de um mapa manual.
     fetch(
-      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${ufTokens[estado]}/municipios`,
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estado.toUpperCase()}/municipios`,
     )
-      .then((res) => res.json())
-      .then((data) => {
-        if (active) setCidadesList(data);
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
       })
-      .catch((err) => console.error("IBGE Error", err));
+      .then((data) => {
+        if (active && Array.isArray(data)) {
+          const formatted = data.map((c: any) => ({ nome: c.nome }));
+          setCidadesList(formatted);
+        }
+      })
+      .catch((err) => {
+        // Log leve para evitar quebras visuais no console do Next.js Dev
+        console.warn("[IBGE/Localidades] Falha na rede ou API indisponível:", err.message);
+      });
+
     return () => {
       active = false;
     };
@@ -1169,6 +1157,138 @@ ${socialBlock}
     localStorage.setItem("capta_leads_vault_cache", JSON.stringify(updated));
   };
 
+  const addToSwipe = (lead: any) => {
+    const key = lead.mapsUrl || lead.title || lead.url;
+    if (swipeLeads.some((l) => (l.mapsUrl || l.title || l.url) === key)) {
+      setStatusText("Design já está no Swipe File!");
+      return;
+    }
+    const updated = [
+      ...swipeLeads,
+      { ...lead, swipedAt: new Date().toISOString() },
+    ];
+    setSwipeLeads(updated);
+    localStorage.setItem("capta_swipe_leads", JSON.stringify(updated));
+    setStatusText("Site marcado para CLONAGEM_UI!");
+    setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
+  };
+
+  const removeFromSwipe = (lead: any) => {
+    const key = lead.mapsUrl || lead.title || lead.url;
+    const updated = swipeLeads.filter((l) => (l.mapsUrl || l.url || l.title) !== key);
+    setSwipeLeads(updated);
+    localStorage.setItem("capta_swipe_leads", JSON.stringify(updated));
+  };
+
+  const generateCloningPrompt = (lead: any) => {
+    const prompt = `# CLONAGEM DE NICHO // ENGENHARIA REVERSA DE ALTA FIDELIDADE
+Aja como um desenvolvedor Fullstack Senior e especialista em UI/UX. 
+Analise este site de referência no nicho '${lead.title}': ${lead.url} 
+
+Objetivo: Quero realizar a 'engenharia reversa' COMPLETA deste site para criar um TEMPLATE DE NICHO idêntico.
+
+## 🎨 DESIGN SYSTEM ORIGINAL (Capture exatamente):
+1. MAPA DE CORES: Extraia as cores fundamentais (HEX/HSL), gradientes e esquemas de contraste.
+2. TIPOGRAFIA: Identifique as famílias de fontes ou similares próximos (Google Fonts), tamanhos e pesos.
+3. ESTILIZAÇÃO: Replique o arredondamento de bordas (border-radius), sombras e efeitos de vidro/glassmorphism.
+
+## 🏗️ ESTRUTURA E LAYOUT:
+1. HERO SECTION: Replique o alinhamento de texto, CTAs, imagens de fundo e hierarquia central.
+2. COMPONENTES: Mapeie as seções de Serviços, Depoimentos, Galeria e Formulários exatamente como no site.
+3. MICRO-INTERAÇÕES: Capture as animações de scroll, hover de botões e transições suaves.
+
+## ⚡ REQUISITOS TÉCNICOS:
+- Framework: Next.js 14, Tailwind CSS e Framer Motion.
+- Generalização: Transforme nomes, logos e fotos específicas em placeholders genéricos para o nicho (ex: 'Sua Clínica', 'Serviço Premium').
+
+IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyberpunk. O objetivo é que o resultado final seja o template pronto perfeito para outros clientes deste mesmo nicho.`;
+
+    navigator.clipboard.writeText(prompt);
+    setIsPromptCopied(true);
+    setTimeout(() => setIsPromptCopied(false), 3000);
+    setStatusText("Prompt de Clonagem Copiado!");
+    setTimeout(() => setStatusText("Dashboard Ativo."), 3000);
+  };
+
+  const openStitchConfig = (lead: any) => {
+    const cleanName = lead.title.split('-')[0].trim();
+    const safeId = cleanName.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, '_')
+      .replace(/_{2,}/g, '_')
+      .replace(/^_|_$/g, '');
+    
+    setStitchConfig({
+      name: `SWIPE: ${cleanName}`,
+      themeId: `${safeId}_v1`,
+      segment: nicho || 'geral',
+      lead
+    });
+    setIsStitchConfigOpen(true);
+  };
+
+  const handleAutoBuild = async (overrideLead?: any) => {
+    const targetLead = overrideLead || stitchConfig.lead;
+    if (!targetLead || stitchStatuses[targetLead.url] === 'generating') return;
+    
+    const finalName = overrideLead ? `SWIPE: ${targetLead.title}` : stitchConfig.name;
+    const finalThemeId = overrideLead ? `swipe_${Date.now()}` : stitchConfig.themeId;
+    const finalSegment = overrideLead ? (nicho || 'geral') : stitchConfig.segment;
+
+    setIsStitchConfigOpen(false);
+    setStitchStatuses(prev => ({ ...prev, [targetLead.url]: 'generating' }));
+    setStatusText(`Iniciando Síntese: ${finalName}...`);
+
+    const promptData = `# CLONAGEM DE NICHO // ENGENHARIA REVERSA DE ALTA FIDELIDADE
+Aja como um desenvolvedor Fullstack Senior e especialista em UI/UX. 
+Analise este site de referência no nicho '${finalSegment}': ${targetLead.url} 
+
+Objetivo: Quero realizar a 'engenharia reversa' COMPLETA deste site para criar um TEMPLATE DE NICHO idêntico.
+
+## 🎨 DESIGN SYSTEM ORIGINAL (Capture exatamente):
+1. MAPA DE CORES: Extraia as cores principais (HEX/HSL).
+2. TIPOGRAFIA: Identifique fontes Google similares.
+3. ESTILIZAÇÃO: Replique border-radius e sombras originais.
+
+## 🏗️ ESTRUTURA E LAYOUT:
+1. HERO & SEÇÕES: Replique o alinhamento de texto e CTAs.
+2. COMPONENTES: Mapeie seções de Serviços e Depoimentos.
+
+## ⚡ REQUISITOS TÉCNICOS:
+- Framework: Next.js 14, Tailwind CSS e Framer Motion.
+- Generalização: Use placeholders genéricos para o nicho.
+
+IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`;
+
+    try {
+      const result = await generateStitchLayout(promptData, finalSegment);
+      if (result.success && result.code) {
+        const saveResult = await saveGeneratedTemplate(
+          finalName, 
+          finalSegment, 
+          finalThemeId, 
+          result.code
+        );
+
+        if (saveResult.success) {
+          setStitchStatuses(prev => ({ ...prev, [targetLead.url]: 'completed' }));
+          setStatusText("Template Sincronizado com Sucesso!");
+          setIsPromptCopied(true);
+          setTimeout(() => setIsPromptCopied(false), 3000);
+        } else {
+          throw new Error("Falha ao salvar no banco.");
+        }
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
+      console.error("Stitch Build Error:", error);
+      setStitchStatuses(prev => ({ ...prev, [targetLead.url]: 'error' }));
+      setStatusText(error.message || "Erro na Síntese.");
+    }
+  };
+
   const savePreview = () => {
     if (!previewHtmlInput.trim() || !selectedLeadDetails) return;
     const id = crypto.randomUUID().split("-")[0];
@@ -1207,6 +1327,7 @@ ${socialBlock}
   const openLeadDetails = (lead: any) => {
     setLeadAnalysis(null);
     setIsAnalyzing(false);
+    setIsSiteOutdated(false);
     setSelectedLeadDetails(lead);
     setIsDetailsModalOpen(true);
     setGeneratedMessage("");
@@ -1224,14 +1345,13 @@ ${socialBlock}
     void nichoEmpresa; // suppress unused-vars: valor reservado para templates futuros
 
     let template = "";
-    const lostRevenue = Math.floor(fluxoMensal * 0.3 * ticketMedio); // 30% loss estimation
 
     if (type === "venda") {
-      template = `Olá! Vi seu perfil no Google em ${local}.        Reparei que sem um atendimento automático, vocês podem estar perdendo cerca de R$ ${lostRevenue.toLocaleString("pt-BR")} todos os meses em vendas perdidas por demora. Fiz um dossiê técnico da ${empresa}. Toparia ver?`;
+      template = `Olá! Vi seu perfil no Google em ${local}. Reparei que sem um site moderno, vocês podem estar perdendo vários clientes toda semana por falta de confiança digital. A concorrência acaba levando quem pesquisa na internet. Fiz uma prévia de como ficaria a presença digital oficial da ${empresa}. Toparia ver?`;
     } else if (type === "recall") {
-      template = `Oi pessoal da ${empresa}! Sou o especialista que analisou sua performance em ${local}. O mercado está aquecendo e vi que vocês estão sem Pixel de Rastreamento. Isso está "jogando dinheiro fora" em anúncios. Vamos retomar o papo do site novo?`;
+      template = `Oi pessoal da ${empresa}! Sou o especialista que analisou sua presença em ${local}. O mercado de ${nichoEmpresa} está aquecendo e notei que a falta de um site de alta qualidade está fazendo vocês deixarem dinheiro na mesa todo dia. Vamos retomar o papo de colocar sua marca no mapa digital?`;
     } else {
-      template = `Olá! Notei que a ${empresa} ainda não usa rob  s de atendimento. Calculei que isso gera uma perda de faturamento em torno de R$ ${lostRevenue.toLocaleString("pt-BR")}/mes. Gostaria de receber o PDF da auditoria que fiz de vocês gratuitamente?`;
+      template = `Olá! Notei que a ${empresa} ainda não possui um site moderno e otimizado para celulares. Estudos mostram que 78% dos clientes desistem de lojas ou serviços locais apenas por não confiarem na presença online. Gostaria de receber a auditoria de presença digital que eu fiz de vocês gratuitamente?`;
     }
 
     setGeneratedMessage(template);
@@ -1444,6 +1564,7 @@ ${socialBlock}
             { id: "templates", icon: MessageSquare, label: "TEMPLATES" },
             { id: "active-sites", icon: Globe, label: "NET_SITES" },
             { id: "vault", icon: Archive, label: "COFRE_LEADS" },
+            { id: "swipe", icon: Library, label: "SWIPE_FILE" },
             { id: "crm", icon: Database, label: "CORE_LEADS" },
             { id: "settings", icon: Settings, label: "CONFIG" },
           ].map((item) => (
@@ -1839,6 +1960,16 @@ ${socialBlock}
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
+                                      addToSwipe(lead);
+                                    }}
+                                    className="w-8 h-8 flex items-center justify-center border border-amber-400/30 text-amber-400 hover:bg-amber-500 hover:text-black transition-all"
+                                    title="SWIPE_FOR_CLONING"
+                                  >
+                                    <Layers className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       addToVault(lead);
                                     }}
                                     className="w-8 h-8 flex items-center justify-center border border-[#06b6d4]/30 text-[#06b6d4] hover:bg-[#06b6d4] hover:text-black transition-all"
@@ -2227,6 +2358,104 @@ ${socialBlock}
                     </div>
                   </div>
                 ))}
+              </div>
+            ) : currentView === "swipe" ? (
+              <div className="px-6 pb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4">
+                <div className="flex justify-between items-end border-b border-amber-500/20 pb-6">
+                  <div>
+                    <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase font-hacker">
+                      SWIPE_FILE // <span className="text-amber-500">BIBLIOTECA_DESIGN</span>
+                    </h2>
+                    <p className="text-[10px] text-slate-500 font-mono tracking-widest mt-1 uppercase">
+                      Leads frios com interface de alta qualidade para engenharia reversa.
+                    </p>
+                  </div>
+                  <Badge className="bg-amber-500 text-black font-black px-4 py-1 rounded-none border-none">
+                    {swipeLeads.length} REFERÊNCIAS_SALVAS
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {swipeLeads.map((lead, i) => (
+                    <Card key={i} className="bg-[#0a0a0a] border border-amber-500/20 rounded-none overflow-hidden group hover:border-amber-500/50 transition-all">
+                      <div className="h-32 bg-amber-500/5 relative flex items-center justify-center overflow-hidden border-b border-white/5">
+                        <Globe className="w-12 h-12 text-amber-500/20 group-hover:scale-110 group-hover:text-amber-500/40 transition-all duration-700" />
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          <Badge className="bg-black/60 text-amber-500 text-[8px] font-black border border-amber-500/30 rounded-none">UI_REFERENCE</Badge>
+                        </div>
+                      </div>
+                      <CardContent className="p-6 space-y-4">
+                        <div>
+                          <h4 className="text-sm font-black text-white uppercase truncate">{lead.title}</h4>
+                          <p className="text-[10px] text-slate-500 font-mono truncate">{lead.url}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={() => window.open(lead.url, '_blank')}
+                            className="flex-1 h-10 bg-white/5 border border-white/10 text-white font-black text-[9px] uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+                          >
+                            VER_SITE
+                          </Button>
+                          <Button 
+                            onClick={() => removeFromSwipe(lead)}
+                            className="w-10 h-10 bg-transparent border border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all p-0 flex items-center justify-center"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                        <div className="space-y-2">
+                          {stitchStatuses[lead.url] === 'generating' ? (
+                            <Button className="w-full h-11 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-black text-[9px] uppercase rounded-none cursor-wait">
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" /> SINTETIZANDO_INTERFACE...
+                            </Button>
+                          ) : stitchStatuses[lead.url] === 'completed' ? (
+                            <div className="space-y-2 animate-in fade-in zoom-in-95">
+                               <Button className="w-full h-11 bg-emerald-500 text-black font-black text-[9px] uppercase tracking-tighter rounded-none shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                                  <Check className="w-3.5 h-3.5 mr-2" /> TEMPLATE_PRONTO_NO_CORE
+                               </Button>
+                               <div className="flex gap-2">
+                                  <Button 
+                                    onClick={() => window.open('/admin/studio', '_blank')}
+                                    className="flex-1 h-9 bg-white/5 border border-white/10 text-white font-black text-[8px] uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+                                  >
+                                    <Zap className="w-3 h-3 mr-1.5" /> ABRIR_NO_STUDIO
+                                  </Button>
+                                  <Button 
+                                    onClick={() => window.open('/admin/templates', '_blank')}
+                                    className="flex-1 h-9 bg-white/5 border border-white/10 text-white font-black text-[8px] uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+                                  >
+                                    <Library className="w-3 h-3 mr-1.5" /> BIBLIOTECA
+                                  </Button>
+                               </div>
+                            </div>
+                          ) : (
+                            <>
+                              <Button 
+                                onClick={() => generateCloningPrompt(lead)}
+                                className="w-full h-11 bg-amber-500/10 border border-amber-500/20 text-amber-500 font-black text-[9px] uppercase tracking-tighter hover:bg-amber-500 hover:text-black transition-all"
+                              >
+                                <Copy className="w-3 h-3 mr-2" /> COPIAR_PROMPT (BACKUP)
+                              </Button>
+                              <Button 
+                                onClick={() => openStitchConfig(lead)}
+                                className={`w-full h-11 ${stitchStatuses[lead.url] === 'error' ? 'bg-rose-500' : 'bg-cyan-500'} text-black font-black text-[9px] uppercase tracking-tighter hover:bg-white transition-all shadow-lg shadow-cyan-500/10`}
+                              >
+                                <Zap className="w-3 h-3 mr-2" /> 
+                                {stitchStatuses[lead.url] === 'error' ? 'RE-TENTAR_AUTO_BUILD' : 'AUTO_STITCH_BUILD (FÁBRICA)'}
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {swipeLeads.length === 0 && (
+                    <div className="col-span-full py-32 border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-700">
+                      <Library className="w-12 h-12 mb-4 opacity-20" />
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em]">Swipe_File_Vazio</p>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : currentView === "vault" ? (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
@@ -2665,12 +2894,41 @@ ${socialBlock}
                     >
                       GERAR_PROMPT_LOVABLE_GPT
                     </Button>
-                    <Button
-                      onClick={() => setIsAuditModalOpen(true)}
-                      className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
-                    >
-                      GERAR_DOSSIÊ_AUDITORIA_V2
-                    </Button>
+
+                    {selectedLeadDetails?.url && (
+                      <div
+                        onClick={() => setIsSiteOutdated(!isSiteOutdated)}
+                        className={`flex items-center gap-3 p-4 border transition-all cursor-pointer ${isSiteOutdated ? "bg-[#ff00ff]/10 border-[#ff00ff]/50" : "bg-black border-white/10 hover:border-white/30"}`}
+                      >
+                        <div className={`w-4 h-4 border flex items-center justify-center transition-colors ${isSiteOutdated ? 'bg-[#ff00ff] border-[#ff00ff]' : 'border-slate-500'}`}>
+                          {isSiteOutdated && <Check className="w-3 h-3 text-black" />}
+                        </div>
+                        <div>
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${isSiteOutdated ? "text-[#ff00ff]" : "text-slate-400"}`}>
+                            Marcador: Site Desatualizado / Lento
+                          </p>
+                          <p className="text-[8px] text-slate-500 uppercase leading-none mt-1">
+                            Ativa Proposta de Renovação (-30%)
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {isSiteOutdated ? (
+                      <Button
+                        onClick={() => setIsRenewalModalOpen(true)}
+                        className="w-full h-12 bg-[#ff00ff] text-white font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none shadow-[0_0_20px_rgba(255,0,255,0.4)]"
+                      >
+                        DIAGNÓSTICO_RENOVAÇÃO_PRO
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => setIsAuditModalOpen(true)}
+                        className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
+                      >
+                        GERAR_DOSSIÊ_AUDITORIA_V2
+                      </Button>
+                    )}
                     <button
                       onClick={() => {
                         generateLovablePrompt();
@@ -3096,7 +3354,7 @@ ${socialBlock}
                 <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,transparent_0%,#00ffff_100%)] pointer-events-none"></div>
                 <div className="space-y-4 relative z-10">
                   <p className="text-[10px] text-[#00ffff] font-black uppercase tracking-[0.4em]">
-                    [///] SCORE_DE_OPORTUNIDADE_IA
+                    [///] SCORE_DE_OPORTUNIDADE_ESTRATÉGICA
                   </p>
                   <p className="text-8xl font-black italic tracking-tighter leading-none drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]">
                     {selectedLeadDetails.score || "98"}%
@@ -3149,23 +3407,42 @@ ${socialBlock}
                   </div>
                   <div className="space-y-4 border border-slate-200 bg-white p-6 shadow-[5px_5px_0_#f1f5f9] relative">
                     <div className="absolute top-0 right-4 -translate-y-1/2 bg-white px-2">
-                       <span className="text-[8px] text-[#ff00ff] font-black tracking-widest">[ AI_GAP_DETECTED ]</span>
+                       <span className="text-[8px] text-[#ff00ff] font-black tracking-widest">[ TRUST_GAP_DETECTED ]</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#ff00ff] flex items-center justify-center text-white font-black">
                         02
                       </div>
                       <p className="text-[11px] font-black uppercase text-slate-900 tracking-wider">
-                        CONVERSÃO_VIA_IA_BOT <span className="text-[#ff00ff]">(AUSENTE)</span>
+                        CONFIABILIDADE VISUAL <span className="text-[#ff00ff]">(BAIXA)</span>
                       </p>
                     </div>
                     <p className="text-[10px] text-slate-500 leading-relaxed italic border-l-2 border-[#ff00ff]/30 pl-4">
-                      &quot;A ausência de um atendimento automatizado 24h força
-                      o cliente a esperar pela resposta humana, resultando em
-                      perda de prospectos para concorrentes mais ágeis.&quot;
+                      &quot;A ausência de um site moderno afeta drasticamente a credibilidade. O cliente pesquisa a empresa no Google, não encontra uma vitrine profissional e acaba fechando com o concorrente que transmite mais autoridade digital.&quot;
                     </p>
                   </div>
                 </div>
+              </section>
+
+              <section className="space-y-6 bg-white p-8 border border-slate-200 shadow-[5px_5px_0_#f1f5f9] break-inside-avoid print:break-inside-avoid">
+                 <h3 className="text-2xl font-black text-slate-900 uppercase">A Vantagem Tecnológica SiteProx</h3>
+                 <p className="text-sm font-medium text-slate-600 leading-relaxed mb-4">
+                   Enquanto a maioria das empresas usa sistemas lentos, nós operamos na **Stack Vessel 2025 (Next.js + Vercel)**. Isso garante que sua empresa tenha o site mais rápido do setor na sua região.
+                 </p>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-emerald-50 p-4 border border-emerald-100">
+                       <h4 className="text-[11px] font-black uppercase text-emerald-800 mb-1">⚡ VELOCIDADE LUMINAR (LCP &lt; 1s)</h4>
+                       <p className="text-[10px] text-emerald-700">Seu site abre instantaneamente. Seus clientes não esperam mais para ver seus serviços.</p>
+                    </div>
+                    <div className="bg-slate-50 p-4 border border-slate-100">
+                       <h4 className="text-[11px] font-black uppercase text-slate-800 mb-1">✓ Equipe SiteProx (Chave na Mão)</h4>
+                       <p className="text-[10px] text-slate-500">Nossa equipe de especialistas configura tudo. Você recebe o site pronto para vender.</p>
+                    </div>
+                    <div className="bg-purple-50 p-4 border border-purple-100">
+                       <h4 className="text-[11px] font-black uppercase text-purple-800 mb-1">📅 Upgrade Sazonal</h4>
+                       <p className="text-[10px] text-purple-700">Mantenha seu site vivo! Design festivo (Natal, Black Friday) por apenas R$ 50.</p>
+                    </div>
+                 </div>
               </section>
 
               {/* ROI Calculadora Master */}
@@ -3182,17 +3459,17 @@ ${socialBlock}
                       {
                         f: "Fase 01",
                         t: "ECOSSISTEMA_PRIME",
-                        d: "Deploy de site de alta performance e autoridade Google.",
+                        d: "Deploy de site moderno, mobile-first e de carregamento ultrarrápido.",
                       },
                       {
                         f: "Fase 02",
-                        f2: "IA_CONVERSION",
-                        d2: "Ativação de Bot de agendamento e qualificação automática.",
+                        f2: "OTIMIZAÇÃO_CONVERSÃO",
+                        d2: "Estruturação de jornada do usuário com botões flutuantes e CTAs diretos.",
                       },
                       {
                         f: "Fase 03",
-                        f3: "ADS_ELITE",
-                        d3: "Tráfego pago ultra-segmentado para ROI máximo.",
+                        f3: "SEO_LOCAL_BÁSICO",
+                        d3: "Indexação facilitada para ser encontrado pelo Google em buscas locais.",
                       },
                     ].map((item, i) => (
                       <div key={i} className="flex gap-4">
@@ -3275,6 +3552,30 @@ ${socialBlock}
                   </div>
                 </div>
               </section>
+              
+              <section className="bg-rose-50 border border-current p-8 shadow-[5px_5px_0_#f1f5f9] text-rose-600 relative overflow-hidden break-inside-avoid print:break-inside-avoid">
+                 <h3 className="text-2xl font-black uppercase mb-4 relative z-10">SOLUÇÃO SUGERIDA (INVESTIMENTO)</h3>
+                 <p className="text-sm font-bold relative z-10 leading-relaxed mb-6 text-rose-800">
+                   Com base no diagnóstico acima, recomendamos um dos nossos pacotes de &quot;Vessel Digital&quot; para capturar as oportunidades perdidas. Escolha o nível de armamento comercial ideal para o momento da sua empresa:
+                 </p>
+                 <div className="grid grid-cols-2 gap-6 relative z-10 mb-6 font-mono">
+                    <div className="bg-white p-6 border border-rose-200 shadow-sm flex flex-col justify-between items-start gap-4">
+                       <div>
+                         <p className="text-[12px] font-black uppercase text-slate-500 mb-1">PLANO PRESENÇA</p>
+                         <p className="text-[10px] pt-1 text-slate-500 font-medium">One-Page moderna, ágil e focada em gerar cliques reais no seu WhatsApp. Perfeito para empresas que buscam entrar no digital com baixo custo.</p>
+                       </div>
+                       <p className="text-3xl font-black text-rose-600">R$ 100 <span className="text-xs text-rose-400 font-bold">/mês</span></p>
+                    </div>
+                    <div className="bg-rose-600 outline outline-2 outline-offset-2 outline-rose-600 p-6 border border-white/20 shadow-md flex flex-col justify-between items-start text-white relative">
+                       <div className="absolute top-0 right-0 bg-white text-rose-600 text-[9px] font-black px-2 py-1 uppercase">RECOMENDADO</div>
+                       <div>
+                         <p className="text-[12px] font-black uppercase text-rose-100 mb-1">PLANO AUTORIDADE</p>
+                         <p className="text-[10px] pt-1 text-rose-200 font-medium">Site Multi-page completo (Serviços, Sobre, Contato e Galeria). Ideal para quem já tem site desatualizado e quer transmitir autoridade máxima.</p>
+                       </div>
+                       <p className="text-3xl font-black">R$ 150 <span className="text-xs text-rose-200 font-bold">/mês</span></p>
+                    </div>
+                 </div>
+              </section>
 
               <footer className="pt-20 flex justify-between items-end border-t-2 border-slate-200 relative">
                 <div className="absolute top-4 right-0 text-[8px] text-slate-400 font-mono tracking-widest text-right">
@@ -3290,7 +3591,7 @@ ${socialBlock}
                   </div>
                   <div className="space-y-4">
                     <h5 className="text-3xl font-black text-slate-900 border-b-8 border-[#00ffff] inline-block pr-12 uppercase italic tracking-tighter">
-                      LUCAS | AI_STRATEGIST
+                      LUCAS | DIGITAL_STRATEGIST
                     </h5>
                     <div className="flex gap-6">
                       <p className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">
@@ -3307,7 +3608,7 @@ ${socialBlock}
                     SITE<span className="text-[#00ffff]">PROX</span>
                   </p>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em]">
-                    RESIDUOS_ZERO_IA
+                    ESTRATÉGIA_RESIDUO_ZERO
                   </p>
                 </div>
               </footer>
@@ -3334,6 +3635,171 @@ ${socialBlock}
         </div>
       )}
 
+      {/* MODAL DE PROPOSTA DE RENOVAÇÃO DE SITE (PDF STYLE) */}
+      {isRenewalModalOpen && selectedLeadDetails && (
+        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:inset-auto print:bg-white print:text-black print:p-0 print:block print:overflow-visible print:backdrop-blur-none print:backdrop-filter-none modal-print-container w-full h-full overflow-y-auto">
+          <div className="bg-white text-slate-900 w-full max-w-4xl flex flex-col relative shadow-[0_0_150px_rgba(255,0,255,0.4)] border border-white/10 print:shadow-none print:w-full print:max-w-none print:border-none print:m-0 print:p-0 print:block rounded-none overflow-hidden print:overflow-visible">
+            <style dangerouslySetInnerHTML={{ __html: `
+              .cyber-grid-print-pink {
+                background-image: 
+                  linear-gradient(to right, #fdf4ff 1px, transparent 1px),
+                  linear-gradient(to bottom, #fdf4ff 1px, transparent 1px);
+                background-size: 20px 20px;
+              }
+            `}} />
+            <header className="bg-slate-950 p-10 flex justify-between items-start border-b border-[#ff00ff]/20 relative overflow-hidden print:bg-white print:border-b-4 print:border-[#ff00ff]">
+              <div className="absolute top-4 right-10 text-[8px] text-[#ff00ff] font-black tracking-widest text-right hidden print:block">
+                 [ RENEWAL_PROTOCOL // CONFIDENTIAL ]
+              </div>
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ff00ff] to-transparent opacity-50 print:hidden" />
+              <div className="relative z-10 w-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-[#ff00ff] flex items-center justify-center rotate-45 print:bg-black">
+                    <Target className="w-6 h-6 text-white -rotate-45 print:text-white" />
+                  </div>
+                  <h1 className="text-2xl font-black text-white italic tracking-tighter print:text-black">
+                    SITE<span className="text-[#ff00ff] print:text-black">PROX</span>
+                  </h1>
+                </div>
+                <div className="space-y-1">
+                  <h2 className="text-4xl font-black text-white leading-none uppercase tracking-tight">
+                    DIAGNÓSTICO_DE_OBSOLESCÊNCIA
+                  </h2>
+                </div>
+              </div>
+            </header>
+
+            <div className="flex-1 p-10 space-y-10 overflow-y-auto font-mono text-[11px] text-slate-700 relative cyber-grid-print-pink">
+              <section className="bg-white shadow-[10px_10px_0_#fdf4ff] border border-slate-200 border-l-4 border-[#ff00ff] p-6 relative overflow-hidden group break-inside-avoid print:break-inside-avoid">
+                <div className="absolute top-1 left-2 text-[6px] text-slate-300 font-black tracking-widest select-none">
+                  [////] SYS.SCAN_INIT // TARGET_FOUND
+                </div>
+                <p className="text-2xl font-black text-slate-900 border-b-2 border-[#ff00ff]/20 pb-2 mb-4 mt-2 uppercase tracking-tighter italic">
+                  [::] {selectedLeadDetails.title}
+                </p>
+                <div className="flex flex-wrap gap-6">
+                  <p className="flex items-center gap-2 text-slate-500 font-bold uppercase">
+                    <Globe className="w-4 h-4 text-[#ff00ff]" />{" "}
+                    {selectedLeadDetails.url}
+                  </p>
+                </div>
+              </section>
+
+              <section className="bg-[#050505] p-10 text-white border-b-8 border-[#ff00ff] flex justify-between items-center shadow-2xl relative overflow-hidden break-inside-avoid print:break-inside-avoid">
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,transparent_0%,#ff00ff_100%)] pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <p className="text-[10px] text-[#ff00ff] font-black uppercase tracking-[0.4em]">
+                    [///] STATUS_TECNOLÓGICO DA PLATAFORMA
+                  </p>
+                  <p className="text-6xl font-black italic tracking-tighter leading-none drop-shadow-[0_0_15px_rgba(255,0,255,0.5)]">
+                    DEFASADO
+                  </p>
+                  <Badge className="bg-[#ff00ff] text-white font-black text-[10px] px-4 py-1 rounded-none border-none animate-pulse">
+                    FALHA DE RETENÇÃO DETECTADA
+                  </Badge>
+                </div>
+              </section>
+
+              <section className="space-y-6 bg-white p-8 border border-slate-200 shadow-[5px_5px_0_#fdf4ff] break-inside-avoid print:break-inside-avoid">
+                 <h3 className="text-2xl font-black text-slate-900 uppercase">Por que a SiteProx é diferente?</h3>
+                 <p className="text-sm font-medium text-slate-600 leading-relaxed mb-4">
+                   Agências tradicionais cobram caro e entregam sites lentos. A SiteProx utiliza a **Stack Vessel 2025 (Next.js + Vercel Edgeless)**, garantindo que seu site carregue em menos de 1 segundo, retendo muito mais clientes.
+                 </p>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-emerald-50 p-4 border border-emerald-100">
+                       <h4 className="text-[11px] font-black uppercase text-emerald-800 mb-1">⚡ VELOCIDADE LUMINAR (LCP &lt; 1s)</h4>
+                       <p className="text-[10px] text-emerald-700">Seu site abre instantaneamente no 4G/5G. Mais velocidade = Mais vendas no WhatsApp.</p>
+                    </div>
+                    <div className="bg-slate-50 p-4 border border-slate-100">
+                       <h4 className="text-[11px] font-black uppercase text-slate-800 mb-1">✓ Feito Para Você (Done-for-You)</h4>
+                       <p className="text-[10px] text-slate-500">Nossa IA e especialistas configuram tudo. Você não precisa mexer em nada (diferente do Wix).</p>
+                    </div>
+                    <div className="bg-slate-50 p-4 border border-slate-100">
+                       <h4 className="text-[11px] font-black uppercase text-slate-800 mb-1">✓ Segurança Ativa SSL</h4>
+                       <p className="text-[10px] text-slate-500">Monitoramento 24h contra ataques e quedas. Seu site sempre online e seguro.</p>
+                    </div>
+                    <div className="bg-slate-50 p-4 border border-slate-100">
+                       <h4 className="text-[11px] font-black uppercase text-slate-800 mb-1">✓ Domínio Personalizado Grátis</h4>
+                       <p className="text-[10px] text-slate-500">Use seu nome.com.br ou nosso subdomínio profissional sem custo adicional.</p>
+                    </div>
+                 </div>
+              </section>
+
+              <section className="bg-rose-50 border border-current p-8 shadow-[5px_5px_0_#fdf4ff] text-rose-600 relative overflow-hidden break-inside-avoid print:break-inside-avoid">
+                 <div className="absolute top-0 right-0 bg-rose-600 text-white px-4 py-2 font-black text-xs uppercase italic animate-pulse">Oferta de Resgate Aplicada</div>
+                 <h3 className="text-2xl font-black uppercase mb-4 relative z-10">VALORES ESPECIAIS (-30% OFF)</h3>
+                 <p className="text-sm font-bold relative z-10 leading-relaxed mb-6 text-rose-800">
+                   Como seu site atual foi detectado com atraso tecnológico, liberamos o **Protocolo de Resgate**. Garanta 30% de desconto nas 3 primeiras mensalidades:
+                 </p>
+                 <div className="grid grid-cols-2 gap-6 relative z-10 mb-6">
+                    <div className="bg-white p-6 border border-rose-200 shadow-sm flex flex-col justify-between items-start gap-4">
+                       <div>
+                         <p className="text-[12px] font-black uppercase text-slate-500 mb-1">PLANO PRESENÇA</p>
+                         <p className="text-[10px] pt-1 text-slate-500 font-medium font-mono">Setup Completo + One-Page + Whats</p>
+                       </div>
+                       <div>
+                         <p className="text-[10px] text-slate-400 line-through font-bold">DE R$ 100/mês</p>
+                         <p className="text-4xl font-black text-rose-600">R$ 70 <span className="text-xs text-rose-400 font-bold">/mês*</span></p>
+                         <p className="text-[8px] mt-1 font-bold text-rose-400 uppercase">*3 Primeiras mensalidades</p>
+                       </div>
+                    </div>
+                    <div className="bg-rose-600 outline outline-2 outline-offset-2 outline-rose-600 p-6 border border-white/20 shadow-md flex flex-col justify-between items-start text-white relative">
+                       <div className="absolute top-0 right-0 bg-white text-rose-600 text-[9px] font-black px-2 py-1 uppercase">MAIS ESCOLHIDO</div>
+                       <div>
+                         <p className="text-[12px] font-black uppercase text-rose-100 mb-1">PLANO AUTORIDADE</p>
+                         <p className="text-[10px] pt-1 text-rose-200 font-medium font-mono">Multi-page + Serviços + Galeria</p>
+                       </div>
+                       <div>
+                         <p className="text-[10px] text-rose-300 line-through font-bold">DE R$ 150/mês</p>
+                         <p className="text-4xl font-black">R$ 105 <span className="text-xs text-rose-200 font-bold">/mês*</span></p>
+                         <p className="text-[8px] mt-1 font-bold text-rose-100 uppercase">*3 Primeiras mensalidades</p>
+                       </div>
+                    </div>
+                 </div>
+              </section>
+
+              <footer className="pt-10 flex justify-between items-end border-t-2 border-slate-200 relative break-inside-avoid print:break-inside-avoid">
+                <div className="flex gap-12 items-end">
+                  <div className="space-y-4">
+                    <h5 className="text-2xl font-black text-slate-900 border-b-8 border-[#ff00ff] inline-block pr-12 uppercase italic tracking-tighter">
+                      LUCAS | AI_STRATEGIST
+                    </h5>
+                    <div className="flex gap-6">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        SITEPROX_PROTOCOL
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right space-y-1">
+                  <p className="text-4xl font-black text-slate-900 italic tracking-tighter leading-none">
+                    SITE<span className="text-[#ff00ff]">PROX</span>
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em]">
+                    ESTRATÉGIA_RESIDUO_ZERO
+                  </p>
+                </div>
+              </footer>
+            </div>
+
+            <footer className="no-print p-8 bg-slate-50 border-t border-slate-200 flex justify-end gap-4 relative overflow-hidden">
+              <Button
+                onClick={() => setIsRenewalModalOpen(false)}
+                className="bg-white border border-slate-200 text-slate-600 px-8 py-6 rounded-none font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 relative z-10"
+              >
+                ABORTAR_PROPOSTA
+              </Button>
+              <Button
+                onClick={() => window.print()}
+                className="bg-[#ff00ff] text-white px-10 py-6 rounded-none font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-[#ff00ff]/20 hover:bg-black relative z-10 transition-colors"
+              >
+                [IMPRIMIR_PROPOSTA]
+              </Button>
+            </footer>
+          </div>
+        </div>
+      )}
+
       {isBlacklistModalOpen && (
         <BlacklistModal
           blacklist={blacklist}
@@ -3347,6 +3813,133 @@ ${socialBlock}
           onClearQuarantine={clearQuarantine}
         />
       )}
+
+      {isPromptCopied && (
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[600] animate-in fade-in zoom-in slide-in-from-bottom-5">
+          <div className="bg-cyan-500 text-black px-8 py-4 flex items-center gap-4 shadow-[0_0_30px_rgba(6,182,212,0.5)] border border-cyan-400">
+            <Check className="w-5 h-5 font-black" />
+            <span className="font-mono font-black text-xs uppercase tracking-widest">Prompt_de_Clonagem_Copiado_no_Clipboard</span>
+          </div>
+        </div>
+      )}
+
+      {isStitchConfigOpen && (
+        <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
+           <div className="hud-panel w-full max-w-lg p-10 bg-slate-950 border-cyan-500/40 space-y-8 shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+              <div className="space-y-1">
+                 <Badge className="bg-cyan-500 text-black font-black uppercase text-[9px]">SÍNTESE_CONFIG</Badge>
+                 <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">PREPARAR_CLONAGEM</h3>
+              </div>
+
+              <div className="space-y-6">
+                 <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-500 uppercase">IDENTIFICADOR_PUBLICO (BIBLIOTECA)</label>
+                    <Input 
+                      value={stitchConfig.name}
+                      onChange={(e) => setStitchConfig({ ...stitchConfig, name: e.target.value })}
+                      className="bg-black/60 border-cyan-500/20 text-white rounded-none uppercase text-xs h-12 focus:border-cyan-500"
+                    />
+                 </div>
+
+                 <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-500 uppercase">ID_UNICO_TEMA (ARQUIVO .TSX)</label>
+                    <Input 
+                      value={stitchConfig.themeId}
+                      onChange={(e) => setStitchConfig({ ...stitchConfig, themeId: e.target.value })}
+                      className="bg-black/60 border-cyan-500/20 text-white rounded-none text-xs h-12 font-mono focus:border-cyan-500"
+                    />
+                    <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest">* SERÁ CRIADO EM: /templates/{stitchConfig.themeId}.tsx</p>
+                 </div>
+
+                 <div className="space-y-2">
+                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">NICHO_ALVO (REGRAS_DE_DESIGN)</label>
+                     <select 
+                       value={stitchConfig.segment}
+                       onChange={(e) => setStitchConfig({ ...stitchConfig, segment: e.target.value })}
+                       className="w-full bg-black/60 border border-cyan-500/20 text-white rounded-none h-12 text-[10px] uppercase font-bold px-4 outline-none focus:border-cyan-500"
+                     >
+                       <option value="energia-solar">☀️ ENERGIA SOLAR</option>
+                       <option value="odontologia">🦷 ODONTOLOGIA</option>
+                       <option value="mecanica">🛠️ OFICINA MECÂNICA</option>
+                       <option value="climatizacao">❄️ AR / REFRIGERAÇÃO</option>
+                       <option value="estetica">✨ ESTÉTICA</option>
+                       <option value="beleza">💇‍♀️ SALÃO / BELEZA</option>
+                       <option value="veterinaria">🐶 PET SHOP / VET</option>
+                       <option value="advocacia">⚖️ ADVOCACIA</option>
+                       <option value="seguranca">🔐 SEGURANÇA / CFTV</option>
+                       <option value="mudancas">🚚 MUDANÇAS / FRETES</option>
+                       <option value="limpeza">🧼 HIGIENIZAÇÃO / SOFÁ</option>
+                       <option value="chaveiro">🔑 CHAVEIRO 24H</option>
+                       <option value="vidracaria">🚿 VIDRAÇARIA</option>
+                       <option value="hamburgueria">🍔 HAMBURGUERIA</option>
+                       <option value="pizzaria">🍕 PIZZARIA</option>
+                       <option value="academia">🏋️‍♀️ ACADEMIA</option>
+                       <option value="construcao">🧱 MAT. CONSTRUÇÃO</option>
+                       <option value="geral">💼 SERVIÇOS GERAIS</option>
+                     </select>
+                 </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                 <Button 
+                    className="flex-1 bg-cyan-500 text-black font-black h-16 rounded-none uppercase tracking-widest hover:bg-white transition-colors"
+                    onClick={() => handleAutoBuild()}
+                 >
+                    <Zap className="w-4 h-4 mr-2" /> INICIAR_SÍNTESE_FINAL
+                 </Button>
+                 <Button 
+                    variant="outline"
+                    className="px-8 border-white/10 text-slate-400 h-16 rounded-none uppercase text-[10px] font-black hover:bg-white/5"
+                    onClick={() => setIsStitchConfigOpen(false)}
+                 >
+                    CANCELAR
+                 </Button>
+              </div>
+           </div>
+        </div>
+      )}
+      {isPreviewModalOpen && (
+        <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
+           <div className="hud-panel w-full max-w-2xl p-10 bg-slate-950 border-cyan-500/40 space-y-8 shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+              <div className="space-y-1">
+                 <Badge className="bg-cyan-500 text-black font-black uppercase text-[9px]">UPLOADER_v4.0</Badge>
+                 <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">SUBIR_AO_STITCH_CORE (48H)</h3>
+                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Injete o código gerado pelo motor de IA para criar o link de expiração.</p>
+              </div>
+
+              <div className="space-y-4">
+                 <textarea 
+                   value={previewHtmlInput}
+                   onChange={(e) => setPreviewHtmlInput(e.target.value)}
+                   className="w-full h-64 bg-black/60 border border-cyan-500/20 text-cyan-400 p-6 font-mono text-[10px] focus:border-cyan-500 outline-none rounded-none"
+                   placeholder="Cole o código do site aqui... (Next.js/HTML exportado)"
+                 />
+                 {previewLink && (
+                   <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black font-mono text-xs break-all">
+                     LINK_GERADO: {previewLink}
+                   </div>
+                 )}
+              </div>
+
+              <div className="flex gap-4">
+                 <Button 
+                    className="flex-1 bg-cyan-500 text-black font-black h-16 rounded-none uppercase tracking-widest hover:bg-white transition-colors"
+                    onClick={() => savePreview()}
+                 >
+                    <Activity className="w-5 h-5 mr-3" /> GERAR_LINK_E_COPIAR_WHATS
+                 </Button>
+                 <Button 
+                    variant="outline"
+                    className="px-8 border-white/10 text-slate-400 h-16 rounded-none uppercase text-[10px] font-black hover:bg-white/5"
+                    onClick={() => { setIsPreviewModalOpen(false); setPreviewLink(""); }}
+                 >
+                    FECHAR
+                 </Button>
+              </div>
+           </div>
+        </div>
+      )}
+
 
       <style dangerouslySetInnerHTML={{ __html: `
         ::-webkit-scrollbar {

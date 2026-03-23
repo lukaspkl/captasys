@@ -4,15 +4,29 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Globe, ArrowRight, Check, Hammer, HeartPulse, Building2, Store, ChevronRight, Loader2, Sparkles, Layout } from "lucide-react";
+import { Globe, ArrowRight, Check, Hammer, Building2, ChevronRight, Loader2, Sparkles, Layout, Sun, Activity, Snowflake, Scissors, Dog, Gavel, ShieldCheck, Truck, Droplets, Key, Bath, Utensils, Pizza, Dumbbell, HardHat } from "lucide-react";
 import { createSite, checkSubdomain } from "@/app/actions/sites";
 import { getTemplatesBySegment } from "@/app/actions/templates";
 import { useRouter } from "next/navigation";
 
 const SEGMENTS = [
-  { id: 'mecanica', label: 'Mecânica / Auto', icon: Hammer, color: 'text-red-500', bg: 'bg-red-500/10' },
-  { id: 'saude', label: 'Saúde / Bem-Estar', icon: HeartPulse, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-  { id: 'vendas', label: 'Vendas / Lojas', icon: Store, color: 'text-pink-500', bg: 'bg-pink-500/10' },
+  { id: 'energia-solar', label: 'Energia Solar', icon: Sun, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
+  { id: 'odontologia', label: 'Odontologia', icon: Activity, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
+  { id: 'mecanica', label: 'Mecânica / Auto', icon: Hammer, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+  { id: 'climatizacao', label: 'Ar / Refrigeração', icon: Snowflake, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  { id: 'estetica', label: 'Estética', icon: Sparkles, color: 'text-pink-400', bg: 'bg-pink-400/10' },
+  { id: 'beleza', label: 'Salão / Beleza', icon: Scissors, color: 'text-pink-500', bg: 'bg-pink-500/10' },
+  { id: 'veterinaria', label: 'Pet Shop / Vet', icon: Dog, color: 'text-amber-600', bg: 'bg-amber-600/10' },
+  { id: 'advocacia', label: 'Advocacia', icon: Gavel, color: 'text-slate-400', bg: 'bg-slate-400/10' },
+  { id: 'seguranca', label: 'Segurança / CFTV', icon: ShieldCheck, color: 'text-red-500', bg: 'bg-red-500/10' },
+  { id: 'mudancas', label: 'Mudanças / Fretes', icon: Truck, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+  { id: 'limpeza', label: 'Higienização / Sofá', icon: Droplets, color: 'text-sky-400', bg: 'bg-sky-400/10' },
+  { id: 'chaveiro', label: 'Chaveiro 24h', icon: Key, color: 'text-yellow-600', bg: 'bg-yellow-600/10' },
+  { id: 'vidracaria', label: 'Vidraçaria', icon: Bath, color: 'text-cyan-300', bg: 'bg-cyan-300/10' },
+  { id: 'hamburgueria', label: 'Hamburgueria', icon: Utensils, color: 'text-red-600', bg: 'bg-red-600/10' },
+  { id: 'pizzaria', label: 'Pizzaria', icon: Pizza, color: 'text-orange-600', bg: 'bg-orange-600/10' },
+  { id: 'academia', label: 'Academia', icon: Dumbbell, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  { id: 'construcao', label: 'Mat. Construção', icon: HardHat, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   { id: 'geral', label: 'Serviços Gerais', icon: Building2, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
 ];
 
@@ -164,7 +178,7 @@ export default function CreateSiteWizard() {
                   <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">O template será otimizado para o seu nicho de mercado.</p>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {SEGMENTS.map((s) => (
                     <button
                       key={s.id}

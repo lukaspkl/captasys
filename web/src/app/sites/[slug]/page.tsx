@@ -1,3 +1,6 @@
+import SegurancaV2 from "../templates/segurança-v2";
+import SegurançaV1 from "../templates/Segurança_v1";
+import SwipeGenGrupoAlianAMonitoramento24hETerceirizaODeServiOs6391 from "../templates/swipe_gen_grupo_alian_a___monitoramento_24h_e_terceiriza__o_de_servi_os_6391";
 import PetShop01 from "../templates/pet-shop-01";
 import GenTheme0615 from "../templates/gen_theme_0615";
 import { createClient } from "@/utils/supabase/server";
@@ -27,6 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 const TEMPLATE_MAP: Record<string, any> = {
+  'segurança-v2': SegurancaV2,
+
+  'Segurança_v1': SegurançaV1,
+
+  'swipe_gen_grupo_alian_a___monitoramento_24h_e_terceiriza__o_de_servi_os_6391': SwipeGenGrupoAlianAMonitoramento24hETerceirizaODeServiOs6391,
+
   'pet-shop-01': PetShop01,
 
   'gen_theme_0615': GenTheme0615,

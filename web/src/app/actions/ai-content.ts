@@ -174,7 +174,11 @@ async function updateTemplateMap(newThemeId: string) {
   let content = fs.readFileSync(routerPath, "utf8");
 
   // 1. Adicionar o Import no topo
-  const importName = newThemeId.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  const importName = newThemeId
+    .split(/[-_]/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('')
+    .replace(/[^a-zA-Z0-9]/g, '');
   const importLine = `import ${importName} from "../templates/${newThemeId}";\n`;
   
   // Evitar duplicados
