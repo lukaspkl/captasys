@@ -3,14 +3,19 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const { keyword, cities } = await req.json();
-    const apiKey = process.env.SERPER_API_KEY;
+    const apiKey = process.env.SERPER_API_KEY?.trim();
+
+    if (!apiKey || apiKey === "SUA_CHAVE_AQUI" || apiKey === "") {
+      console.error("[SCANNER_API] Erro: SERPER_API_KEY não configurada ou vazia no ambiente.");
+      return NextResponse.json({ error: "Chave do Serper não configurada no servidor (Production Check)." }, { status: 500 });
+    }
 
     const searchCities = Array.isArray(cities) ? cities : [cities];
     let query = keyword;
 
     // LÓGICA DE RESOLUÇÃO DE LINK CURTO / URL
     let isDirectLink = false;
-    if (keyword.includes("maps.app.goo.gl") || keyword.includes("goo.gl/maps") || keyword.includes("google.com/maps")) {
+    if (keyword && (keyword.includes("maps.app.goo.gl") || keyword.includes("goo.gl/maps") || keyword.includes("google.com/maps"))) {
       isDirectLink = true;
       console.log(`[SCANNER_API] Detectado link direto/curto do Maps: ${keyword}`);
       try {
@@ -30,22 +35,20 @@ export async function POST(req: Request) {
           // FALLBACK TÁTICO: Se não resolveu, pergunta pro Google Search quem é esse link
           const traceRes = await fetch("https://google.serper.dev/search", {
             method: "POST",
-            headers: { "X-API-KEY": apiKey as string, "Content-Type": "application/json" },
+            headers: { "X-API-KEY": apiKey, "Content-Type": "application/json" },
             body: JSON.stringify({ q: keyword })
           });
-          const traceData = await traceRes.json();
-          if (traceData.organic && traceData.organic.length > 0) {
-            const rawTitle = traceData.organic[0].title;
-            query = rawTitle.split(' - ')[0].split(' | ')[0].trim();
+          if (traceRes.ok) {
+            const traceData = await traceRes.json();
+            if (traceData.organic && traceData.organic.length > 0) {
+              const rawTitle = traceData.organic[0].title;
+              query = rawTitle.split(' - ')[0].split(' | ')[0].trim();
+            }
           }
         }
       } catch (err) {
         console.error("[SCANNER_API] Erro no resolutor:", err);
       }
-    }
-
-    if (!apiKey || apiKey === "SUA_CHAVE_AQUI") {
-      return NextResponse.json({ error: "Chave do Serper não configurada." }, { status: 500 });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,12 +59,13 @@ export async function POST(req: Request) {
 
     for (const city of citiesToSearch) {
       const searchQuery = city ? `${query} em ${city}` : query;
+      console.log(`[SCANNER_API] Executando varredura: "${searchQuery}"`);
       
       try {
         const response = await fetch("https://google.serper.dev/maps", {
           method: "POST",
           headers: {
-            "X-API-KEY": apiKey as string,
+            "X-API-KEY": apiKey,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br" }),
@@ -69,16 +73,19 @@ export async function POST(req: Request) {
 
         const data = await response.json();
         
-        // CORREÇÃO TÁTICA: O campo correto é 'places' e não 'maps'
-        const results = data.places || data.maps || [];
+        if (!response.ok) {
+          console.error(`[SCANNER_API] Fallback Serper Error Status ${response.status}:`, data);
+          continue; 
+        }
+
+        const results = data.places || data.links || data.organic || [];
 
         if (results.length > 0) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const formatted = results.map((place: any) => {
+          const formatted = results.map((place: any) => {
             let score = 40; 
             const reasons: string[] = [];
             
-            // 1. OPORTUNIDADE: SEM WEBSITE (O Alvo de Ouro)
             if (!place.website) {
               score += 45;
               reasons.push("SEM_WEBSITE_DETECTADO (OPORTUNIDADE_MÁXIMA)");
@@ -87,13 +94,11 @@ export async function POST(req: Request) {
               reasons.push("Já possui presença web básica");
             }
 
-            // 2. REPUTAÇÃO: BAIXA AVALIAÇÃO OU POUCAS REVIEWS
             if (place.rating && place.rating < 4.2) {
               score += 15;
               reasons.push(`REPUTAÇÃO_BAIXA (${place.rating}★)`);
             }
             
-            // CORREÇÃO TÁTICA: Serper usa 'ratingCount'
             const reviewCount = place.ratingCount || place.reviews || 0;
             if (reviewCount < 10) {
               score += 10;
@@ -112,7 +117,7 @@ export async function POST(req: Request) {
               address: place.address,
               phone: place.phoneNumber,
               url: place.website || "",
-              mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.title + " " + place.address)}`,
+              mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.title + " " + (place.address || ""))}`,
               rating: place.rating,
               reviews: reviewCount,
               category: place.category || place.type,
@@ -131,6 +136,8 @@ export async function POST(req: Request) {
       }
     }
 
+    console.log(`[SCANNER_API] Varredura completa. ${allLeads.length} leads encontrados.`);
+
     return NextResponse.json({ 
         leads: allLeads, 
         totalFound: allLeads.length,
@@ -141,3 +148,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Falha na operação técnica do scanner." }, { status: 500 });
   }
 }
+
