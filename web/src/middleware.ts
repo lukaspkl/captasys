@@ -22,6 +22,7 @@ export default async function middleware(req: NextRequest) {
     "localhost:3000",
     "captasites.com.br",
     "siteprox.com.br",
+    "www.siteprox.com.br",
     "capta-sites.vercel.app",
     "captasys.net",
     "captasys.vercel.app",
