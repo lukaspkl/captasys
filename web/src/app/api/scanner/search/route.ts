@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { keyword, cities, num } = await req.json();
+    const { keyword, cities, num, location } = await req.json();
     // Tenta extrair apenas a parte da chave hexadecimal (40 caracteres) caso o usuário tenha colado algo a mais por engano
     const rawKey = process.env.SERPER_API_KEY || "";
     const apiKey = rawKey.match(/[a-f0-9]{40}/i)?.[0];
@@ -64,13 +64,16 @@ export async function POST(req: Request) {
       console.log(`[SCANNER_API] Executando varredura: "${searchQuery}"`);
       
       try {
+        const serperBody: any = { q: searchQuery, gl: "br", hl: "pt-br", num: num || 20 };
+        if (location) serperBody.location = location;
+
         const response = await fetch("https://google.serper.dev/maps", {
           method: "POST",
           headers: {
             "X-API-KEY": apiKey,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br", num: num || 20 }),
+          body: JSON.stringify(serperBody),
         });
 
         const data = await response.json();
@@ -123,6 +126,8 @@ export async function POST(req: Request) {
               rating: place.rating,
               reviews: reviewCount,
               category: place.category || place.type,
+              latitude: place.latitude,
+              longitude: place.longitude,
               snippet: `${place.category || place.type || keyword} em ${city}`,
               score: Math.min(Math.max(score, 1), 99),
               temperature: score > 75 ? "Quente" : (score > 45 ? "Morno" : "Frio"),
