@@ -1998,23 +1998,25 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                         .blink-2 { animation: neonBlink2 1.5s infinite; }
                         
                         @media print {
-                          body * { visibility: hidden; }
-                          #dossier-print-zone, #dossier-print-zone * { visibility: visible; }
+                          body { background: white !important; }
+                          header, nav, aside, footer, .print-hide, button { display: none !important; }
+                          main > div > div:not(#dossier-print-zone) { display: none !important; }
+                          
                           #dossier-print-zone {
-                            position: fixed !important;
-                            left: 0 !important;
-                            top: 0 !important;
+                            position: static !important;
+                            display: block !important;
                             width: 100% !important;
-                            height: 100% !important;
-                            z-index: 99999 !important;
+                            height: auto !important;
+                            z-index: auto !important;
                             background: white !important;
                             color: black !important;
                             padding: 0 !important;
                             margin: 0 !important;
-                            overflow: visible !important;
+                            visibility: visible !important;
                           }
+                          #dossier-print-zone * { visibility: visible !important; }
                           #dossier-print-zone > div {
-                            border: none !important;
+                            border: 1px solid #ddd !important;
                             box-shadow: none !important;
                             width: 100% !important;
                             max-width: 100% !important;
@@ -2027,9 +2029,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                           #dossier-print-zone .bg-pink-500\/5 { background: #fff1f2 !important; border: 2px solid #ec4899 !important; }
                           #dossier-print-zone .text-slate-500 { color: #475569 !important; }
                           #dossier-print-zone .text-pink-500 { color: #ec4899 !important; }
+                          #dossier-print-zone .animate-pulse { animation: none !important; }
                           #dossier-print-zone .shadow-\[0_0_100px_rgba\(236,72,153,0.1\)\] { box-shadow: none !important; }
-                          #dossier-print-zone button { display: none !important; }
-                          #dossier-print-zone .fixed { position: relative !important; }
                         }
                       `}} />
                       <Table>
