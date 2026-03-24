@@ -20,6 +20,7 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://siteprox.com.br"),
   title: "SiteProx | Criação de Sites de Alta Performance para Negócios Locais",
   description: "Criamos sites profissionais e aplicamos estratégias de SEO e Google Maps para mecânicas, pet shops e negócios locais. No caos da web, nós somos a lei.",
   icons: {
