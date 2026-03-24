@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { keyword, cities } = await req.json();
+    const { keyword, cities, num } = await req.json();
     // Tenta extrair apenas a parte da chave hexadecimal (40 caracteres) caso o usuário tenha colado algo a mais por engano
     const rawKey = process.env.SERPER_API_KEY || "";
     const apiKey = rawKey.match(/[a-f0-9]{40}/i)?.[0];
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
             "X-API-KEY": apiKey,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br", num: 100 }),
+          body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br", num: num || 20 }),
         });
 
         const data = await response.json();

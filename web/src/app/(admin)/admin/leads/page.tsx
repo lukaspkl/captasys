@@ -256,7 +256,7 @@ export default function DashboardPage() {
   const [bairro, setBairro] = useState("");
   const [searchMode, setSearchMode] = useState<"web" | "maps">("web");
   const [minReviewsCount, setMinReviewsCount] = useState<number>(10);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [numResults, setNumResults] = useState<number>(20);
   const [citySearch, setCitySearch] = useState("");
 
   // --- IBGE API (Moved/Consolidated) ---
@@ -983,7 +983,8 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           keyword: keyword,
-          cities: [cidade]
+          cities: [cidade],
+          num: numResults
         }),
       });
 
@@ -3111,7 +3112,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <label className="text-[9px] font-black text-cyan-500 uppercase tracking-widest pl-1">
                       Modo de Varredura
@@ -3122,10 +3123,10 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                       className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                     >
                       <option value="web" className="bg-[#0f172a] text-cyan-400">
-                        WEB (Multi-Engine)
+                        WEB (Multi)
                       </option>
                       <option value="maps" className="bg-[#0f172a] text-cyan-400">
-                        MAPS (Exclusivo Local)
+                        MAPS (Local)
                       </option>
                     </select>
                   </div>
@@ -3137,8 +3138,20 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                       type="number"
                       value={minReviewsCount}
                       onChange={(e) => setMinReviewsCount(Number(e.target.value))}
-                      className="bg-black/40 border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
+                      className="bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                       placeholder="10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-cyan-500 uppercase tracking-widest pl-1">
+                      Resultados (Max 100)
+                    </label>
+                    <Input
+                      type="number"
+                      value={numResults}
+                      onChange={(e) => setNumResults(Math.min(100, Math.max(1, Number(e.target.value))))}
+                      className="bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
+                      placeholder="20"
                     />
                   </div>
                 </div>
