@@ -314,6 +314,7 @@ export default function DashboardPage() {
   const [competitorsCount, setCompetitorsCount] = useState({ radius2km: 0, radius5km: 0 });
   const [competitorsList, setCompetitorsList] = useState<any[]>([]);
   const [dossierPitch, setDossierPitch] = useState("");
+  const [customBairro, setCustomBairro] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(
     null,
@@ -1138,7 +1139,8 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
 
     try {
       const subNiches = NICHE_CONFIG[nicho]?.keywords || [nicho];
-      const bairros = isDeepScan ? (bairrosList.length > 0 ? bairrosList : [{ nome: "" }]) : [{ nome: bairro }];
+      const targetBairro = bairro === "OUTRO" ? customBairro : bairro;
+      const bairros = isDeepScan ? (bairrosList.length > 0 ? bairrosList : [{ nome: "" }]) : [{ nome: targetBairro }];
       const totalSteps = bairros.length * subNiches.length;
       let completedSteps = 0;
 
@@ -3403,8 +3405,27 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                         {b.nome}
                       </option>
                     ))}
+                    {!isDeepScan && cidade && (
+                      <option value="OUTRO" className="bg-[#0f172a] text-pink-500 font-black italic">
+                        &gt;&gt;&gt; OUTRO (ESCREVER MANUALMENTE)...
+                      </option>
+                    )}
                   </select>
                 </div>
+
+                {bairro === "OUTRO" && !isDeepScan && (
+                  <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                    <label className="text-[9px] font-black text-pink-500 uppercase tracking-widest pl-1">
+                      Digite o Nome do Bairro
+                    </label>
+                    <Input
+                      value={customBairro}
+                      onChange={(e) => setCustomBairro(e.target.value)}
+                      placeholder="EX: SAVASSI, CENTRO, ALPHAVILLE..."
+                      className="bg-black/40 border border-pink-500/40 rounded-none h-12 text-xs font-bold text-white uppercase focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all font-mono placeholder:text-pink-900/50"
+                    />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
