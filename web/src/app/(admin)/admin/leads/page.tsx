@@ -318,10 +318,14 @@ export default function DashboardPage() {
 
   const handlePrintDossier = () => {
     setIsPrinting(true);
+    // Pequeno delay para garantir que o React renderizou o novo DOM
     setTimeout(() => {
       window.print();
-      setIsPrinting(false);
-    }, 500);
+      // Não resetamos o estado imediatamente para dar tempo ao spooler de impressão
+      // O usuário pode simplesmente clicar fora ou mudar de aba se quiser 'voltar', 
+      // ou podemos resetar após um tempo maior.
+      setTimeout(() => setIsPrinting(false), 2000);
+    }, 800);
   };
   const [customBairro, setCustomBairro] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1727,7 +1731,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                       Dossiê de Inteligência <br/> <span className="text-pink-600 underline">Estratégica</span>
                     </h1>
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mt-2">
-                       Ref_ID: {dossierLead.id.split('-')[0].toUpperCase()} // SITEPROX_MILITARY_GRADE
+                       Ref_ID: {dossierLead.id.split('-')[0].toUpperCase() + " // SITEPROX_MILITARY_GRADE"}
                     </p>
                   </div>
                </div>
