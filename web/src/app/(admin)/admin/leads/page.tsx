@@ -1117,20 +1117,36 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
         const data = await res.json();
         
         if (data.leads && data.leads.length > 0) {
-          const formated = data.leads.map((l: any) => ({
-            ...l,
-            id: crypto.randomUUID(),
-            status: "novo",
-            reviewCount: l.reviews?.toString() || "0",
-            rating: l.rating?.toString() || "N/A",
-            perceptions: typeof l.classificationMotivity === 'string' ? l.classificationMotivity.split(" | ") : []
-          }));
+          const bairroTerm = targetBairro?.toUpperCase() || "";
+          const exactMatches = data.leads.filter((l: any) => 
+            !bairroTerm || (l.address?.toUpperCase().includes(bairroTerm))
+          );
+
+          if (exactMatches.length === 0 && targetBairro) {
+            setStatusText(`SINAL_DÉBIL: Sem hits exatos no bairro "${targetBairro}". Buscando em arredores da cidade...`);
+          }
+
+          const formated = data.leads.map((l: any) => {
+            const isExact = bairroTerm && l.address?.toUpperCase().includes(bairroTerm);
+            return {
+              ...l,
+              id: crypto.randomUUID(),
+              status: isExact ? "novo" : "relevante_expandido",
+              reviewCount: l.reviews?.toString() || "0",
+              rating: l.rating?.toString() || "N/A",
+              perceptions: typeof l.classificationMotivity === 'string' ? l.classificationMotivity.split(" | ") : []
+            };
+          });
           
           setLeads(prev => {
             const existingUrls = new Set(prev.map(p => p.url));
             const uniqueNew = formated.filter((f: any) => !existingUrls.has(f.url));
             return [...prev, ...uniqueNew];
           });
+        } else {
+           if (targetBairro) {
+             setStatusText(`SILÊNCIO_RÁDIO: Zero resultados para "${targetKeyword}" em "${targetBairro}". Tentando geral...`);
+           }
         }
       } catch (err) {
         console.error("Erro no scan segmentado:", err);
