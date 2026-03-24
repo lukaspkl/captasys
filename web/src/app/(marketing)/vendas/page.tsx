@@ -308,18 +308,18 @@ const SiteProxPage = () => {
                    </div>
                    
                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-black/20 p-6 rounded-2xl border border-white/5">
-                      <div className="flex items-start sm:items-center gap-3 sm:gap-4 overflow-hidden">
-                         <div className="relative w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-cyan-400/50 transition-colors">
+                      <div className="flex items-center gap-4 min-w-0">
+                         <div className="relative w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-cyan-400/50 transition-colors">
                             <img src={`/${t.avatar}`} alt={t.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                          </div>
-                         <div className="text-left min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
+                         <div className="flex flex-col gap-1 min-w-0">
+                            <div className="flex items-center gap-2">
                                <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest truncate">{t.name}</p>
                                <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
                             </div>
-                            <div className="flex items-center gap-1.5 mt-1 border border-emerald-500/20 bg-emerald-500/5 px-2 py-0.5 rounded-full w-fit shrink-0">
-                               <ShieldCheck className="w-3 h-3 text-emerald-500/50" />
-                               <p className="text-[7px] sm:text-[8px] text-emerald-500 font-black uppercase tracking-[0.1em] sm:tracking-widest">Sistema_Verificado</p>
+                            <div className="flex items-center gap-1 mt-0.5 border border-emerald-500/20 bg-emerald-500/5 px-2 py-0.5 rounded-full w-fit shrink-0">
+                               <ShieldCheck className="w-2.5 h-2.5 text-emerald-500/50" />
+                               <p className="text-[7px] text-emerald-500 font-black uppercase tracking-widest whitespace-nowrap">Verificado</p>
                             </div>
                          </div>
                       </div>
