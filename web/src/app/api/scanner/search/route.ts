@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const { keyword, cities } = await req.json();
-    const apiKey = process.env.SERPER_API_KEY?.trim();
+    // Tenta extrair apenas a parte da chave hexadecimal (40 caracteres) caso o usuário tenha colado algo a mais por engano
+    const rawKey = process.env.SERPER_API_KEY || "";
+    const apiKey = rawKey.match(/[a-f0-9]{40}/i)?.[0];
 
     if (!apiKey || apiKey === "SUA_CHAVE_AQUI" || apiKey === "") {
       console.error("[SCANNER_API] Erro: SERPER_API_KEY não configurada ou vazia no ambiente.");
