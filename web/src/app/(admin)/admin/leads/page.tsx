@@ -314,6 +314,15 @@ export default function DashboardPage() {
   const [competitorsCount, setCompetitorsCount] = useState({ radius2km: 0, radius5km: 0 });
   const [competitorsList, setCompetitorsList] = useState<any[]>([]);
   const [dossierPitch, setDossierPitch] = useState("");
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  const handlePrintDossier = () => {
+    setIsPrinting(true);
+    setTimeout(() => {
+      window.print();
+      setIsPrinting(false);
+    }, 500);
+  };
   const [customBairro, setCustomBairro] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(
@@ -1704,6 +1713,135 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDetailsModalOpen]); // Intencional: só dispara quando o modal abre
+
+  if (isPrinting && dossierLead) {
+    return (
+      <div className="bg-white min-h-screen p-10 font-outfit text-black selection:bg-pink-100">
+        <div id="dossier-print-render" className="w-full max-w-4xl mx-auto space-y-12">
+          {/* Cabeçalho do Relatório */}
+          <div className="border-b-4 border-pink-500 pb-10 flex justify-between items-start">
+            <div className="space-y-4">
+               <div className="flex items-center gap-6">
+                  <div className="w-20 h-20 bg-pink-600 flex items-center justify-center -skew-x-6 shadow-[4px_4px_0_black]">
+                    <Radar className="w-10 h-10 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-black uppercase italic tracking-tighter leading-none">
+                      Dossiê de Inteligência <br/> <span className="text-pink-600 underline">Estratégica</span>
+                    </h1>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mt-2">
+                      Ref_ID: {dossierLead.id.split('-')[0].toUpperCase()} // SITEPROX_MILITARY_GRADE
+                    </p>
+                  </div>
+               </div>
+               <div className="mt-8">
+                  <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest block mb-1">Target_Subject</span>
+                  <h2 className="text-2xl font-black uppercase italic">{dossierLead.title}</h2>
+                  <p className="text-xs font-bold text-slate-500">{dossierLead.address}</p>
+               </div>
+            </div>
+            <div className="flex flex-col items-end gap-2 text-right">
+               <div className="bg-red-600 text-white px-4 py-1 text-[10px] font-black uppercase">CONFIDENCIAL</div>
+               <div className="border-2 border-black p-4 text-[9px] font-bold uppercase leading-tight italic">
+                  Documento Gerado em: <br/> {new Date().toLocaleDateString('pt-BR')} <br/> 
+                  <span className="text-pink-600">Assinado: SITEPROX_SYS</span>
+               </div>
+            </div>
+          </div>
+
+          {/* Seção 1: O Radar de Campo (Nossa Ideia de Concorrência) */}
+          <section className="space-y-8">
+            <div className="flex items-center gap-4">
+               <div className="h-1 flex-1 bg-slate-100"></div>
+               <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 italic">Mapeamento de Hostilidade Local</h3>
+               <div className="h-1 flex-1 bg-slate-100"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+               <div className="border border-slate-200 p-8 space-y-4 relative overflow-hidden h-48 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-pink-600">Zona 01 // 2km</span>
+                    <h4 className="text-xs font-bold uppercase italic text-slate-500">Confronto Imediato</h4>
+                  </div>
+                  <p className="text-6xl font-black italic tracking-tighter">{competitorsCount.radius2km}</p>
+                  <p className="text-[9px] font-black uppercase leading-tight text-slate-400">Empresas do mesmo nicho em combate direto por visibilidade.</p>
+               </div>
+
+               <div className="border border-slate-200 p-8 space-y-4 relative overflow-hidden h-48 flex flex-col justify-between bg-slate-50">
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-slate-800">Zona 02 // 5km</span>
+                    <h4 className="text-xs font-bold uppercase italic text-slate-500">Alcance Regional</h4>
+                  </div>
+                  <p className="text-6xl font-black italic tracking-tighter">{competitorsCount.radius5km}</p>
+                  <p className="text-[9px] font-black uppercase leading-tight text-slate-400">Projeção de mercado onde o lead poderia estar captando clientes.</p>
+               </div>
+
+               <div className="border-2 border-slate-900 p-8 space-y-4 relative overflow-hidden h-48 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-slate-800">Reputação Google</span>
+                    <h4 className="text-xs font-bold uppercase italic text-slate-500">Google Business Score</h4>
+                  </div>
+                  <p className={`text-6xl font-black italic tracking-tighter ${parseFloat(dossierLead.rating) < 4.6 ? 'text-red-500' : 'text-emerald-500'}`}>
+                    {dossierLead.rating}★
+                  </p>
+                  <p className="text-[9px] font-black uppercase leading-tight text-slate-400">Avaliação do público. {parseFloat(dossierLead.rating) < 4.6 ? 'Criticamente abaixo da média.' : 'Satisfatório, mas com falhas de SEO.'}</p>
+               </div>
+            </div>
+          </section>
+
+          {/* Seção 2: Identificação de Rivais Principais */}
+          <section className="space-y-6">
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 shadow-[inset_0_-2px_0_#ec4899] h-fit w-fit px-2">Monitoramento de Alvos Relevantes</h3>
+            <div className="border border-slate-200 divide-y divide-slate-100">
+               {competitorsList.length > 0 ? competitorsList.map((c, i) => (
+                  <div key={i} className="p-4 flex justify-between items-center group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-1 h-1 bg-pink-500"></div>
+                      <div>
+                        <p className="text-[11px] font-black uppercase">{c.title}</p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{c.address?.slice(0, 60)}...</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                       <span className="text-xs font-black italic">{c.rating}★</span>
+                       <p className="text-[8px] font-bold text-pink-500 uppercase">{c.reviews} Reviews</p>
+                    </div>
+                  </div>
+               )) : (
+                 <p className="p-8 text-center text-xs font-bold text-slate-400 uppercase tracking-widest italic">Aguardando Sincronização de Sensores...</p>
+               )}
+            </div>
+          </section>
+
+          {/* Seção 3: Diagnóstico e Recomendação */}
+          <section className="border-4 border-black p-12 bg-pink-50 relative">
+             <div className="flex items-center gap-3 mb-6">
+                <Cpu className="w-6 h-6 text-pink-600" />
+                <h3 className="text-sm font-black uppercase tracking-[0.4em] italic text-pink-700">Parecer Técnico SITEPROX</h3>
+             </div>
+             <p className="text-2xl font-black text-slate-900 leading-snug italic">
+               &ldquo;{dossierPitch}&rdquo;
+             </p>
+             <div className="mt-10 pt-10 border-t border-pink-200 flex justify-between items-end">
+                <div className="space-y-1">
+                   <p className="text-[9px] font-black uppercase text-slate-400">Assinado Digitalmente por:</p>
+                   <p className="text-sm font-black italic uppercase tracking-tighter">SiteProx_Advanced-Intelligence_Unit</p>
+                </div>
+                <div className="text-center">
+                   <div className="w-12 h-1 bg-black mx-auto mb-2"></div>
+                   <p className="text-[8px] font-black uppercase opacity-30">Cód._Assinatura: SPX-HACK-2024</p>
+                </div>
+             </div>
+          </section>
+
+          <footer className="pt-20 text-center space-y-2 opacity-30">
+             <div className="h-0.5 w-full bg-slate-100"></div>
+             <p className="text-[8px] font-black uppercase tracking-[0.5em]">Este documento é de uso exclusivo para fins de consultoria de alta performance.</p>
+          </footer>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -3317,7 +3455,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                     </p>
                     <div className="pt-6 flex gap-4">
                        <Button 
-                        onClick={() => window.print()}
+                        onClick={() => handlePrintDossier()}
                         className="bg-white text-black font-black uppercase tracking-widest text-[10px] h-12 px-8 hover:bg-pink-500 hover:text-white transition-all rounded-none"
                        >
                          Exportar PDF_DOSSIÊ
