@@ -1757,7 +1757,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
               padding: 0 !important;
               overflow: visible !important;
             }
-            .print-dossier-overlay.active { 
+            .print-dossier-overlay.active, .print-audit-overlay.active { 
               display: block !important; 
               position: absolute !important;
               left: 0 !important;
@@ -1888,6 +1888,53 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                  <p className="text-[8px] font-black uppercase tracking-[0.5em] text-black">Este documento contém dados confidenciais de inteligência. Uso proibido sem autorização do operador.</p>
               </footer>
             </div>
+          </div>
+        )}
+
+        {/*      CAMADA NUCLEAR DE IMPRESSÃO: AUDITORIA */}
+        {selectedLeadDetails && (
+          <div className={`print-audit-overlay ${isPrinting && isAuditModalOpen ? 'active' : ''}`}>
+             <div className="w-full bg-white font-mono text-black p-[15mm]">
+                <header className="border-b-4 border-cyan-500 pb-8 mb-10 flex justify-between items-center">
+                   <div>
+                    <h1 className="text-4xl font-black uppercase italic tracking-tighter">AUDITORIA_ESTRATÉGICA</h1>
+                    <p className="text-sm font-bold text-slate-500 uppercase">SYS.CLIENT: {selectedLeadDetails.title}</p>
+                   </div>
+                   <div className="text-right">
+                    <p className="text-2xl font-black text-cyan-500">{selectedLeadDetails.score || '98'}%</p>
+                    <p className="text-[8px] font-black text-slate-400">SCORE_OPORTUNIDADE</p>
+                   </div>
+                </header>
+                
+                <section className="space-y-12">
+                   <div className="grid grid-cols-2 gap-10">
+                      <div className="p-6 border-l-4 border-rose-500 bg-rose-50/10">
+                         <h2 className="text-xs font-black uppercase text-rose-600 mb-2">GAP_01: PRESENÇA_MOBILE</h2>
+                         <p className="text-[10px] text-slate-700 leading-relaxed italic">Falta de adaptabilidade mobile detectada. Perda estimada de 65% na taxa de conversão direta.</p>
+                      </div>
+                      <div className="p-6 border-l-4 border-purple-500 bg-purple-50/10">
+                         <h2 className="text-xs font-black uppercase text-purple-600 mb-2">GAP_02: CONFIABILIDADE_VISUAL</h2>
+                         <p className="text-[10px] text-slate-700 leading-relaxed italic">Ausência de vitrine digital profissional. Redução drástica na autoridade local perceptível.</p>
+                      </div>
+                   </div>
+
+                   <div className="bg-slate-900 text-white p-10 space-y-4">
+                      <h3 className="text-xl font-black uppercase tracking-widest text-[#00ffff]">PROJEÇÃO_DE_RECEITA_RECUPERÁVEL</h3>
+                      <p className="text-6xl font-black italic tracking-tighter">R$ {(ticketMedio * fluxoMensal * (auditConversion / 100)).toLocaleString('pt-BR')}</p>
+                      <p className="text-[9px] text-cyan-400/60 font-mono tracking-[0.4em uppercase]">VALOR_ESTIMADO_MENSAL baseado em {auditConversion}% de conversão</p>
+                   </div>
+
+                   <div className="border border-slate-200 p-8 space-y-4">
+                      <h4 className="text-lg font-black uppercase text-slate-900 underline decoration-cyan-400">PLANO_DE_AÇÃO_SITEPROX</h4>
+                      <p className="text-[11px] text-slate-600 leading-relaxed font-bold">Implementação de ecossistema digital Vessel 2025. Foco em velocidade luminar (LCP &lt; 1s) e CTAs diretos via WhatsApp.</p>
+                   </div>
+                </section>
+                
+                <footer className="mt-20 pt-8 border-t border-slate-100 flex justify-between items-end opacity-40">
+                   <div className="text-[8px] font-black uppercase tracking-widest">SITEPROX_INTELLIGENCE // v4.0</div>
+                   <div className="text-right text-[8px] font-black uppercase tracking-widest">SPOOLER: {new Date().toLocaleDateString('pt-BR')}</div>
+                </footer>
+             </div>
           </div>
         )}
       </div>
@@ -3853,9 +3900,9 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
         </div>
       )}
 
-      {/*      MODAL DE AUDITORIA (PDF STYLE) v3.0 */}
+      {/*      MODAL DE AUDITORIA (SCREEN ONLY) */}
       {isAuditModalOpen && selectedLeadDetails && (
-        <div className={`fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:bg-white print:text-black print:p-0 print:block modal-print-container overflow-y-auto w-full h-full ${isPrinting ? 'active' : ''}`}>
+        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:hidden overflow-y-auto w-full h-full">
           <div className="bg-white text-slate-900 w-full max-w-4xl flex flex-col relative shadow-[0_0_150px_rgba(6,182,212,0.4)] border border-white/10 print:shadow-none print:w-full print:max-w-none print:border-none print:m-0 print:p-0 print:block rounded-none overflow-hidden print:overflow-visible">
             <style dangerouslySetInnerHTML={{ __html: `
               .cyber-grid-print {
