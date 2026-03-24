@@ -245,6 +245,39 @@ function BlacklistModal({
   );
 }
 
+const NICHE_CONFIG: Record<string, { emoji: string; keywords: string[] }> = {
+  "Energia Solar": { emoji: "☀️", keywords: ["Empresa de Energia Solar", "Energia Fotovoltaica", "Instalação Placas Solares", "Energia Solar Residencial"] },
+  "Odontologia": { emoji: "🦷", keywords: ["Clínica Odontológica", "Dentista", "Ortodontia", "Implante Dentário", "Harmonização Facial"] },
+  "Oficina Mecânica": { emoji: "🛠️", keywords: ["Oficina Mecânica", "Auto Elétrica", "Centro Automotivo", "Funilaria e Pintura", "Martelinho de Ouro"] },
+  "Ar Condicionado": { emoji: "❄️", keywords: ["Ar Condicionado", "Refrigeração", "Manutenção de Ar Condicionado", "Instalação de Ar Condicionado"] },
+  "Clínica de Estética": { emoji: "✨", keywords: ["Clínica de Estética", "Estética Avançada", "Biomedicina Estética", "Harmonização Facial"] },
+  "Salão de Beleza": { emoji: "💇‍♀️", keywords: ["Salão de Beleza", "Barbearia", "Cabelereiro", "Esmalteria"] },
+  "Clínica Veterinária": { emoji: "🐶", keywords: ["Clínica Veterinária", "Pet Shop", "Banho e Tosa", "Hospital Veterinário"] },
+  "Escritório de Advocacia": { emoji: "⚖️", keywords: ["Escritório de Advocacia", "Advogado Civil", "Advogado Trabalhista", "Advogado Criminalista"] },
+  "Segurança Eletrônica": { emoji: "🔐", keywords: ["Segurança Eletrônica", "CFTV", "Câmeras de Segurança", "Alarmes"] },
+  "Mudanças e Fretes": { emoji: "🚚", keywords: ["Mudanças Residenciais", "Fretes e Carretos", "Transportadora de Mudanças"] },
+  "Hamburgueria Gourmet": { emoji: "🍔", keywords: ["Hamburgueria Artesanal", "Delivery de Hamburguer", "Lanchonete"] },
+  "Pizzaria Delivery": { emoji: "🍕", keywords: ["Pizzaria Delivery", "Pizzaria Artesanal", "Forno a Lenha"] },
+  "Marmoraria e Granitos": { emoji: "🪨", keywords: ["Marmoraria", "Granitos e Mármores", "Cortes de Pedras", "Porcelanateria"] },
+  "Contabilidade": { emoji: "📊", keywords: ["Escritório de Contabilidade", "Contador", "Abertura de Empresa", "Consultoria Contábil"] },
+  "Pilates e Yoga": { emoji: "🧘", keywords: ["Estúdio de Pilates", "Aulas de Yoga", "Treinamento Funcional"] },
+  "Assistência Técnica": { emoji: "📱", keywords: ["Conserto de Celular", "Assistência Técnica Apple", "Manutenção de Notebook"] },
+  "Marcenaria e Planejados": { emoji: "🪚", keywords: ["Marcenaria", "Móveis Planejados", "Cozinha Planejada", "Marceneiro"] },
+  "Escola de Idiomas": { emoji: "🇬🇧", keywords: ["Escola de Inglês", "Curso de Idiomas", "Escola de Informática"] },
+  "Vidraçaria": { emoji: "🚿", keywords: ["Vidraçaria", "Box de Banheiro", "Esquadrias de Alumínio", "Vidro Temperado"] },
+  "Limpeza e Higienização": { emoji: "🧼", keywords: ["Limpeza de Sofá", "Higienização de Tapetes", "Limpeza Pós Obra"] },
+  "Imobiliária": { emoji: "🏠", keywords: ["Imobiliária", "Corretor de Imóveis", "Aluguel de Casas", "Venda de Apartamentos"] },
+  "Academia e Crossfit": { emoji: "🏋️", keywords: ["Academia Fitness", "Box de Crossfit", "Personal Trainer"] },
+  "Material de Construção": { emoji: "🧱", keywords: ["Material de Construção", "Depósito de Construção", "Loja de Ferragens"] },
+  "Martelinho de Ouro": { emoji: "🔨", keywords: ["Martelinho de Ouro", "Estética Automotiva", "Recuperação de Para-choque"] },
+  "Instalação de Gesso": { emoji: "🏗️", keywords: ["Gesseiro", "Forro de Gesso", "Sanca de Gesso", "Drywall"] },
+  "Clínica de Psicologia": { emoji: "🧠", keywords: ["Clínica de Psicologia", "Psicólogo Particular", "Terapia Online"] },
+  "Laboratório de Exames": { emoji: "🔬", keywords: ["Laboratório de Análises Clínicas", "Exame de Sangue", "Checkup Médico"] },
+  "Corretora de Seguros": { emoji: "🛡️", keywords: ["Corretora de Seguros", "Seguro Auto", "Seguro de Vida"] },
+  "Buffet e Eventos": { emoji: "🎊", keywords: ["Buffet Infantil", "Espaço para Eventos", "Aluguel de Salão de Festas"] },
+  "Desentupidora 24h": { emoji: "🚽", keywords: ["Desentupidora 24h", "Limpeza de Fossa", "Caça Vazamento"] }
+};
+
 export default function DashboardPage() {
   const [currentView, setCurrentView] = useState("dashboard"); // dashboard, campaigns, active-sites, crm
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1002,10 +1035,10 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
     setProgress(5);
     setLeads([]);
 
-    const runScan = async (targetBairro?: string, currentProgress: number = 10) => {
+    const runScan = async (targetKeyword: string, targetBairro?: string) => {
       try {
-        const keyword = nicho + (targetBairro ? " em " + targetBairro : "");
-        setStatusText(`Radar ${targetBairro ? `[${targetBairro}]` : `[Geral]`}: Escaneando ${nicho}...`);
+        const keyword = targetKeyword + (targetBairro ? " em " + targetBairro : "");
+        setStatusText(`Radar ${targetBairro ? `[${targetBairro}]` : `[Geral]`}: Escaneando ${targetKeyword}...`);
         
         const res = await fetch("/api/scanner/search", {
           method: "POST",
@@ -1031,7 +1064,6 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
           }));
           
           setLeads(prev => {
-            // Evitar duplicatas no merge
             const existingUrls = new Set(prev.map(p => p.url));
             const uniqueNew = formated.filter((f: any) => !existingUrls.has(f.url));
             return [...prev, ...uniqueNew];
@@ -1043,21 +1075,24 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
     };
 
     try {
-      if (isDeepScan && bairrosList.length > 0) {
-        setStatusText(`INICIANDO MODO_DE_VARREDURA_TOTAL [${bairrosList.length} Bairros]`);
-        
-        // Loop sequencial para não estourar rate limit ou timeout
-        for (let i = 0; i < bairrosList.length; i++) {
-          const b = bairrosList[i].nome;
-          const p = Math.floor(5 + ((i + 1) / bairrosList.length) * 90);
+      const subNiches = NICHE_CONFIG[nicho]?.keywords || [nicho];
+      const bairros = isDeepScan ? (bairrosList.length > 0 ? bairrosList : [{ nome: "" }]) : [{ nome: bairro }];
+      const totalSteps = bairros.length * subNiches.length;
+      let completedSteps = 0;
+
+      if (isDeepScan) {
+        setStatusText(`MODO_VARREDURA_TOTAL: Combinando ${bairros.length} Bairros x ${subNiches.length} Sub-Nichos...`);
+      }
+
+      for (const bObj of bairros) {
+        for (const kw of subNiches) {
+          completedSteps++;
+          const p = Math.floor(5 + (completedSteps / totalSteps) * 90);
           setProgress(p);
-          await runScan(b, p);
-          // Pequena pausa tática
-          await new Promise(r => setTimeout(r, 800));
+          await runScan(kw, bObj.nome);
+          // Pausa tática para evitar Shadow Ban ou timeouts de rede
+          await new Promise(r => setTimeout(r, 600));
         }
-        
-      } else {
-        await runScan(bairro);
       }
 
       setProgress(100);
@@ -3094,23 +3129,11 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                       className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                     >
                       <option value="" className="bg-[#0f172a] text-cyan-400">SELECIONE O ALVO DA EXTRAÇÃO...</option>
-                      <option value="Empresa de Energia Solar" className="bg-[#0f172a] text-cyan-400">☀️ EMPRESA DE ENERGIA SOLAR</option>
-                      <option value="Clínica Odontológica" className="bg-[#0f172a] text-cyan-400">🦷 CLÍNICA ODONTOLÓGICA</option>
-                      <option value="Oficina Mecânica" className="bg-[#0f172a] text-cyan-400">🛠️ OFICINA MECÂNICA</option>
-                      <option value="Ar Condicionado e Refrigeração" className="bg-[#0f172a] text-cyan-400">❄️ AR CONDICIONADO / REFRIGERAÇÃO</option>
-                      <option value="Clínica de Estética" className="bg-[#0f172a] text-cyan-400">✨ CLÍNICA DE ESTÉTICA</option>
-                      <option value="Salão de Beleza" className="bg-[#0f172a] text-cyan-400">💇‍♀️ SALÃO DE BELEZA / BARBEARIA</option>
-                      <option value="Clínica Veterinária" className="bg-[#0f172a] text-cyan-400">🐶 CLÍNICA VETERINÁRIA / PET SHOP</option>
-                      <option value="Escritório de Advocacia" className="bg-[#0f172a] text-cyan-400">⚖️ ADVOCACIA / ESCRITÓRIO</option>
-                      <option value="Empresa de Segurança e Câmeras" className="bg-[#0f172a] text-cyan-400">🔐 SEGURANÇA / CFTV</option>
-                      <option value="Mudanças e Fretes" className="bg-[#0f172a] text-cyan-400">🚚 MUDANÇAS E FRETES</option>
-                      <option value="Limpeza de Sofá e Higienização" className="bg-[#0f172a] text-cyan-400">🧼 LIMPEZA DE SOFÁ / HIGIENIZAÇÃO</option>
-                      <option value="Chaveiro 24h" className="bg-[#0f172a] text-cyan-400">🔑 CHAVEIRO 24H</option>
-                      <option value="Vidraçaria e Esquadrias" className="bg-[#0f172a] text-cyan-400">🚿 VIDRAÇARIA / ESQUADRIAS</option>
-                      <option value="Hamburgueria" className="bg-[#0f172a] text-cyan-400">🍔 HAMBURGUERIA / FAST FOOD</option>
-                      <option value="Pizzaria Delivery" className="bg-[#0f172a] text-cyan-400">🍕 PIZZARIA DELIVERY</option>
-                      <option value="Academia Fitness" className="bg-[#0f172a] text-cyan-400">🏋️‍♀️ ACADEMIA / CROSSFIT</option>
-                      <option value="Material de Construção" className="bg-[#0f172a] text-cyan-400">🧱 MATERIAL DE CONSTRUÇÃO</option>
+                      {Object.entries(NICHE_CONFIG).map(([key, cfg]) => (
+                        <option key={key} value={key} className="bg-[#0f172a] text-cyan-400">
+                          {cfg.emoji} {key.toUpperCase()}
+                        </option>
+                      ))}
                   </select>
                 </div>
 
