@@ -70,7 +70,7 @@ export async function POST(req: Request) {
             "X-API-KEY": apiKey,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br" }),
+          body: JSON.stringify({ q: searchQuery, gl: "br", hl: "pt-br", num: 100 }),
         });
 
         const data = await response.json();
