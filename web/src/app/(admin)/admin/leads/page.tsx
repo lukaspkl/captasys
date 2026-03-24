@@ -1737,12 +1737,11 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
   }, [isDetailsModalOpen, selectedLeadDetails, leadAnalysis, isAnalyzing, startLeadAnalysis]);
 
   // ─── NUCLEAR PRINT ENGINE V3 ──────────────────────────────────────────────
-  const isDossierOpenForPrint = isPrinting && dossierLead;
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 font-outfit relative overflow-x-hidden">
+    <>
       {/* NUCLEAR PRINT LAYER - ISOLAMENTO TOTAL PARA PDF */}
-      <div className={`print-dossier-overlay ${isDossierOpenForPrint ? 'active' : ''}`}>
+      <div className={`print-dossier-overlay ${isPrinting && dossierLead ? 'active' : ''}`}>
         <style jsx global>{`
           @media screen {
             .print-dossier-overlay { display: none; }
@@ -1891,6 +1890,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
           </div>
         )}
       </div>
+
+      <div className="min-h-screen bg-[#020617] text-slate-100 font-outfit relative overflow-x-hidden print:hidden">
 
       <div className="flex-1 flex flex-col relative z-20 print:hidden">
         {/*      HUD CRT OVERLAY */}
@@ -2981,7 +2982,9 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
             )}
           </div>
         </div>
+        </div>
       </div>
+
 
       {isDetailsModalOpen && selectedLeadDetails && (
         <div className="fixed inset-0 bg-[#020617]/90 backdrop-blur-3xl z-150 flex items-center justify-center p-4 print:hidden">
@@ -4534,6 +4537,6 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
           }
         }
       `}} />
-      </div>
-    );
+      </>
+  );
 }
