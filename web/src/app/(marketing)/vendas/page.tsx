@@ -19,16 +19,27 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '700'] });
 const pixelFont = Silkscreen({ weight: '400', subsets: ['latin'] });
 
 // --- ANIMATION WRAPPER ---
-const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-  >
-    {children}
-  </motion.div>
-);
+const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+  
+  React.useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return (
+    <motion.div
+      initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={isMobile ? { duration: 0 } : { duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 // --- COMPONENTS ---
 
@@ -119,7 +130,19 @@ const PlanCard = ({ plan }: { plan: Plan }) => (
   </motion.div>
 );
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = React.useState(false);
+  React.useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+};
+
 const SiteProxPage = () => {
+  const isMobile = useIsMobile();
   const plansData = [
     { 
       name: "Plano Presença", 
@@ -183,7 +206,7 @@ const SiteProxPage = () => {
            <div className="max-w-6xl mx-auto space-y-10">
               <div className="space-y-4">
                 <motion.h1 
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={isMobile ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, ease: "easeOut" }}
                   className={`text-5xl sm:text-6xl md:text-9xl font-black italic tracking-tighter leading-[0.85] uppercase ${sora.className}`}
