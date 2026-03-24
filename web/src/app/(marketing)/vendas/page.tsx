@@ -307,7 +307,7 @@ const SiteProxPage = () => {
                       </p>
                    </div>
                    
-                   <div className="flex justify-between items-center bg-black/20 p-6 rounded-2xl border border-white/5">
+                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-black/20 p-6 rounded-2xl border border-white/5">
                       <div className="flex items-center gap-4">
                          <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-cyan-400/50 transition-colors">
                             <img src={`/${t.avatar}`} alt={t.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
@@ -323,7 +323,7 @@ const SiteProxPage = () => {
                             </div>
                          </div>
                       </div>
-                      <div className="px-6 py-3 bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white hover:text-black transition-all">
+                      <div className="w-full sm:w-auto text-center sm:text-right px-6 py-3 bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white hover:text-black transition-all">
                          {t.res}
                       </div>
                    </div>
