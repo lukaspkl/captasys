@@ -1691,6 +1691,16 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
     );
   }, [selectedLeadDetails]);
 
+  const startMapsAnalysis = useCallback(() => {
+    if (!selectedLeadDetails?.mapsUrl) return;
+    setIsAnalyzing(true);
+    window.dispatchEvent(
+      new CustomEvent("CAPTASAAS_START_ANALYSIS", {
+        detail: { url: selectedLeadDetails.mapsUrl },
+      }),
+    );
+  }, [selectedLeadDetails]);
+
   useEffect(() => {
     if (
       isDetailsModalOpen &&
