@@ -1767,7 +1767,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
               background: white !important;
               z-index: 9999999 !important;
             }
-            body > *:not(.print-dossier-overlay) {
+            /* Esconde apenas a raiz do dashboard, mantendo a árvore React viva para o print */
+            .min-h-screen.print\:hidden {
               display: none !important;
             }
           }
