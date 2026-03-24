@@ -3855,7 +3855,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
 
       {/*      MODAL DE AUDITORIA (PDF STYLE) v3.0 */}
       {isAuditModalOpen && selectedLeadDetails && (
-        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:inset-auto print:bg-white print:text-black print:p-0 print:block print:overflow-visible print:backdrop-blur-none print:backdrop-filter-none modal-print-container overflow-y-auto w-full h-full">
+        <div className={`fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:bg-white print:text-black print:p-0 print:block modal-print-container overflow-y-auto w-full h-full ${isPrinting ? 'active' : ''}`}>
           <div className="bg-white text-slate-900 w-full max-w-4xl flex flex-col relative shadow-[0_0_150px_rgba(6,182,212,0.4)] border border-white/10 print:shadow-none print:w-full print:max-w-none print:border-none print:m-0 print:p-0 print:block rounded-none overflow-hidden print:overflow-visible">
             <style dangerouslySetInnerHTML={{ __html: `
               .cyber-grid-print {
@@ -4198,7 +4198,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
 
       {/* MODAL DE PROPOSTA DE RENOVAÇÃO DE SITE (PDF STYLE) */}
       {isRenewalModalOpen && selectedLeadDetails && (
-        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:inset-auto print:bg-white print:text-black print:p-0 print:block print:overflow-visible print:backdrop-blur-none print:backdrop-filter-none modal-print-container w-full h-full overflow-y-auto">
+        <div className={`fixed inset-0 bg-black/98 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 print:static print:bg-white print:text-black print:p-0 print:block modal-print-container w-full h-full overflow-y-auto ${isPrinting ? 'active' : ''}`}>
           <div className="bg-white text-slate-900 w-full max-w-4xl flex flex-col relative shadow-[0_0_150px_rgba(255,0,255,0.4)] border border-white/10 print:shadow-none print:w-full print:max-w-none print:border-none print:m-0 print:p-0 print:block rounded-none overflow-hidden print:overflow-visible">
             <style dangerouslySetInnerHTML={{ __html: `
               .cyber-grid-print-pink {
@@ -4520,14 +4520,17 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
             background-color: white !important;
             color: black !important;
           }
-          .modal-print-container {
+          .modal-print-container.active {
+            display: block !important;
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
             width: 100% !important;
+            height: auto !important;
             margin: 0 !important;
             padding: 0 !important;
             background: white !important;
+            z-index: 9999999 !important;
             overflow: visible !important;
             /* Forçar a impressão das cores de fundo */
             -webkit-print-color-adjust: exact !important;
