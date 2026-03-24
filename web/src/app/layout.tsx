@@ -20,8 +20,8 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "SiteProx - No caos da web, nós somos a lei",
-  description: "Estratégias de Elite para Negócios Locais - Aceleramos seu faturamento com tecnologia de ponta.",
+  title: "SiteProx | Criação de Sites de Alta Performance para Negócios Locais",
+  description: "Criamos sites profissionais e aplicamos estratégias de SEO e Google Maps para mecânicas, pet shops e negócios locais. No caos da web, nós somos a lei.",
   icons: {
     icon: '/favicon.png',
   },
