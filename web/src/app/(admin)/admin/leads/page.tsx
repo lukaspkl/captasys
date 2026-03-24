@@ -4120,7 +4120,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                 ABORT_SEQUENCE
               </Button>
               <Button
-                onClick={() => window.print()}
+                onClick={() => handlePrintDossier()}
                 className="bg-[#ff00ff] text-white px-10 py-6 rounded-none font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-[#ff00ff]/20 hover:bg-black relative z-10 transition-colors"
               >
                 [SPOOL_TO_DATA_DRIVE]
@@ -4285,7 +4285,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                 ABORTAR_PROPOSTA
               </Button>
               <Button
-                onClick={() => window.print()}
+                onClick={() => handlePrintDossier()}
                 className="bg-[#ff00ff] text-white px-10 py-6 rounded-none font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-[#ff00ff]/20 hover:bg-black relative z-10 transition-colors"
               >
                 [IMPRIMIR_PROPOSTA]
