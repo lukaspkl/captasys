@@ -45,7 +45,7 @@ const WhatsAppButton = () => (
         className="absolute inset-0 bg-[#25D366] rounded-full blur-2xl"
       />
       <motion.a
-        href="https://wa.me/5511999999999"
+        href="https://wa.me/5531982188309?text=Olá,%20tenho%20interesse%20nas%20estratégias%20da%20SiteProx!"
         target="_blank"
         whileHover={{ scale: 1.1 }}
         className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-[#25D366] to-[#22d3ee] rounded-full shadow-[0_0_30px_rgba(37,211,102,0.5)] border-2 border-white/20"
@@ -110,9 +110,12 @@ const PlanCard = ({ plan }: { plan: Plan }) => (
        </ul>
     </div>
 
-    <button className={`mt-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${plan.featured ? 'bg-black text-white hover:bg-emerald-600' : 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-xl'}`}>
+    <a 
+      href={`https://wa.me/5531982188309?text=Olá!%20Gostaria%20de%20assinar%20o%20${encodeURIComponent(plan.name)}.`}
+      target="_blank"
+      className={`mt-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all text-center block ${plan.featured ? 'bg-black text-white hover:bg-emerald-600' : 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-xl'}`}>
        Quero_Meu_Site_Agora
-    </button>
+    </a>
   </motion.div>
 );
 
