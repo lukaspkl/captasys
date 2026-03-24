@@ -252,8 +252,11 @@ export default function DashboardPage() {
   const [nicho, setNicho] = useState("");
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
-  const [cidadesList, setCidadesList] = useState<{ nome: string }[]>([]);
+  const [cidadeId, setCidadeId] = useState<string | number | null>(null);
+  const [cidadesList, setCidadesList] = useState<{ nome: string; id: string | number }[]>([]);
   const [bairro, setBairro] = useState("");
+  const [bairrosList, setBairrosList] = useState<{ nome: string }[]>([]);
+  const [isDeepScan, setIsDeepScan] = useState(false);
   const [searchMode, setSearchMode] = useState<"web" | "maps">("web");
   const [minReviewsCount, setMinReviewsCount] = useState<number>(10);
   const [numResults, setNumResults] = useState<number>(20);
@@ -646,12 +649,11 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
       })
       .then((data) => {
         if (active && Array.isArray(data)) {
-          const formatted = data.map((c: any) => ({ nome: c.nome }));
+          const formatted = data.map((c: any) => ({ nome: c.nome, id: c.id }));
           setCidadesList(formatted);
         }
       })
       .catch((err) => {
-        // Log leve para evitar quebras visuais no console do Next.js Dev
         console.warn("[IBGE/Localidades] Falha na rede ou API indisponível:", err.message);
       });
 
@@ -660,10 +662,42 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
     };
   }, [estado]);
 
+  // Carregar Bairros (Distritos) ao selecionar cidade
+  useEffect(() => {
+    let active = true;
+    if (!cidadeId) {
+      setBairrosList([]);
+      return;
+    }
+    
+    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/municipios/${cidadeId}/distritos`)
+      .then(res => res.json())
+      .then(data => {
+        if (active && Array.isArray(data)) {
+          // Filtrar nomes únicos e remover o nome da própria cidade se for o único
+          const formatted = data.map((d: any) => ({ nome: d.nome }));
+          setBairrosList(formatted);
+        }
+      })
+      .catch(() => setBairrosList([]));
+
+    return () => { active = false; };
+  }, [cidadeId]);
+
   const handleEstadoChange = (val: string) => {
     setEstado(val || "");
     setCidade("");
-    setCitySearch("");
+    setCidadeId(null);
+    setBairro("");
+    setBairrosList([]);
+  };
+
+  const handleCidadeChange = (val: string) => {
+    setCidade(val);
+    const selected = cidadesList.find(c => c.nome === val);
+    if (selected) setCidadeId(selected.id);
+    else setCidadeId(null);
+    setBairro("");
   };
 
   useEffect(() => {
@@ -965,57 +999,71 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
 
     setIsModalOpen(false);
     setIsSearching(true);
-    setProgress(10);
-    setStatusText(
-      searchMode === "maps"
-        ? `Iniciando API Serper: Bairro ${bairro || "Geral"}...`
-        : "Acionando Varredura Serper API...",
-    );
+    setProgress(5);
     setLeads([]);
 
+    const runScan = async (targetBairro?: string, currentProgress: number = 10) => {
+      try {
+        const keyword = nicho + (targetBairro ? " em " + targetBairro : "");
+        setStatusText(`Radar ${targetBairro ? `[${targetBairro}]` : `[Geral]`}: Escaneando ${nicho}...`);
+        
+        const res = await fetch("/api/scanner/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            keyword: keyword,
+            cities: [cidade],
+            num: numResults
+          }),
+        });
+
+        if (!res.ok) throw new Error("Satélites fora de alcance.");
+        const data = await res.json();
+        
+        if (data.leads && data.leads.length > 0) {
+          const formated = data.leads.map((l: any) => ({
+            ...l,
+            id: crypto.randomUUID(),
+            status: "novo",
+            reviewCount: l.reviews?.toString() || "0",
+            rating: l.rating?.toString() || "N/A",
+            perceptions: typeof l.classificationMotivity === 'string' ? l.classificationMotivity.split(" | ") : []
+          }));
+          
+          setLeads(prev => {
+            // Evitar duplicatas no merge
+            const existingUrls = new Set(prev.map(p => p.url));
+            const uniqueNew = formated.filter((f: any) => !existingUrls.has(f.url));
+            return [...prev, ...uniqueNew];
+          });
+        }
+      } catch (err) {
+        console.error("Erro no scan segmentado:", err);
+      }
+    };
+
     try {
-      const keyword = nicho + (bairro ? " em " + bairro : "");
-      setProgress(40);
-      setStatusText(`Buscando no radar de ${cidade}...`);
-
-      const res = await fetch("/api/scanner/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          keyword: keyword,
-          cities: [cidade],
-          num: numResults
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Falha de conexão com os Satélites (Serper).");
-      }
-
-      setProgress(80);
-      const data = await res.json();
-
-      if (data.error) throw new Error(data.error);
-
-      if (data.leads && data.leads.length > 0) {
-        // Formatar para bater exatamente com a tabela
-        const formatedAlerts = data.leads.map((l: any) => ({
-          ...l,
-          id: crypto.randomUUID(),
-          status: "novo",
-          reviewCount: l.reviews?.toString() || "0",
-          rating: l.rating?.toString() || "N/A",
-          perceptions: typeof l.classificationMotivity === 'string' ? l.classificationMotivity.split(" | ") : []
-        }));
-        setLeads(formatedAlerts);
-        setStatusText(`Varredura Concluída! ${formatedAlerts.length} identificados.`);
+      if (isDeepScan && bairrosList.length > 0) {
+        setStatusText(`INICIANDO MODO_DE_VARREDURA_TOTAL [${bairrosList.length} Bairros]`);
+        
+        // Loop sequencial para não estourar rate limit ou timeout
+        for (let i = 0; i < bairrosList.length; i++) {
+          const b = bairrosList[i].nome;
+          const p = Math.floor(5 + ((i + 1) / bairrosList.length) * 90);
+          setProgress(p);
+          await runScan(b, p);
+          // Pequena pausa tática
+          await new Promise(r => setTimeout(r, 800));
+        }
+        
       } else {
-        setStatusText(`Radar Limpo. Nenhum lead viável encontrado.`);
+        await runScan(bairro);
       }
+
       setProgress(100);
+      setStatusText(`Sincronização Finalizada.`);
     } catch (err: any) {
-      console.error("Erro na busca:", err);
-      setStatusText(`ERRO DE SISTEMA: ${err.message}`);
+      setStatusText(`FALHA_NOS_SATÉLITES: ${err.message}`);
     } finally {
       setTimeout(() => {
         setIsSearching(false);
@@ -3088,28 +3136,48 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                     </label>
                     <select
                       value={cidade}
-                      onChange={(e) => setCidade(e.target.value)}
+                      onChange={(e) => handleCidadeChange(e.target.value)}
                       disabled={!estado || cidadesList.length === 0}
                       className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono disabled:opacity-50"
                     >
                       <option value="" className="bg-[#0f172a] text-cyan-400">SELECIONE A CIDADE...</option>
                       {cidadesList.map((c: any) => (
-                        <option key={c.nome} value={c.nome} className="bg-[#0f172a] text-cyan-400">{c.nome}</option>
+                        <option key={c.id} value={c.nome} className="bg-[#0f172a] text-cyan-400">{c.nome}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-cyan-500 uppercase tracking-widest pl-1">
-                    Bairro (Opcional)
-                  </label>
-                  <Input
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-[9px] font-black text-cyan-500 uppercase tracking-widest pl-1">
+                      Bairro (Localização Geográfica)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[8px] font-black text-pink-500 uppercase font-mono">Deep Scan Mode</span>
+                      <input 
+                        type="checkbox" 
+                        checked={isDeepScan} 
+                        onChange={(e) => setIsDeepScan(e.target.checked)}
+                        className="w-3 h-3 accent-pink-500"
+                      />
+                    </div>
+                  </div>
+                  <select
                     value={bairro}
                     onChange={(e) => setBairro(e.target.value)}
-                    className="bg-black/40 border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase placeholder:text-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
-                    placeholder="EX: VILA MADALENA"
-                  />
+                    disabled={isDeepScan || !cidade}
+                    className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono disabled:opacity-30"
+                  >
+                    <option value="" className="bg-[#0f172a] text-cyan-400">
+                      {isDeepScan ? "MODO SCAN TOTAL ATIVADO (Pular Bairro)" : "SELECIONE O BAIRRO (OU GERAL)..."}
+                    </option>
+                    {bairrosList.map((b: any) => (
+                      <option key={b.nome} value={b.nome} className="bg-[#0f172a] text-cyan-400">
+                        {b.nome}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
