@@ -1741,7 +1741,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
   return (
     <>
       {/* NUCLEAR PRINT LAYER - ISOLAMENTO TOTAL PARA PDF */}
-      <div className={`print-dossier-overlay ${isPrinting && dossierLead ? 'active' : ''}`}>
+      <div className={`print-dossier-overlay ${isPrinting && (dossierLead || isAuditModalOpen || isRenewalModalOpen) ? 'active' : ''}`}>
         <style jsx global>{`
           @media screen {
             .print-dossier-overlay { display: none; }
@@ -1895,44 +1895,105 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
         {selectedLeadDetails && (
           <div className={`print-audit-overlay ${isPrinting && isAuditModalOpen ? 'active' : ''}`}>
              <div className="w-full bg-white font-mono text-black p-[15mm]">
-                <header className="border-b-4 border-cyan-500 pb-8 mb-10 flex justify-between items-center">
-                   <div>
-                    <h1 className="text-4xl font-black uppercase italic tracking-tighter">AUDITORIA_ESTRATÉGICA</h1>
-                    <p className="text-sm font-bold text-slate-500 uppercase">SYS.CLIENT: {selectedLeadDetails.title}</p>
-                   </div>
-                   <div className="text-right">
-                    <p className="text-2xl font-black text-cyan-500">{selectedLeadDetails.score || '98'}%</p>
-                    <p className="text-[8px] font-black text-slate-400">SCORE_OPORTUNIDADE</p>
-                   </div>
+                {/* Conteúdo Real da Auditoria para Impressão */}
+                <header className="border-b-[6px] border-cyan-500 pb-10 flex justify-between items-start">
+                  <div className="space-y-4">
+                     <div className="flex items-center gap-6">
+                        <div className="w-20 h-20 bg-cyan-600 flex items-center justify-center -skew-x-6 text-white text-3xl font-black">
+                         SPX
+                        </div>
+                        <div>
+                          <h1 className="text-4xl font-black uppercase italic tracking-tighter leading-none text-black">
+                            Auditoria Digital <br/> <span className="text-cyan-600 underline">de Performance</span>
+                          </h1>
+                          <p className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-[0.4em]">Protocolo_SiteProx_2025 // v4.0</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div className="text-right space-y-2">
+                     <div className="bg-black text-white px-6 py-2 text-xs font-black uppercase italic">STATUS: CRÍTICO</div>
+                     <p className="text-[10px] font-black text-slate-400 uppercase">Gerado em: {new Date().toLocaleDateString('pt-BR')}</p>
+                  </div>
                 </header>
-                
-                <section className="space-y-12">
+
+                <section className="space-y-16 mt-12">
+                   {/* Diagnóstico HUD */}
+                   <div className="bg-slate-50 border border-slate-200 p-8 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-6 opacity-5">
+                         <Target className="w-20 h-20 text-black" />
+                      </div>
+                      <h3 className="text-xs font-black text-cyan-600 uppercase tracking-widest mb-4">[::] DIAGNÓSTICO_PRIORITÁRIO</h3>
+                      <p className="text-3xl font-black text-black italic uppercase tracking-tighter">{selectedLeadDetails.title}</p>
+                      <p className="text-sm font-bold text-slate-500 mt-1 uppercase">{selectedLeadDetails.address}</p>
+                   </div>
+
+                   {/* Score de Oportunidade */}
+                   <div className="flex gap-10">
+                      <div className="flex-1 bg-black p-10 text-white space-y-4 shadow-xl">
+                         <p className="text-[10px] text-cyan-400 font-black uppercase tracking-[0.4em]">SCORE_DE_OPORTUNIDADE</p>
+                         <p className="text-8xl font-black italic tracking-tighter leading-none">{selectedLeadDetails.score || '98'}%</p>
+                         <div className="h-1.5 w-full bg-white/10 mt-6 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 h-full bg-cyan-400 w-[98%]"></div>
+                         </div>
+                      </div>
+                      <div className="w-1/3 border-4 border-black p-8 flex flex-col justify-center items-center text-center">
+                         <Zap className="w-12 h-12 text-cyan-600 mb-4" />
+                         <p className="text-xs font-black uppercase text-black leading-tight">ENTREGA_PROMETIDA: REDUÇÃO_RESIDUO_ZERO</p>
+                      </div>
+                   </div>
+
+                   {/* ROI CALCULATOR CLONE */}
+                   <div className="bg-cyan-50 border-2 border-cyan-100 p-10 space-y-6">
+                      <h4 className="text-xl font-black uppercase text-cyan-900 tracking-widest flex items-center gap-3">
+                        POTENCIAL_DE_LUCRO_VASSADO (MENSAL)
+                      </h4>
+                      <p className="text-7xl font-black text-black italic tracking-tighter">
+                        R$ {(ticketMedio * fluxoMensal * (auditConversion / 100)).toLocaleString('pt-BR')}
+                      </p>
+                      <div className="grid grid-cols-2 gap-8 pt-6 border-t border-cyan-200">
+                         <div>
+                            <p className="text-[8px] font-black text-cyan-600 uppercase">Ticket_Médio_Ref:</p>
+                            <p className="text-lg font-black text-black">R$ {ticketMedio}</p>
+                         </div>
+                         <div>
+                            <p className="text-[8px] font-black text-cyan-600 uppercase">Fluxo_Mensal_Estimado:</p>
+                            <p className="text-lg font-black text-black">{fluxoMensal} Leads</p>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Análise de Gaps */}
                    <div className="grid grid-cols-2 gap-10">
-                      <div className="p-6 border-l-4 border-rose-500 bg-rose-50/10">
-                         <h2 className="text-xs font-black uppercase text-rose-600 mb-2">GAP_01: PRESENÇA_MOBILE</h2>
-                         <p className="text-[10px] text-slate-700 leading-relaxed italic">Falta de adaptabilidade mobile detectada. Perda estimada de 65% na taxa de conversão direta.</p>
+                      <div className="border border-slate-200 p-8 space-y-4">
+                         <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center font-black">01</div>
+                            <h5 className="text-sm font-black uppercase text-black italic">PRESENÇA_MOBILE_REATIVA</h5>
+                         </div>
+                         <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic border-l-2 border-rose-200 pl-4 text-justify">
+                            A falta de carregamento instantâneo e botões de ação direta no celular causa uma perda de leads de até 65%. 
+                         </p>
                       </div>
-                      <div className="p-6 border-l-4 border-purple-500 bg-purple-50/10">
-                         <h2 className="text-xs font-black uppercase text-purple-600 mb-2">GAP_02: CONFIABILIDADE_VISUAL</h2>
-                         <p className="text-[10px] text-slate-700 leading-relaxed italic">Ausência de vitrine digital profissional. Redução drástica na autoridade local perceptível.</p>
+                      <div className="border border-slate-200 p-8 space-y-4">
+                         <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-purple-500 text-white flex items-center justify-center font-black">02</div>
+                            <h5 className="text-sm font-black uppercase text-black italic">CONFIABILIDADE_VISUAL</h5>
+                         </div>
+                         <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic border-l-2 border-purple-200 pl-4 text-justify">
+                            Empresas sem site moderno perdem autoridade. O cliente decide pelo concorrente que transmite mais confiança digital.
+                         </p>
                       </div>
-                   </div>
-
-                   <div className="bg-slate-900 text-white p-10 space-y-4">
-                      <h3 className="text-xl font-black uppercase tracking-widest text-[#00ffff]">PROJEÇÃO_DE_RECEITA_RECUPERÁVEL</h3>
-                      <p className="text-6xl font-black italic tracking-tighter">R$ {(ticketMedio * fluxoMensal * (auditConversion / 100)).toLocaleString('pt-BR')}</p>
-                      <p className="text-[9px] text-cyan-400/60 font-mono tracking-[0.4em uppercase]">VALOR_ESTIMADO_MENSAL baseado em {auditConversion}% de conversão</p>
-                   </div>
-
-                   <div className="border border-slate-200 p-8 space-y-4">
-                      <h4 className="text-lg font-black uppercase text-slate-900 underline decoration-cyan-400">PLANO_DE_AÇÃO_SITEPROX</h4>
-                      <p className="text-[11px] text-slate-600 leading-relaxed font-bold">Implementação de ecossistema digital Vessel 2025. Foco em velocidade luminar (LCP &lt; 1s) e CTAs diretos via WhatsApp.</p>
                    </div>
                 </section>
                 
-                <footer className="mt-20 pt-8 border-t border-slate-100 flex justify-between items-end opacity-40">
-                   <div className="text-[8px] font-black uppercase tracking-widest">SITEPROX_INTELLIGENCE // v4.0</div>
-                   <div className="text-right text-[8px] font-black uppercase tracking-widest">SPOOLER: {new Date().toLocaleDateString('pt-BR')}</div>
+                <footer className="mt-24 pt-10 border-t-2 border-slate-200 flex justify-between items-end">
+                   <div className="space-y-4">
+                      <p className="text-2xl font-black uppercase italic text-black border-b-4 border-cyan-500 inline-block pr-10">LUCAS_ESTRATEGISTA</p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">SQUAD_SITEPROX // OPERAÇÃO_LUCRO_TOTAL</p>
+                   </div>
+                   <div className="text-right">
+                      <p className="text-3xl font-black italic text-black">SITE<span className="text-cyan-600">PROX</span></p>
+                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2">RESIDUO_ZERO_PROTOCOL</p>
+                   </div>
                 </footer>
              </div>
           </div>
