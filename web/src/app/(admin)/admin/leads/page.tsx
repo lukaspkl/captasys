@@ -3319,6 +3319,12 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                         GERAR_DOSSIÊ_AUDITORIA_V2
                       </Button>
                     )}
+                    <Button
+                      onClick={() => generateTacticalDossier(selectedLeadDetails)}
+                      className="w-full h-12 bg-pink-500 text-white font-black italic tracking-widest hover:bg-white hover:text-pink-500 transition-all border-none shadow-[0_0_20px_rgba(236,72,153,0.3)] my-4"
+                    >
+                      <Radar className="w-5 h-5 mr-2" /> GERAR_DOSSIÊ_TÁTICO_V4
+                    </Button>
                     <button
                       onClick={() => {
                         generateLovablePrompt();
