@@ -36,7 +36,7 @@ const WhatsAppButton = () => (
   <motion.div
     initial={{ scale: 0, opacity: 0 }}
     animate={{ scale: 1, opacity: 1 }}
-    className="fixed bottom-10 right-10 z-[100] group"
+    className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[100] group"
   >
     <div className="relative">
       <motion.div 
@@ -48,9 +48,9 @@ const WhatsAppButton = () => (
         href="https://wa.me/5531982188309?text=Olá,%20tenho%20interesse%20nas%20estratégias%20da%20SiteProx!"
         target="_blank"
         whileHover={{ scale: 1.1 }}
-        className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-[#25D366] to-[#22d3ee] rounded-full shadow-[0_0_30px_rgba(37,211,102,0.5)] border-2 border-white/20"
+        className="relative flex items-center justify-center w-14 h-14 md:w-20 md:h-20 bg-gradient-to-tr from-[#25D366] to-[#22d3ee] rounded-full shadow-[0_0_30px_rgba(37,211,102,0.5)] border-2 border-white/20"
       >
-        <MessageCircle className="w-10 h-10 text-white fill-current" />
+        <MessageCircle className="w-7 h-7 md:w-10 md:h-10 text-white fill-current" />
         <div className="absolute right-24 top-1/2 -translate-y-1/2 bg-black/90 backdrop-blur-3xl border border-emerald-500/50 px-6 py-4 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl">
            <p className="text-white text-xs font-black uppercase tracking-widest italic">Falar_com_especialista_agora</p>
            <p className="text-[#25D366] text-[9px] font-bold uppercase mt-1 tracking-widest animate-pulse">● Resposta em minutos</p>
@@ -186,7 +186,7 @@ const SiteProxPage = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, ease: "easeOut" }}
-                  className={`text-6xl md:text-9xl font-black italic tracking-tighter leading-[0.85] uppercase ${sora.className}`}
+                  className={`text-5xl sm:text-6xl md:text-9xl font-black italic tracking-tighter leading-[0.85] uppercase ${sora.className}`}
                 >
                   <span className="block text-white">TRANSFORME</span>
                   <span className="block text-white">LEADS EM</span>
@@ -195,14 +195,14 @@ const SiteProxPage = () => {
                   </span>
                 </motion.h1>
                 <FadeIn delay={0.4}>
-                  <p className={`text-xs md:text-sm font-black uppercase tracking-[0.5em] text-slate-500 line-clamp-1 italic ${pixelFont.className}`}>
+                  <p className={`text-[9px] md:text-sm font-black uppercase tracking-[0.3em] md:tracking-[0.5em] text-slate-500 line-clamp-1 italic ${pixelFont.className}`}>
                     SiteProx — No caos da web, nós somos a ordem.
                   </p>
                 </FadeIn>
               </div>
               
               <FadeIn delay={0.6}>
-                <p className="text-2xl md:text-4xl text-white font-black max-w-4xl mx-auto leading-none uppercase italic border-l-8 border-[#22d3ee] pl-8 text-left bg-white/5 py-8 backdrop-blur-sm group hover:border-[#ec4899] transition-colors duration-500">
+                <p className="text-xl md:text-4xl text-white font-black max-w-4xl mx-auto leading-none uppercase italic border-l-4 md:border-l-8 border-[#22d3ee] pl-4 md:pl-8 text-left bg-white/5 py-8 backdrop-blur-sm group hover:border-[#ec4899] transition-colors duration-500">
                   Criamos sites profissionais para negócios locais que querem <span className="text-[#22d3ee] group-hover:text-white transition-colors">mais clientes</span> pelo WhatsApp e Google.
                 </p>
               </FadeIn>
@@ -231,7 +231,7 @@ const SiteProxPage = () => {
                  <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div className="space-y-10">
                        <AlertOctagon className="w-16 h-16 text-red-500" />
-                       <h2 className={`text-5xl md:text-[6rem] font-black tracking-tighter uppercase italic leading-[0.85] ${sora.className}`}>
+                       <h2 className={`text-4xl md:text-[6rem] font-black tracking-tighter uppercase italic leading-[0.85] ${sora.className}`}>
                          Você está <span className="text-red-500 underline decoration-wavy">perdendo</span> clientes agora.
                        </h2>
                        <p className="text-2xl text-slate-400 font-medium italic border-l-4 border-red-500 pl-8">
