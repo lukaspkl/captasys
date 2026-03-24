@@ -2001,19 +2001,35 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                           body * { visibility: hidden; }
                           #dossier-print-zone, #dossier-print-zone * { visibility: visible; }
                           #dossier-print-zone {
-                            position: absolute;
-                            left: 0;
-                            top: 0;
-                            width: 100%;
-                            height: auto;
+                            position: fixed !important;
+                            left: 0 !important;
+                            top: 0 !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            z-index: 99999 !important;
                             background: white !important;
                             color: black !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            overflow: visible !important;
                           }
-                          #dossier-print-zone .bg-[#0f172a] { background: white !important; border: 1px solid #ddd !important; }
+                          #dossier-print-zone > div {
+                            border: none !important;
+                            box-shadow: none !important;
+                            width: 100% !important;
+                            max-width: 100% !important;
+                            background: white !important;
+                          }
+                          #dossier-print-zone .bg-[#0f172a] { background: white !important; color: black !important; }
                           #dossier-print-zone .text-white { color: black !important; }
-                          #dossier-print-zone .text-slate-500 { color: #666 !important; }
-                          #dossier-print-zone .border-pink-500\/30 { border-color: #ec4899 !important; }
+                          #dossier-print-zone .bg-black\/40 { background: #f8fafc !important; border: 1px solid #e2e8f0 !important; }
+                          #dossier-print-zone .bg-white\/5 { background: #f1f5f9 !important; border: 1px solid #e2e8f0 !important; }
+                          #dossier-print-zone .bg-pink-500\/5 { background: #fff1f2 !important; border: 2px solid #ec4899 !important; }
+                          #dossier-print-zone .text-slate-500 { color: #475569 !important; }
+                          #dossier-print-zone .text-pink-500 { color: #ec4899 !important; }
+                          #dossier-print-zone .shadow-\[0_0_100px_rgba\(236,72,153,0.1\)\] { box-shadow: none !important; }
                           #dossier-print-zone button { display: none !important; }
+                          #dossier-print-zone .fixed { position: relative !important; }
                         }
                       `}} />
                       <Table>
@@ -3210,26 +3226,36 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
       {/* DOSSIÊ TÁTICO MODAL */}
       {isDossierModalOpen && dossierLead && (
         <div id="dossier-print-zone" className="fixed inset-0 bg-[#020617]/95 backdrop-blur-2xl z-[200] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)]">
+          <div className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] h-fit flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)] my-auto">
             <div className="absolute top-0 left-0 w-full h-1 bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)]" />
             
-            <div className="p-8 border-b border-white/5 flex justify-between items-center bg-black/40">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
-                  <Radar className="w-8 h-8 text-pink-500 animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="font-outfit text-2xl font-black italic text-white uppercase tracking-tighter">
-                    Dossiê de Inteligência Tática
-                  </h2>
-                  <p className="text-[10px] text-pink-500 font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                    <ShieldCheck className="w-3 h-3" /> Relatório_ID: {dossierLead.id.split('-')[0]} SITEPROX_V3
-                  </p>
-                </div>
+            <div className="p-8 border-b border-white/5 flex flex-col gap-4 bg-black/40">
+              <div className="flex justify-between items-center">
+                 <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
+                      <Radar className="w-8 h-8 text-pink-500 animate-pulse" />
+                    </div>
+                    <div>
+                      <h2 className="font-outfit text-2xl font-black italic text-white uppercase tracking-tighter">
+                        Dossiê de Inteligência Tática
+                      </h2>
+                      <p className="text-[10px] text-pink-500 font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                        <ShieldCheck className="w-3 h-3" /> Relatório_ID: {dossierLead.id.split('-')[0]} SITEPROX_V3
+                      </p>
+                    </div>
+                  </div>
+                  <button onClick={() => setIsDossierModalOpen(false)} className="text-slate-500 hover:text-white transition-all print:hidden">
+                    <X className="w-6 h-6" />
+                  </button>
               </div>
-              <button onClick={() => setIsDossierModalOpen(false)} className="text-slate-500 hover:text-white transition-all">
-                <X className="w-6 h-6" />
-              </button>
+              
+              <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-end">
+                 <div>
+                    <label className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Alvo da Análise</label>
+                    <h3 className="text-xl font-bold text-white uppercase italic">{dossierLead.title}</h3>
+                 </div>
+                 <Badge className="bg-pink-500 text-white border-none text-[8px] font-black uppercase px-3 h-6 mb-1">CLASSIFICADO // CONFIDENCIAL</Badge>
+              </div>
             </div>
 
             <div className="p-10 flex-1 space-y-12">
