@@ -250,22 +250,22 @@ const SiteProxPage = () => {
       <section className="py-40 z-10 relative">
          <div className="container mx-auto px-6">
             <FadeIn>
-              <div className="bg-gradient-to-br from-red-600/10 to-transparent border border-red-500/20 rounded-[4rem] p-16 relative overflow-hidden">
-                 <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                    <div className="space-y-10">
-                       <AlertOctagon className="w-16 h-16 text-red-500" />
-                       <h2 className={`text-4xl md:text-[6rem] font-black tracking-tighter uppercase italic leading-[0.85] ${sora.className}`}>
+               <div className="bg-gradient-to-br from-red-600/10 to-transparent border border-red-500/20 rounded-[2rem] md:rounded-[4rem] p-8 md:p-16 relative overflow-hidden">
+                 <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                    <div className="space-y-8 md:space-y-10">
+                       <AlertOctagon className="w-12 h-12 md:w-16 md:h-16 text-red-500" />
+                       <h2 className={`text-3xl sm:text-4xl md:text-[6rem] font-black tracking-tighter uppercase italic leading-tight md:leading-[0.85] ${sora.className}`}>
                          Você está <span className="text-red-500 underline decoration-wavy">perdendo</span> clientes agora.
                        </h2>
-                       <p className="text-2xl text-slate-400 font-medium italic border-l-4 border-red-500 pl-8">
+                       <p className="text-lg md:text-2xl text-slate-400 font-medium italic border-l-4 border-red-500 pl-4 md:pl-8">
                          Enquanto você está offline ou com um site lento, seu concorrente está fechando vendas no WhatsApp. Seu negócio é <span className="text-white font-black">INVISÍVEL.</span>
                        </p>
                     </div>
-                    <div className="space-y-8">
+                    <div className="space-y-4 md:space-y-8">
                        {[ "O lead não espera 3 segundos.", "Visual amador afasta bons clientes.", "Sites lentos custam dinheiro real." ].map((item, i) => (
-                         <div key={i} className="p-8 bg-black/40 border border-white/5 rounded-3xl flex items-center gap-6 group hover:border-red-500/50 transition-all">
-                            <History className="w-10 h-10 text-red-500 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
-                            <p className="text-xl font-black uppercase tracking-tighter">{item}</p>
+                         <div key={i} className="p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-6 group hover:border-red-500/50 transition-all">
+                            <History className="w-8 h-8 md:w-10 md:h-10 text-red-500 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                            <p className="text-sm md:text-xl font-black uppercase tracking-tighter">{item}</p>
                          </div>
                        ))}
                     </div>
