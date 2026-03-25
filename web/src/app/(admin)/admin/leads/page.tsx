@@ -16,6 +16,7 @@ import {
 // MODALS
 import SearchModal from "./components/modals/SearchModal";
 import DossierModal from "./components/modals/DossierModal";
+import AuditModal from "./components/modals/AuditModal";
 import BlacklistModal from "./components/modals/BlacklistModal";
 import StitchConfigModal from "./components/modals/StitchConfigModal";
 import PreviewModal from "./components/modals/PreviewModal";
@@ -71,8 +72,24 @@ export default function DashboardPage() {
     setSelectedLeadDetails,
     leadAnalysis,
     isAnalyzing,
+    filterMode,
+    setFilterMode,
+    isAuditModalOpen,
+    setIsAuditModalOpen,
+    ticketMedio,
+    setTicketMedio,
+    fluxoMensal,
+    setFluxoMensal,
+    auditConversion,
+    setAuditConversion,
     isSiteOutdated,
     setIsSiteOutdated,
+    isRenewalModalOpen,
+    setIsRenewalModalOpen,
+    isManualModalOpen,
+    setIsManualModalOpen,
+    isLovableModalOpen,
+    setIsLovableModalOpen,
     generatedMessage,
     isDossierModalOpen,
     setIsDossierModalOpen,
@@ -110,8 +127,6 @@ export default function DashboardPage() {
     previewHtmlInput,
     setPreviewHtmlInput,
     previewLink,
-    filterMode,
-    setFilterMode,
     quarantinedLeads,
 
     // Handlers
@@ -141,9 +156,6 @@ export default function DashboardPage() {
     handleDeleteLead,
     setLeads,
     setSelectedLeadIndex,
-    setIsManualModalOpen,
-    setIsRenewalModalOpen,
-    setIsAuditModalOpen,
     addToBlacklist,
     removeFromBlacklist,
     recoverLead,
@@ -441,6 +453,16 @@ export default function DashboardPage() {
         previewLink={previewLink}
         onSave={savePreview}
         onClose={() => setIsPreviewModalOpen(false)}
+      />
+
+      <AuditModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+        lead={selectedLeadDetails}
+        ticketMedio={ticketMedio}
+        fluxoMensal={fluxoMensal}
+        conversaoAtual={auditConversion}
+        onPrint={() => window.print()}
       />
     </>
   );
