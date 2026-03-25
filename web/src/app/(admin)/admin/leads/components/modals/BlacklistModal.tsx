@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -35,7 +34,7 @@ export default function BlacklistModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[400] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-400 flex items-center justify-center p-4">
       <div className="bg-dark-bg border border-red-500/30 w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_0_60px_rgba(239,68,68,0.15)] relative">
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-red-500/20 bg-red-950/10">
@@ -112,10 +111,10 @@ export default function BlacklistModal({
                 {blacklist.map((entry) => (
                   <div
                     key={entry}
-                    className="flex items-center justify-between px-4 py-2 bg-white/[0.02] border border-white/5 group hover:border-red-500/20 transition-all"
+                    className="flex items-center justify-between px-4 py-2 bg-white/2 border border-white/5 group hover:border-red-500/20 transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-red-500 flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-red-500 shrink-0" />
                       <span className="text-[11px] font-mono text-slate-400 group-hover:text-white transition-colors">
                         {entry}
                       </span>
@@ -153,7 +152,7 @@ export default function BlacklistModal({
                 {quarantinedLeads.map((lead, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between px-4 py-3 bg-white/[0.02] border border-white/5 group hover:border-amber-500/20 transition-all gap-3"
+                    className="flex items-center justify-between px-4 py-3 bg-white/2 border border-white/5 group hover:border-amber-500/20 transition-all gap-3"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-[11px] font-bold text-slate-300 truncate">
@@ -168,7 +167,7 @@ export default function BlacklistModal({
                     </div>
                     <button
                       onClick={() => onRecover(lead)}
-                      className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-black font-mono uppercase tracking-wider text-cyan-400 border border-cyan-400/20 hover:bg-cyan-400/10 hover:border-cyan-400 transition-all"
+                      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-black font-mono uppercase tracking-wider text-cyan-400 border border-cyan-400/20 hover:bg-cyan-400/10 hover:border-cyan-400 transition-all"
                     >
                       <RotateCcw className="w-3 h-3" /> RECUPERAR
                     </button>

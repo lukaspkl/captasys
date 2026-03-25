@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -17,10 +16,10 @@ interface SearchModalProps {
   setEstado: (val: string) => void;
   cidade: string;
   handleCidadeChange: (val: string) => void;
-  cidadesList: any[];
+  cidadesList: { nome: string; id: string | number }[];
   bairro: string;
   setBairro: (val: string) => void;
-  bairrosList: any[];
+  bairrosList: { nome: string }[];
   isDeepScan: boolean;
   setIsDeepScan: (val: boolean) => void;
   customBairro: string;
@@ -62,10 +61,10 @@ const SearchModal: React.FC<SearchModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-150 flex items-center justify-center p-4">
       <Card className="bg-[#0f172a] border border-cyan-500/30 rounded-none w-full max-w-lg overflow-hidden relative shadow-[0_0_50px_rgba(6,182,212,0.15)]">
         <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
-        <CardHeader className="p-6 border-b border-white/5 bg-white/[0.02]">
+        <CardHeader className="p-6 border-b border-white/5 bg-white/2">
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl font-black italic text-white uppercase tracking-tighter flex items-center gap-3">
               <Target className="w-5 h-5 text-cyan-500" />
@@ -138,7 +137,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                   <option value="" className="bg-[#0f172a] text-cyan-400">
                     SELECIONE A CIDADE...
                   </option>
-                  {cidadesList.map((c: any) => (
+                  {cidadesList.map((c: { nome: string; id: string | number }) => (
                     <option key={c.id} value={c.nome} className="bg-[#0f172a] text-cyan-400">
                       {c.nome}
                     </option>
@@ -175,7 +174,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                     ? "MODO SCAN TOTAL ATIVADO (Pular Bairro)"
                     : "SELECIONE O BAIRRO (OU GERAL)..."}
                 </option>
-                {bairrosList.map((b: any) => (
+                {bairrosList.map((b: { nome: string }) => (
                   <option key={b.nome} value={b.nome} className="bg-[#0f172a] text-cyan-400">
                     {b.nome}
                   </option>

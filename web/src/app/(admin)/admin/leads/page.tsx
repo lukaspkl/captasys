@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import { useLeadsState, templatesList } from "./hooks/useLeadsState";
 import { Button } from "@/components/ui/button";
+import { View } from "./types";
 import {
   Globe,
   Database,
   Activity,
-  Zap,
   LayoutDashboard,
   Settings,
   Archive,
@@ -157,23 +154,25 @@ export default function DashboardPage() {
       <div className="flex">
         {/* NAVEGAÇÃO TÁTICA LATERAL */}
         <aside className="w-24 min-h-screen bg-black/40 border-r border-[#06b6d4]/10 flex flex-col items-center py-10 gap-10 sticky top-0 h-screen z-50">
-          <div className="w-14 h-14 bg-[#06b6d4]/10 border border-[#06b6d4]/40 flex items-center justify-center group cursor-pointer hover:border-[#ff00ff] transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-            <Database className="w-6 h-6 text-[#06b6d4] group-hover:text-[#ff00ff] transition-all" />
+          <div className="w-14 h-14 bg-[#06b6d4]/10 border border-[#06b6d4]/40 flex items-center justify-center group cursor-pointer hover:border-neon-pink transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            <Database className="w-6 h-6 text-[#06b6d4] group-hover:text-neon-pink transition-all" />
           </div>
 
           <nav className="flex flex-col gap-6">
-            {[
-              { id: "dashboard", icon: LayoutDashboard, label: "MAIN_DASH" },
-              { id: "active-sites", icon: Globe, label: "PROD_CORE" },
-              { id: "crm", icon: Activity, label: "CRM_FLOW" },
-              { id: "templates", icon: Database, label: "TEMPLATES" },
-              { id: "swipe", icon: Sparkles, label: "SWIPE_FILE" },
-              { id: "vault", icon: Archive, label: "SECRET_VAULT" },
-              { id: "settings", icon: Settings, label: "SYS_CONFIG" },
-            ].map((item) => (
+            {(
+              [
+                { id: "dashboard", icon: LayoutDashboard, label: "MAIN_DASH" },
+                { id: "active-sites", icon: Globe, label: "PROD_CORE" },
+                { id: "crm", icon: Activity, label: "CRM_FLOW" },
+                { id: "templates", icon: Database, label: "TEMPLATES" },
+                { id: "swipe", icon: Sparkles, label: "SWIPE_FILE" },
+                { id: "vault", icon: Archive, label: "SECRET_VAULT" },
+                { id: "settings", icon: Settings, label: "SYS_CONFIG" },
+              ] as const
+            ).map((item) => (
               <button
                 key={item.id}
-                onClick={() => setCurrentView(item.id as any)}
+                onClick={() => setCurrentView(item.id as View)}
                 className={`w-12 h-12 flex flex-col items-center justify-center gap-1 transition-all group relative ${currentView === item.id ? "text-[#06b6d4]" : "text-slate-600 hover:text-white"}`}
               >
                 <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />

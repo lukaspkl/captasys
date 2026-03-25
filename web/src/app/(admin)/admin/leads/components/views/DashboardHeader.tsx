@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -10,9 +9,10 @@ import {
   Target 
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import type { Lead } from "../../types";
 
 interface DashboardHeaderProps {
-  leads: any[];
+  leads: Lead[];
   filterMode: string;
   setFilterMode: (val: string) => void;
   isSearching: boolean;

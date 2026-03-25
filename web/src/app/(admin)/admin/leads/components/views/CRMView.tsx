@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -49,9 +48,9 @@ const CRMView: React.FC<CRMViewProps> = ({
 
                   <div className="flex items-center justify-between mt-6 pt-4 border-t border-cyan-400/10">
                     <div
-                      className={`text-[9px] font-black px-3 py-1 rounded-none font-mono ${lead.score > 70 ? "bg-cyan-500/10 text-cyan-400 border border-cyan-400/20 shadow-[0_0_10px_rgba(6,182,212,0.1)]" : lead.score > 40 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : "bg-pink-500/10 text-pink-500 border border-pink-500/20"}`}
+                      className={`text-[9px] font-black px-3 py-1 rounded-none font-mono ${(lead.score ?? 0) > 70 ? "bg-cyan-500/10 text-cyan-400 border border-cyan-400/20 shadow-[0_0_10px_rgba(6,182,212,0.1)]" : (lead.score ?? 0) > 40 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : "bg-pink-500/10 text-pink-500 border border-pink-500/20"}`}
                     >
-                      SCORE::{lead.score}
+                      SCORE::{lead.score ?? 0}
                     </div>
                     <button
                       onClick={(e) => {

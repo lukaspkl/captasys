@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // ─── LEAD ───────────────────────────────────────────────────────────────────
 export interface Lead {
   title?: string;
@@ -19,7 +17,22 @@ export interface Lead {
     mobile?: boolean;
   };
   blockedReason?: string;
-  [key: string]: any;
+  classificationMotivity?: string;
+  analysisStatus?: "PENDENTE" | "ANALISANDO" | "COMPLETO";
+  savedAt?: string;
+  swipedAt?: string;
+  score?: number;
+  temperature?: "Frio" | "Morno" | "Quente";
+  snippet?: string;
+  id?: string;
+  reviews?: number | string;
+}
+
+// ─── LEAD ANALYSIS ──────────────────────────────────────────────────────────
+export interface LeadAnalysis {
+  platform?: string;
+  score?: number;
+  perceptions?: string[];
 }
 
 // ─── LEAD SCORE ─────────────────────────────────────────────────────────────
@@ -34,7 +47,7 @@ export interface StitchConfig {
   name: string;
   themeId: string;
   segment: string;
-  lead: any;
+  lead: Lead | null;
 }
 
 // ─── ACTIVE PROJECT ────────────────────────────────────────────────────────
@@ -48,7 +61,7 @@ export interface ActiveProject {
   liveUrl: string;
   type: string;
   htmlContent: string;
-  leadInfo?: any;
+  leadInfo?: Lead;
 }
 
 
@@ -104,3 +117,4 @@ export const NICHE_CONFIG: Record<string, NicheConfig> = {
   "Construção": { emoji: "🧱", keywords: ["Material de Construção", "Reforma Residencial", "Pintura Comercial", "Engenharia Civil"] },
   "Geral": { emoji: "💼", keywords: ["Prestação de Serviços", "Consultoria de Negócios", "Marketing Digital"] }
 };
+export type View = "dashboard" | "active-sites" | "crm" | "templates" | "swipe" | "vault" | "settings" | "campaigns";

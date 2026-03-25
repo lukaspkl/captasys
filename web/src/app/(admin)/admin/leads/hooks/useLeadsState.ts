@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { updateProjectStatus } from "@/app/actions/nodes";
 import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
-import type { Lead, StitchConfig, ProjectSettings, TemplateConfig, ActiveProject } from "../types";
+import type { Lead, StitchConfig, ProjectSettings, TemplateConfig, ActiveProject, MarketingTemplate, LeadAnalysis, View } from "../types";
 import { NICHE_CONFIG } from "../types";
 
 export const templatesList = [
@@ -47,7 +47,7 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
 ];
 
 export const useLeadsState = () => {
-  const [currentView, setCurrentView] = useState("dashboard"); // dashboard, campaigns, active-sites, crm
+  const [currentView, setCurrentView] = useState<View>("dashboard"); // dashboard, campaigns, active-sites, crm
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nicho, setNicho] = useState("");
   const [estado, setEstado] = useState("");
@@ -80,7 +80,7 @@ export const useLeadsState = () => {
   const [selectedLeadDetails, setSelectedLeadDetails] = useState<Lead | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [generatedMessage, setGeneratedMessage] = useState("");
-  const [leadAnalysis, setLeadAnalysis] = useState<any>(null);
+  const [leadAnalysis, setLeadAnalysis] = useState<LeadAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPromptCopied, setIsPromptCopied] = useState(false);
   const [stitchStatuses, setStitchStatuses] = useState<Record<string, 'idle' | 'generating' | 'completed' | 'error'>>({});
@@ -123,7 +123,7 @@ export const useLeadsState = () => {
   });
 
   const [selectedTemplateLeadUrl, setSelectedTemplateLeadUrl] = useState<string | null>(null);
-  const [activeTemplate, setActiveTemplate] = useState<any>(null);
+  const [activeTemplate, setActiveTemplate] = useState<MarketingTemplate | null>(null);
 
   // Blacklist Manager
   const DEFAULT_BLACKLIST = [
@@ -216,7 +216,7 @@ export const useLeadsState = () => {
     setBlacklist((prev) => prev.filter((e) => e !== entry));
   };
 
-  const recoverLead = (lead: any) => {
+  const recoverLead = (lead: Lead) => {
     setLeads((prev) => [{ ...lead, blockedReason: undefined }, ...prev]);
     setQuarantinedLeads((prev) => {
       const updated = prev.filter((q) => q.url !== lead.url || q.title !== lead.title);
@@ -230,15 +230,15 @@ export const useLeadsState = () => {
     localStorage.removeItem("capta_quarantine");
   };
 
-  const handleDeleteLead = (leadOrUrl: any) => {
-    const key = typeof leadOrUrl === "string" ? leadOrUrl : (leadOrUrl.mapsUrl || leadOrUrl.url || leadOrUrl.title);
+  const handleDeleteLead = (leadOrUrl: Lead | string) => {
+    const key = typeof leadOrUrl === "string" ? leadOrUrl : (leadOrUrl.mapsUrl || leadOrUrl.url || leadOrUrl.title || "");
     setLeads((prev) => prev.filter((l) => (l.mapsUrl || l.url || l.title) !== key));
     const cached = JSON.parse(localStorage.getItem("capta_leads_cache") || "[]");
-    localStorage.setItem("capta_leads_cache", JSON.stringify(cached.filter((l: any) => (l.mapsUrl || l.url || l.title) !== key)));
+    localStorage.setItem("capta_leads_cache", JSON.stringify(cached.filter((l: Lead) => (l.mapsUrl || l.url || l.title) !== key)));
   };
 
-  const addToVault = (lead: any) => {
-    const key = lead.mapsUrl || lead.title || lead.url;
+  const addToVault = (lead: Lead) => {
+    const key = (lead.mapsUrl || lead.title || lead.url || "").toString();
     if (vaultLeads.some((l) => (l.mapsUrl || l.title || l.url) === key)) {
       setStatusText("Lead já está no cofre!");
       handleDeleteLead(key);
@@ -252,15 +252,15 @@ export const useLeadsState = () => {
     setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
   };
 
-  const removeFromVault = (leadOrUrl: any) => {
-    const key = typeof leadOrUrl === "string" ? leadOrUrl : (leadOrUrl.mapsUrl || leadOrUrl.title || leadOrUrl.url);
+  const removeFromVault = (leadOrUrl: Lead | string) => {
+    const key = typeof leadOrUrl === "string" ? leadOrUrl : (leadOrUrl.mapsUrl || leadOrUrl.title || leadOrUrl.url || "");
     const updated = vaultLeads.filter((l) => (l.mapsUrl || l.url || l.title) !== key);
     setVaultLeads(updated);
     localStorage.setItem("capta_leads_vault_cache", JSON.stringify(updated));
   };
 
-  const addToSwipe = (lead: any) => {
-    const key = lead.mapsUrl || lead.title || lead.url;
+  const addToSwipe = (lead: Lead) => {
+    const key = (lead.mapsUrl || lead.title || lead.url || "").toString();
     if (swipeLeads.some((l) => (l.mapsUrl || l.title || l.url) === key)) {
       setStatusText("Design já está no Swipe File!");
       return;
@@ -272,14 +272,14 @@ export const useLeadsState = () => {
     setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
   };
 
-  const removeFromSwipe = (lead: any) => {
-    const key = lead.mapsUrl || lead.title || lead.url;
+  const removeFromSwipe = (lead: Lead) => {
+    const key = (lead.mapsUrl || lead.title || lead.url || "").toString();
     const updated = swipeLeads.filter((l) => (l.mapsUrl || l.url || l.title) !== key);
     setSwipeLeads(updated);
     localStorage.setItem("capta_swipe_leads", JSON.stringify(updated));
   };
 
-  const generateCloningPrompt = (lead: any) => {
+  const generateCloningPrompt = (lead: Lead) => {
     const prompt = `# CLONAGEM DE NICHO // ENGENHARIA REVERSA DE ALTA FIDELIDADE
 Aja como um desenvolvedor Fullstack Senior e especialista em UI/UX. 
 Analise este site de referência no nicho '${lead.title}': ${lead.url} 
@@ -315,7 +315,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
         setStitchStatuses(prev => ({ ...prev, [targetLead.url!]: 'completed' }));
         setStatusText("Template Sincronizado!");
       } else { throw new Error(result.error); }
-    } catch (error: any) { setStatusText(error.message); }
+    } catch (error: unknown) { setStatusText(error instanceof Error ? error.message : "Erro desconhecido"); }
   };
 
   const handleSendZap = (lead: Lead) => {
@@ -429,7 +429,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
         if (data.leads && data.leads.length > 0) {
           const bairroTerm = targetBairro?.toUpperCase() || "";
           
-          const formated: Lead[] = data.leads.map((l: any) => {
+          const formated: Lead[] = data.leads.map((l: Lead) => {
             const isExact = bairroTerm && l.address?.toUpperCase().includes(bairroTerm);
             return {
               ...l,
@@ -471,8 +471,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
 
       setProgress(100);
       setStatusText(`Sincronização Finalizada.`);
-    } catch (err: any) {
-      setStatusText(`FALHA_NOS_SATÉLITES: ${err.message}`);
+    } catch (err: unknown) {
+      setStatusText(`FALHA_NOS_SATÉLITES: ${err instanceof Error ? err.message : "Erro desconhecido"}`);
     } finally {
       setTimeout(() => {
         setIsSearching(false);
@@ -532,7 +532,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setTimeout(() => setStatusText("Dashboard Ativo."), 3000);
   };
 
-  const processTemplatePreview = (template: any) => {
+  const processTemplatePreview = (template: MarketingTemplate) => {
     setActiveTemplate(template);
     const selectedTemplateLead = leads.find((l) => l.url === selectedTemplateLeadUrl);
 
@@ -563,7 +563,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   };
 
   const sortedLeads = useMemo(() => {
-    return [...leads].sort((a, b) => ((b as any).score || 0) - ((a as any).score || 0));
+    return [...leads].sort((a, b) => (b.score || 0) - (a.score || 0));
   }, [leads]);
 
   const filteredLeads = useMemo(() => {
@@ -588,7 +588,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
       })
       .then((data) => {
         if (active && Array.isArray(data)) {
-          const formatted = data.map((c: any) => ({ nome: c.nome, id: c.id }));
+          const formatted = data.map((c: { nome: string; id: string }) => ({ nome: c.nome, id: c.id }));
           setCidadesList(formatted);
         }
       })
@@ -610,7 +610,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
       .then(res => res.json())
       .then(data => {
         if (active && Array.isArray(data)) {
-          const formatted = data.map((d: any) => ({ nome: d.nome }));
+          const formatted = data.map((d: { nome: string }) => ({ nome: d.nome }));
           setBairrosList(formatted);
         }
       })
@@ -631,7 +631,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   // Enriquecimento Automático
   useEffect(() => {
     if (isSearching || isAnalyzing) return;
-    const nextToEnrich = leads.find(l => !l.phone && (l as any).analysisStatus === "PENDENTE");
+    const nextToEnrich = leads.find(l => !l.phone && l.analysisStatus === "PENDENTE");
     if (nextToEnrich) {
       setLeads(prev => prev.map(l => l.id === nextToEnrich.id ? { ...l, analysisStatus: "ANALISANDO" } : l));
       window.dispatchEvent(new CustomEvent("CAPTASAAS_START_ANALYSIS", { detail: { url: nextToEnrich.url, mapsUrl: nextToEnrich.mapsUrl, silent: true } }));
@@ -640,8 +640,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
 
   // Extension Listeners
   useEffect(() => {
-    const handleExtensionUpdate = (event: any) => {
-      const msg = event.detail;
+    const handleExtensionUpdate = (event: Event) => {
+      const msg = (event as CustomEvent).detail;
       if (msg.action === "SEARCH_PROGRESS") { setStatusText(msg.status); setProgress(msg.progress); setIsSearching(true); }
       else if (msg.action === "LEADS_FOUND") { 
         setLeads(prev => [...(msg.leads || []), ...prev]);

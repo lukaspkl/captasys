@@ -1,22 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
 import { Radar, ShieldCheck, X, Crosshair, Cpu, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { Lead } from "../../types";
 
 interface DossierModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lead: any;
+  lead: Lead | null;
   isLoading: boolean;
   competitorsCount: { radius2km: number; radius5km: number };
-  competitorsList: any[];
+  competitorsList: Lead[];
   pitch: string;
   onPrint: () => void;
-  onSendZap: (lead: any) => void;
-  isPrinting?: boolean;
+  onSendZap: (lead: Lead) => void;
 }
 
 const DossierModal: React.FC<DossierModalProps> = ({
@@ -29,14 +28,13 @@ const DossierModal: React.FC<DossierModalProps> = ({
   pitch,
   onPrint,
   onSendZap,
-  isPrinting = false,
 }) => {
   if (!isOpen || !lead) return null;
 
   return (
     <div
       id="dossier-print-zone"
-      className="fixed inset-0 bg-[#020617]/95 backdrop-blur-2xl z-[200] flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 bg-[#020617]/95 backdrop-blur-2xl z-200 flex items-center justify-center p-4 overflow-y-auto"
     >
       <div className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] h-fit flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)] my-auto">
         <div className="absolute top-0 left-0 w-full h-1 bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)]" />
@@ -83,7 +81,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
         <div className="p-10 flex-1 space-y-12">
           {isLoading ? (
             <div className="h-64 flex flex-col items-center justify-center space-y-6">
-              <div className="w-20 h-20 border-t-2 border-pink-500 border-r-2 border-transparent rounded-full animate-spin" />
+              <div className="w-20 h-20 border-2 border-transparent border-t-pink-500 rounded-full animate-spin" />
               <p className="text-xs font-black text-pink-500 uppercase tracking-[0.5em] animate-pulse">
                 Sincronizando satélites...
               </p>
@@ -120,7 +118,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
                   </p>
                   <h3
                     className={`text-4xl font-black italic ${
-                      parseFloat(lead.rating) < 4.6
+                      parseFloat(String(lead.rating || "0")) < 4.6
                         ? "text-rose-500"
                         : "text-emerald-500"
                     }`}
@@ -140,7 +138,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
                   Próximos
                 </h4>
                 <div className="grid grid-cols-1 gap-3">
-                  {competitorsList.map((c: any, i: number) => (
+                  {competitorsList.map((c: Lead, i: number) => (
                     <div
                       key={i}
                       className="bg-white/5 border border-white/5 p-4 flex justify-between items-center group hover:bg-white/10 transition-all"
@@ -161,7 +159,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
                           {c.rating}★
                         </span>
                         <Badge className="bg-pink-500/10 text-pink-500 border-none text-[8px] uppercase">
-                          {c.reviews} reviews
+                          {c.reviewCount || 0} reviews
                         </Badge>
                       </div>
                     </div>

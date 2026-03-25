@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -93,7 +92,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({
                 <Input
                   value={templateConfig.sellerName}
                   onChange={(e) =>
-                    setTemplateConfig((prev: any) => ({
+                    setTemplateConfig((prev: TemplateConfig) => ({
                       ...prev,
                       sellerName: e.target.value,
                     }))
@@ -108,7 +107,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({
                 <Input
                   value={templateConfig.basePrice}
                   onChange={(e) =>
-                    setTemplateConfig((prev: any) => ({
+                    setTemplateConfig((prev: TemplateConfig) => ({
                       ...prev,
                       basePrice: e.target.value,
                     }))
@@ -123,7 +122,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({
                 <Input
                   value={templateConfig.installments}
                   onChange={(e) =>
-                    setTemplateConfig((prev: any) => ({
+                    setTemplateConfig((prev: TemplateConfig) => ({
                       ...prev,
                       installments: e.target.value,
                     }))
@@ -138,7 +137,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({
                 <Input
                   value={templateConfig.installmentValue}
                   onChange={(e) =>
-                    setTemplateConfig((prev: any) => ({
+                    setTemplateConfig((prev: TemplateConfig) => ({
                       ...prev,
                       installmentValue: e.target.value,
                     }))

@@ -24,7 +24,7 @@ export default function PreviewModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-700 flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
       <div className="hud-panel w-full max-w-2xl p-10 bg-slate-950 border-cyan-500/40 space-y-8 shadow-[0_0_50px_rgba(6,182,212,0.15)]">
         <div className="space-y-1">
           <Badge className="bg-cyan-500 text-black font-black uppercase text-[9px]">UPLOADER_v4.0</Badge>

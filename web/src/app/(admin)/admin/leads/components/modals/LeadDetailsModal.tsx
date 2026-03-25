@@ -6,12 +6,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { Lead } from "../../types";
+import type { Lead, LeadAnalysis } from "../../types";
 
 interface LeadDetailsModalProps {
   isOpen: boolean;
   selectedLeadDetails: Lead | null;
-  leadAnalysis: any;
+  leadAnalysis: LeadAnalysis | null;
   isAnalyzing: boolean;
   isSiteOutdated: boolean;
   generatedMessage: string;
@@ -20,7 +20,7 @@ interface LeadDetailsModalProps {
   onClose: () => void;
   onStartMapsAnalysis: () => void;
   onUpdateLeadStatus: (url: string, status: string) => void;
-  onSetSelectedLeadDetails: (details: any) => void;
+  onSetSelectedLeadDetails: React.Dispatch<React.SetStateAction<Lead | null>>;
   onConvertToActive: (lead: Lead) => void;
   onGenerateLovablePrompt: () => void;
   onSetIsRenewalModalOpen: (open: boolean) => void;
@@ -58,7 +58,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
   if (!isOpen || !selectedLeadDetails) return null;
 
   return (
-    <div className="fixed inset-0 bg-[#020617]/90 backdrop-blur-3xl z-[150] flex items-center justify-center p-4 print:hidden">
+    <div className="fixed inset-0 bg-[#020617]/90 backdrop-blur-3xl z-150 flex items-center justify-center p-4 print:hidden">
       <div className="bg-[#0f172a] border border-white/10 w-full max-w-6xl h-[90vh] flex flex-col relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
 
@@ -157,8 +157,8 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] text-slate-600 uppercase">Score Mobile</span>
-                  <span className={`italic uppercase text-[10px] tracking-widest ${leadAnalysis ? (leadAnalysis.score < 50 ? "text-rose-500" : "text-emerald-500") : "text-slate-500"}`}>
-                    {leadAnalysis ? `${leadAnalysis.score}/100` : "Indefinido"}
+                  <span className={`italic uppercase text-[10px] tracking-widest ${leadAnalysis ? ((leadAnalysis.score ?? 0) < 50 ? "text-rose-500" : "text-emerald-500") : "text-slate-500"}`}>
+                    {leadAnalysis ? `${leadAnalysis.score ?? 0}/100` : "Indefinido"}
                   </span>
                 </div>
                 <div className="flex flex-col">
@@ -243,7 +243,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                     key={status}
                     onClick={() => {
                       onUpdateLeadStatus(selectedLeadDetails.url!, status);
-                      onSetSelectedLeadDetails((prev: any) => ({ ...prev, status }));
+                      onSetSelectedLeadDetails((prev) => prev ? ({ ...prev, status }) : null);
                     }}
                     className={`h-10 px-4 text-[10px] font-black italic tracking-widest border border-white/10 hover:bg-[#06b6d4] hover:text-black transition-all ${(selectedLeadDetails.status || "NOVO") === status ? "bg-[#06b6d4] text-black border-[#06b6d4]" : "text-slate-500"}`}
                   >
@@ -281,13 +281,13 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                 {selectedLeadDetails?.url && (
                   <div
                     onClick={() => onSetIsSiteOutdated(!isSiteOutdated)}
-                    className={`flex items-center gap-3 p-4 border transition-all cursor-pointer ${isSiteOutdated ? "bg-[#ff00ff]/10 border-[#ff00ff]/50" : "bg-black border-white/10 hover:border-white/30"}`}
+                    className={`flex items-center gap-3 p-4 border transition-all cursor-pointer ${isSiteOutdated ? "bg-neon-pink/10 border-neon-pink/50" : "bg-black border-white/10 hover:border-white/30"}`}
                   >
-                    <div className={`w-4 h-4 border flex items-center justify-center transition-colors ${isSiteOutdated ? 'bg-[#ff00ff] border-[#ff00ff]' : 'border-slate-500'}`}>
+                    <div className={`w-4 h-4 border flex items-center justify-center transition-colors ${isSiteOutdated ? 'bg-neon-pink border-neon-pink' : 'border-slate-500'}`}>
                       {isSiteOutdated && <Check className="w-3 h-3 text-black" />}
                     </div>
                     <div>
-                      <p className={`text-[10px] font-black uppercase tracking-widest ${isSiteOutdated ? "text-[#ff00ff]" : "text-slate-400"}`}>Marcador: Site Desatualizado / Lento</p>
+                      <p className={`text-[10px] font-black uppercase tracking-widest ${isSiteOutdated ? "text-neon-pink" : "text-slate-400"}`}>Marcador: Site Desatualizado / Lento</p>
                       <p className="text-[8px] text-slate-500 uppercase leading-none mt-1">Ativa Proposta de Renovação (-30%)</p>
                     </div>
                   </div>
@@ -296,7 +296,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                 {isSiteOutdated ? (
                   <Button
                     onClick={() => onSetIsRenewalModalOpen(true)}
-                    className="w-full h-12 bg-[#ff00ff] text-white font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none shadow-[0_0_20px_rgba(255,0,255,0.4)]"
+                    className="w-full h-12 bg-neon-pink text-white font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none shadow-[0_0_20px_rgba(255,0,255,0.4)]"
                   >
                     DIAGNÓSTICO_RENOVAÇÃO_PRO
                   </Button>
@@ -314,13 +314,13 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                 >
                   <Radar className="w-5 h-5 mr-2" /> GERAR_DOSSIÊ_TÁTICO_V4
                 </Button>
-                <button
-                  onClick={() => {
-                    onGenerateLovablePrompt();
-                    setTimeout(() => window.open("https://stitch.withgoogle.com", "_blank"), 600);
-                  }}
-                  className="w-full h-10 bg-gradient-to-r from-[#fbce07] to-[#f59e0b] text-black font-black italic text-[9px] uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2"
-                >
+                  <button
+                    onClick={() => {
+                      onGenerateLovablePrompt();
+                      setTimeout(() => window.open("https://stitch.withgoogle.com", "_blank"), 600);
+                    }}
+                    className="w-full h-10 bg-linear-to-r from-[#fbce07] to-[#f59e0b] text-black font-black italic text-[9px] uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                  >
                   <Sparkles className="w-3.5 h-3.5 fill-current" /> GOOGLE_STITCH_MCP
                 </button>
                 <Button

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -10,13 +9,14 @@ import {
   CardContent 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import type { Lead } from "../../types";
 
 interface RadarPanelProps {
   statusText: string;
   progress: number;
   nicho: string;
-  quarantinedLeads: any[];
-  leads: any[];
+  quarantinedLeads: Lead[];
+  leads: Lead[];
   cidade: string;
 }
 
@@ -31,7 +31,7 @@ const RadarPanel: React.FC<RadarPanelProps> = ({
   return (
     <div className="xl:col-span-4 space-y-8">
       <Card className="bg-[#0a0a0a] border border-cyan-400/30 rounded-none shadow-[0_0_20px_rgba(0,243,255,0.1)] backdrop-blur-md relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-full h-[1px] bg-cyan-400/50 animate-[scanline_4s_linear_infinite]"></div>
+        <div className="absolute top-0 right-0 w-full h-px bg-cyan-400/50 animate-[scanline_4s_linear_infinite]"></div>
         <CardHeader className="border-b border-cyan-400/20 bg-cyan-950/10">
           <CardTitle className="font-mono text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] flex items-center gap-2">
             <Activity className="w-3 h-3 animate-pulse" />{" "}
@@ -76,7 +76,7 @@ const RadarPanel: React.FC<RadarPanelProps> = ({
       </Card>
 
       {leads.length > 0 && (
-        <Card className="bg-[#06b6d4] text-black border-none rounded-none skew-x-[-2deg] transition-all">
+        <Card className="bg-[#06b6d4] text-black border-none rounded-none -skew-x-2 transition-all">
           <CardHeader>
             <CardTitle className="font-outfit text-lg font-black italic uppercase">
               PITCH_RÁPIDO
