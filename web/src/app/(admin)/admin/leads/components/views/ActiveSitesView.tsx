@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -21,12 +20,13 @@ import {
   CardContent, 
   CardFooter 
 } from "@/components/ui/card";
+import { ActiveProject } from "../types";
 
 interface ActiveSitesViewProps {
-  activeProjects: any[];
+  activeProjects: ActiveProject[];
   toggleProjectStatus: (id: string) => void;
-  openProjectSettings: (project: any) => void;
-  generateBundle: (project: any) => void;
+  openProjectSettings: (project: ActiveProject) => void;
+  generateBundle: (project: ActiveProject) => void;
   deleteActiveProject: (id: string) => void;
 }
 

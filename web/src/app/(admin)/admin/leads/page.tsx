@@ -99,10 +99,18 @@ export default function DashboardPage() {
     setCustomBairro,
     isBlacklistModalOpen,
     setIsBlacklistModalOpen,
+    blacklist,
+    newBlacklistEntry,
+    setNewBlacklistEntry,
     isStitchConfigModalOpen,
     setIsStitchConfigModalOpen,
+    stitchConfig,
+    setStitchConfig,
     isPreviewModalOpen,
     setIsPreviewModalOpen,
+    previewHtmlInput,
+    setPreviewHtmlInput,
+    previewLink,
     filterMode,
     setFilterMode,
     quarantinedLeads,
@@ -126,6 +134,7 @@ export default function DashboardPage() {
     removeFromSwipe,
     generateCloningPrompt,
     openStitchConfig,
+    handleAutoBuild,
     removeFromVault,
     processTemplatePreview,
     addToSwipe,
@@ -136,6 +145,11 @@ export default function DashboardPage() {
     setIsManualModalOpen,
     setIsRenewalModalOpen,
     setIsAuditModalOpen,
+    addToBlacklist,
+    removeFromBlacklist,
+    recoverLead,
+    clearQuarantine,
+    savePreview,
   } = useLeadsState();
 
   return (
@@ -398,17 +412,31 @@ export default function DashboardPage() {
 
       <BlacklistModal
         isOpen={isBlacklistModalOpen}
+        blacklist={blacklist}
+        quarantinedLeads={quarantinedLeads}
+        newBlacklistEntry={newBlacklistEntry}
+        setNewBlacklistEntry={setNewBlacklistEntry}
         onClose={() => setIsBlacklistModalOpen(false)}
+        onAdd={addToBlacklist}
+        onRemove={removeFromBlacklist}
+        onRecover={recoverLead}
+        onClearQuarantine={clearQuarantine}
       />
 
       <StitchConfigModal
         isOpen={isStitchConfigModalOpen}
+        config={stitchConfig}
+        onConfigChange={setStitchConfig}
+        onSubmit={() => handleAutoBuild()}
         onClose={() => setIsStitchConfigModalOpen(false)}
-        lead={selectedLeadDetails}
       />
 
       <PreviewModal
         isOpen={isPreviewModalOpen}
+        htmlInput={previewHtmlInput}
+        onHtmlInputChange={setPreviewHtmlInput}
+        previewLink={previewLink}
+        onSave={savePreview}
         onClose={() => setIsPreviewModalOpen(false)}
       />
     </div>

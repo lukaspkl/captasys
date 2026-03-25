@@ -3,20 +3,23 @@
 
 import { useState } from "react";
 import { X, Trash2, ShieldOff, ShieldAlert, RotateCcw, Plus } from "lucide-react";
+import type { Lead } from "../../types";
 
 interface BlacklistModalProps {
+  isOpen: boolean;
   blacklist: string[];
-  quarantinedLeads: any[];
+  quarantinedLeads: Lead[];
   newBlacklistEntry: string;
   setNewBlacklistEntry: (v: string) => void;
   onClose: () => void;
   onAdd: (entry: string) => void;
   onRemove: (entry: string) => void;
-  onRecover: (lead: any) => void;
+  onRecover: (lead: Lead) => void;
   onClearQuarantine: () => void;
 }
 
 export default function BlacklistModal({
+  isOpen,
   blacklist,
   quarantinedLeads,
   newBlacklistEntry,
@@ -28,6 +31,8 @@ export default function BlacklistModal({
   onClearQuarantine,
 }: BlacklistModalProps) {
   const [tab, setTab] = useState<"blacklist" | "quarantine">("blacklist");
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[400] flex items-center justify-center p-4">

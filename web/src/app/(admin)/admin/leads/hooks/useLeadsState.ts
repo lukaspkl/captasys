@@ -64,14 +64,14 @@ export const useLeadsState = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("Vessel em Espera...");
-  const [leads, setLeads] = useState<any[]>([]);
-  const [vaultLeads, setVaultLeads] = useState<any[]>([]);
-  const [swipeLeads, setSwipeLeads] = useState<any[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [vaultLeads, setVaultLeads] = useState<Lead[]>([]);
+  const [swipeLeads, setSwipeLeads] = useState<Lead[]>([]);
   const [isDossierModalOpen, setIsDossierModalOpen] = useState(false);
-  const [dossierLead, setDossierLead] = useState<any>(null);
+  const [dossierLead, setDossierLead] = useState<Lead | null>(null);
   const [isDossierLoading, setIsDossierLoading] = useState(false);
   const [competitorsCount, setCompetitorsCount] = useState({ radius2km: 0, radius5km: 0 });
-  const [competitorsList, setCompetitorsList] = useState<any[]>([]);
+  const [competitorsList, setCompetitorsList] = useState<Lead[]>([]);
   const [dossierPitch, setDossierPitch] = useState("");
   const [isPrinting, setIsPrinting] = useState(false);
 
@@ -84,7 +84,7 @@ export const useLeadsState = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPromptCopied, setIsPromptCopied] = useState(false);
   const [stitchStatuses, setStitchStatuses] = useState<Record<string, 'idle' | 'generating' | 'completed' | 'error'>>({});
-  const [isStitchConfigOpen, setIsStitchConfigOpen] = useState(false);
+  const [isStitchConfigModalOpen, setIsStitchConfigModalOpen] = useState(false);
   const [stitchConfig, setStitchConfig] = useState<StitchConfig>({ name: '', themeId: '', segment: 'geral', lead: null });
   const [filterMode, setFilterMode] = useState("all");
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
@@ -133,11 +133,11 @@ export const useLeadsState = () => {
     "g1.globo", "veja.abril", "hoteis.com", "decolar", "kayak", "youtube.com",
   ];
   const [blacklist, setBlacklist] = useState<string[]>(DEFAULT_BLACKLIST);
-  const [quarantinedLeads, setQuarantinedLeads] = useState<any[]>([]);
+  const [quarantinedLeads, setQuarantinedLeads] = useState<Lead[]>([]);
   const [isBlacklistModalOpen, setIsBlacklistModalOpen] = useState(false);
   const [newBlacklistEntry, setNewBlacklistEntry] = useState("");
 
-  const calculateLeadScore = useCallback((lead: any) => {
+  const calculateLeadScore = useCallback((lead: Lead) => {
     let score = 30;
     const reasons: string[] = [];
     let temp: "Frio" | "Morno" | "Quente" = "Morno";
@@ -292,33 +292,33 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setTimeout(() => setStatusText("Dashboard Ativo."), 3000);
   };
 
-  const openStitchConfig = (lead: any) => {
-    const cleanName = lead.title.split('-')[0].trim();
+  const openStitchConfig = (lead: Lead) => {
+    const cleanName = lead.title?.split('-')[0].trim() || "Lead";
     const safeId = cleanName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '_').replace(/_{2,}/g, '_').replace(/^_|_$/g, '');
     setStitchConfig({ name: `SWIPE: ${cleanName}`, themeId: `${safeId}_v1`, segment: nicho || 'geral', lead });
-    setIsStitchConfigOpen(true);
+    setIsStitchConfigModalOpen(true);
   };
 
-  const handleAutoBuild = async (overrideLead?: any) => {
+  const handleAutoBuild = async (overrideLead?: Lead) => {
     const targetLead = overrideLead || stitchConfig.lead;
-    if (!targetLead || stitchStatuses[targetLead.url] === 'generating') return;
+    if (!targetLead || !targetLead.url || stitchStatuses[targetLead.url] === 'generating') return;
     const finalName = overrideLead ? `SWIPE: ${targetLead.title}` : stitchConfig.name;
     const finalThemeId = overrideLead ? `swipe_${Date.now()}` : stitchConfig.themeId;
     const finalSegment = overrideLead ? (nicho || 'geral') : stitchConfig.segment;
-    setIsStitchConfigOpen(false);
-    setStitchStatuses(prev => ({ ...prev, [targetLead.url]: 'generating' }));
+    setIsStitchConfigModalOpen(false);
+    setStitchStatuses(prev => ({ ...prev, [targetLead.url!]: 'generating' }));
     setStatusText(`Iniciando Síntese: ${finalName}...`);
     try {
       const result = await generateStitchLayout("CLONAGEM_PROMPT", finalSegment);
       if (result.success && result.code) {
         await saveGeneratedTemplate(finalName, finalSegment, finalThemeId, result.code);
-        setStitchStatuses(prev => ({ ...prev, [targetLead.url]: 'completed' }));
+        setStitchStatuses(prev => ({ ...prev, [targetLead.url!]: 'completed' }));
         setStatusText("Template Sincronizado!");
       } else { throw new Error(result.error); }
     } catch (error: any) { setStatusText(error.message); }
   };
 
-  const handleSendZap = (lead: any) => {
+  const handleSendZap = (lead: Lead) => {
     if (!lead || !lead.phone) return;
     const cleanPhone = lead.phone.replace(/\D/g, "");
     const message = generatedMessage || `Oi ${lead.title}, vi que trabalham com ${nicho} em ${cidade}. Podemos conversar?`;
@@ -334,12 +334,12 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     return `${slug}.${window.location.host}`;
   };
 
-  const convertToActive = (lead: any) => {
+  const convertToActive = (lead: Lead) => {
     if (!lead) return;
-    const slug = lead.title.toLowerCase().replace(/[^a-z0-9]/g, "-");
+    const slug = lead.title?.toLowerCase().replace(/[^a-z0-9]/g, "-") || "new-project";
     const newProject: ActiveProject = {
       id: Math.random().toString(36).substring(7),
-      name: lead.title, slug, status: "active",
+      name: lead.title || "Novo Projeto", slug, status: "active",
       renewal: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("pt-BR").substring(0, 5),
       type: "Recorrência", monthlyFee: "149,00",
       liveUrl: getSubdomainUrl(slug), htmlContent: previewHtmlInput || "", leadInfo: lead,
@@ -353,7 +353,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   };
 
   const startLeadAnalysis = useCallback(() => {
-    if (!selectedLeadDetails) return;
+    if (!selectedLeadDetails || !selectedLeadDetails.url) return;
     setIsAnalyzing(true);
     window.dispatchEvent(new CustomEvent("CAPTASAAS_START_ANALYSIS", { detail: { url: selectedLeadDetails.url } }));
   }, [selectedLeadDetails]);
@@ -375,7 +375,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setGeneratedMessage(template);
   };
 
-  const generateTacticalDossier = async (lead: any) => {
+  const generateTacticalDossier = async (lead: Lead) => {
     if (!lead) return;
     setDossierLead(lead);
     setIsDossierModalOpen(true);
@@ -385,7 +385,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ keyword: `${nicho} em ${cidade}`, num: 20 }),
       });
-      const data = await res.json();
+      await res.json();
       setCompetitorsCount({ radius2km: 5, radius5km: 15 });
       setDossierPitch("Estratégia Vencedora: upgrade site ativo.");
     } catch { setDossierPitch("Erro no radar."); } finally { setIsDossierLoading(false); }
@@ -428,15 +428,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
         
         if (data.leads && data.leads.length > 0) {
           const bairroTerm = targetBairro?.toUpperCase() || "";
-          const exactMatches = data.leads.filter((l: any) => 
-            !bairroTerm || (l.address?.toUpperCase().includes(bairroTerm))
-          );
-
-          if (exactMatches.length === 0 && targetBairro) {
-            setStatusText(`Sinal Débil: Sem hits exatos no bairro "${targetBairro}". Buscando em arredores...`);
-          }
-
-          const formated = data.leads.map((l: any) => {
+          
+          const formated: Lead[] = data.leads.map((l: any) => {
             const isExact = bairroTerm && l.address?.toUpperCase().includes(bairroTerm);
             return {
               ...l,
@@ -449,7 +442,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
           
           setLeads(prev => {
             const existingUrls = new Set(prev.map(p => p.url));
-            const uniqueNew = formated.filter((f: any) => !existingUrls.has(f.url));
+            const uniqueNew = formated.filter((f) => !existingUrls.has(f.url));
             return [...prev, ...uniqueNew];
           });
         }
@@ -503,7 +496,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     }
   };
 
-  const openProjectSettings = (project: any) => {
+  const openProjectSettings = (project: ActiveProject) => {
     setEditingProject(project);
     setProjectSettings({
       name: project.name, slug: project.slug,
@@ -541,7 +534,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
 
   const processTemplatePreview = (template: any) => {
     setActiveTemplate(template);
-    const selectedTemplateLead = leads.find((l: any) => l.url === selectedTemplateLeadUrl);
+    const selectedTemplateLead = leads.find((l) => l.url === selectedTemplateLeadUrl);
 
     if (!selectedTemplateLead) {
       setWhatsappPreviewMessage("⚠️ SELECIONE UM LEAD PRIMEIRO PARA VISUALIZAR A INTERPOLAÇÃO DE VARIÁVEIS.");
@@ -549,15 +542,15 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
       return;
     }
 
-    const leadName = selectedTemplateLead.title.split(" ")[0] || "Responsável";
+    const leadName = selectedTemplateLead.title?.split(" ")[0] || "Responsável";
     const nichoName = nicho || "seu segmento";
     const cityName = cidade || "sua região";
-    const linkDemo = `${templateConfig.demoBaseUrl}${selectedTemplateLead.title.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
+    const linkDemo = `${templateConfig.demoBaseUrl}${selectedTemplateLead.title?.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
 
     let msg = template.content;
     msg = msg.replace(/\{\{nome_lead\}\}/g, leadName);
     msg = msg.replace(/\{\{nome_vendedor\}\}/g, templateConfig.sellerName);
-    msg = msg.replace(/\{\{nome_empresa\}\}/g, selectedTemplateLead.title);
+    msg = msg.replace(/\{\{nome_empresa\}\}/g, selectedTemplateLead.title || "");
     msg = msg.replace(/\{\{nicho\}\}/g, nichoName);
     msg = msg.replace(/\{\{cidade\}\}/g, cityName);
     msg = msg.replace(/\{\{link_demo\}\}/g, linkDemo);
@@ -570,7 +563,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   };
 
   const sortedLeads = useMemo(() => {
-    return [...leads].sort((a, b) => (b.score || 0) - (a.score || 0));
+    return [...leads].sort((a, b) => ((b as any).score || 0) - ((a as any).score || 0));
   }, [leads]);
 
   const filteredLeads = useMemo(() => {
@@ -626,7 +619,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     return () => { active = false; };
   }, [cidadeId]);
 
-  const openLeadDetails = (lead: any) => {
+  const openLeadDetails = (lead: Lead) => {
     setLeadAnalysis(null);
     setIsAnalyzing(false);
     setSelectedLeadDetails(lead);
@@ -638,7 +631,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   // Enriquecimento Automático
   useEffect(() => {
     if (isSearching || isAnalyzing) return;
-    const nextToEnrich = leads.find(l => !l.phone && l.analysisStatus === "PENDENTE");
+    const nextToEnrich = leads.find(l => !l.phone && (l as any).analysisStatus === "PENDENTE");
     if (nextToEnrich) {
       setLeads(prev => prev.map(l => l.id === nextToEnrich.id ? { ...l, analysisStatus: "ANALISANDO" } : l));
       window.dispatchEvent(new CustomEvent("CAPTASAAS_START_ANALYSIS", { detail: { url: nextToEnrich.url, mapsUrl: nextToEnrich.mapsUrl, silent: true } }));
@@ -667,7 +660,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setActiveProjects(prev => prev.filter(p => p.id !== id));
   };
 
-  const generateBundle = (project: any) => {
+  const generateBundle = (project: ActiveProject) => {
     setStatusText(`       Preparando bundle para ${project.name}...`);
     setTimeout(() => {
       setStatusText("       Bundle gerado e pronto para download!");
@@ -711,7 +704,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     isAnalyzing, setIsAnalyzing,
     isPromptCopied, setIsPromptCopied,
     stitchStatuses, setStitchStatuses,
-    isStitchConfigOpen, setIsStitchConfigOpen,
+    isStitchConfigModalOpen, setIsStitchConfigModalOpen,
     stitchConfig, setStitchConfig,
     filterMode, setFilterMode,
     isAuditModalOpen, setIsAuditModalOpen,
