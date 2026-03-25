@@ -433,7 +433,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
       
       return `Diagnóstico Estratégico para ${empresa}: Identificamos que a concorrência no nicho de ${nichoAlvo} em ${local} está se consolidando rapidamente. ${hasNoSite 
         ? `A falta de um portal otimizado está drenando sua densidade orgânica, entregando tráfego qualificado para os 'Invasores Digitais' monitorados neste dossiê.` 
-        : `Apesar de possuir um ponto digital, sua performance em ${local} está 40% abaixo do potencial máximo de conversão regional.`} Nossa recomendação é o upgrade imediato para o SiteProx v4 para retomar a soberania do mercado local.`;
+        : `Apesar de possuir um ponto digital, sua performance em ${local} está 40% abaixo do potencial máximo de conversão regional.`} Nossa recomendação é o upgrade imediato para o SiteProx para retomar a soberania do mercado local.`;
     }
 
     if (type === "venda") {
