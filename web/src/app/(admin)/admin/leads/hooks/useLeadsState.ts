@@ -423,16 +423,25 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   const generateAIPitch = useCallback((type: "venda" | "recall" | "apresentacao", overrideLead?: Lead) => {
     const targetLead = overrideLead || selectedLeadDetails;
     if (!targetLead) return "";
-    const empresa = targetLead.title;
-    const local = cidade || "região";
-    let template = "";
-    if (type === "venda") template = `Olá ${empresa}! Vi seu perfil em ${local}. Já pensou em ter um site moderno?`;
-    else if (type === "recall") template = `Oi ${empresa}, vamos retomar nosso papo?`;
-    else template = `Estratégia Vencedora: upgrade site ativo para ${empresa}. Aumente sua conversão em ${local}.`;
     
-    setGeneratedMessage(template);
-    return template;
-  }, [selectedLeadDetails, cidade]);
+    const empresa = targetLead.title;
+    const local = cidade || "sua região";
+    const nichoAlvo = nicho || "seu segmento";
+    
+    if (type === "apresentacao") {
+      const hasNoSite = !targetLead.url || targetLead.url.includes("google.com");
+      
+      return `Diagnóstico Estratégico para ${empresa}: Identificamos que a concorrência no nicho de ${nichoAlvo} em ${local} está se consolidando rapidamente. ${hasNoSite 
+        ? `A falta de um portal otimizado está drenando sua densidade orgânica, entregando tráfego qualificado para os 'Invasores Digitais' monitorados neste dossiê.` 
+        : `Apesar de possuir um ponto digital, sua performance em ${local} está 40% abaixo do potencial máximo de conversão regional.`} Nossa recomendação é o upgrade imediato para o CAPTA_SYSTEM v4 para retomar a soberania do mercado local.`;
+    }
+
+    if (type === "venda") {
+      return `Olá ${empresa}! Fizemos um mapeamento tático em ${local} e vimos que vocês têm um potencial incrível, mas os concorrentes estão ocupando os espaços onde vocês deveriam brilhar. Já pensou em dominar o Google por aqui?`;
+    }
+
+    return `Estratégia Vencedora: upgrade site ativo para ${empresa}. Aumente sua conversão em ${local} e bloqueie o crescimento da concorrência local.`;
+  }, [selectedLeadDetails, cidade, nicho]);
 
   const generateTacticalDossier = async (lead: Lead) => {
     if (!lead) return;

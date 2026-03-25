@@ -5,6 +5,7 @@ export interface Lead {
   mapsUrl?: string;
   phone?: string;
   address?: string;
+  addressBase?: string; // Logradouro extraído do endereço
   rating?: string | number;
   reviewCount?: string | number;
   status?: string;
