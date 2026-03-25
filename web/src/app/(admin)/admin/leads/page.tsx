@@ -1,3 +1,5 @@
+"use client";
+
 import { useLeadsState, templatesList } from "./hooks/useLeadsState";
 import { Button } from "@/components/ui/button";
 import { View } from "./types";
