@@ -166,8 +166,8 @@ export const useLeadsState = () => {
       if (score < 40) temp = "Frio";
     }
 
-    const ratingNum = lead.rating ? parseFloat(lead.rating) : 0;
-    const reviewsNum = lead.reviewCount ? parseInt(lead.reviewCount) : 0;
+    const ratingNum = lead.rating ? parseFloat(String(lead.rating)) : 0;
+    const reviewsNum = lead.reviewCount ? parseInt(String(lead.reviewCount), 10) : 0;
 
     if (ratingNum > 0) {
       if (reviewsNum < 5) {
