@@ -86,7 +86,7 @@ const VaultView: React.FC<VaultViewProps> = ({
                   {lead.temperature || "Morno"}
                 </Badge>
                 <span className="text-[10px] font-black text-white/40 font-mono tracking-tighter">
-                  SCORE::{lead.score}%
+                  SCORE::{lead.score ?? 0}%
                 </span>
               </div>
               <p className="text-[10px] text-cyan-900 font-mono leading-relaxed line-clamp-3 mb-4 italic uppercase">

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -126,7 +125,7 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
                     <div className="flex flex-col gap-0.5 ml-2">
                       <div className="w-16 h-1 bg-white/5 relative overflow-hidden">
                         <div
-                          className={`h-full transition-all ${lead.score > 70 ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : lead.score > 40 ? "bg-amber-500" : "bg-rose-500"}`}
+                          className={`h-full transition-all ${(lead.score ?? 0) > 70 ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : (lead.score ?? 0) > 40 ? "bg-amber-500" : "bg-rose-500"}`}
                           style={{ width: `${lead.score || 0}%` }}
                         />
                       </div>

@@ -58,10 +58,10 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({
                 >
                   &gt;&gt;&gt; ESCOLHER ALVO_
                 </option>
-                {leads.map((l) => (
+                {leads.map((l, lIdx) => (
                   <option
-                    key={l.url}
-                    value={l.url}
+                    key={l.url || lIdx}
+                    value={l.url || ""}
                     className="bg-dark-bg text-cyan-400"
                   >
                     {l.title}{" "}
@@ -72,7 +72,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({
               <Target className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400/50 pointer-events-none" />
             </div>
             {selectedTemplateLeadUrl &&
-              !leads.find((l) => l.url === selectedTemplateLeadUrl)
+              !leads.find((l) => l.url === selectedTemplateLeadUrl && l.url)
                 ?.phone && (
                 <p className="text-[9px] text-pink-500 uppercase tracking-tighter mt-1 font-black">
                   ⚠️ AVISO: WHATSAPP NÃO DETECTADO NESTE DOMÍNIO

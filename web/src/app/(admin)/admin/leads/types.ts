@@ -26,6 +26,7 @@ export interface Lead {
   snippet?: string;
   id?: string;
   reviews?: number | string;
+  email?: string;
 }
 
 // ─── LEAD ANALYSIS ──────────────────────────────────────────────────────────
