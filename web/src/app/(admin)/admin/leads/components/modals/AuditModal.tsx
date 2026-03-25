@@ -5,7 +5,8 @@ import {
   X, Printer, ShieldAlert, TrendingDown, Zap, 
   BarChart3, AlertCircle, Smartphone, Globe, Activity,
   SmartphoneIcon, Gauge, MousePointer2, Megaphone,
-  CheckCircle2, Target, Cpu, Rocket, Star, ShieldCheck
+  CheckCircle2, Target, Cpu, Rocket, Star, ShieldCheck,
+  Radar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Lead } from "../../types";
@@ -108,7 +109,7 @@ const AuditModal: React.FC<AuditModalProps> = ({
               </div>
               <div>
                 <h2 className="text-[10px] font-black text-[#fbce07] uppercase tracking-[0.4em] italic mb-1">
-                  Relatório de Auditoria de Performance // v5.0
+                  Relatório de Auditoria de Performance // v5.4
                 </h2>
                 <h1 className="text-4xl font-black text-white print:text-black uppercase tracking-tighter italic leading-none">
                   DIAGNÓSTICO_DE_RECEITA_<span className="text-[#fbce07]">SITEPROX</span>
@@ -212,7 +213,7 @@ const AuditModal: React.FC<AuditModalProps> = ({
                 { icon: MousePointer2, label: "Botões de Conversão", status: "INEFICIENTES", color: "text-amber-500" },
                 { icon: Globe, label: "SEO Regional (Buscas)", status: "INVISÍVEL", color: "text-rose-500" },
                 { icon: Activity, label: "Acompanhamento Real", status: "SEM DADOS", color: "text-slate-500" },
-                { icon: Megaphone, label: "Relacionamento Google", status: "AVISO_BAIXO", color: "text-rose-500" },
+                { icon: Megaphone, label: "Google ADS Score", status: "INSUFICIENTE", color: "text-rose-500" },
                 { icon: SmartphoneIcon, label: "Visualização Celular", status: "REJEITADO", color: "text-rose-500" },
                 { icon: Star, label: "Autoridade Digital", status: "FADIGA", color: "text-amber-500" },
               ].map((item, i) => (
@@ -225,7 +226,7 @@ const AuditModal: React.FC<AuditModalProps> = ({
             </div>
           </div>
 
-          {/* Solution Plans Section */}
+          {/* Solution Plans Section - SYNCED WITH /VENDAS */}
           <div className="space-y-8">
             <div className="flex items-center gap-4">
               <Rocket className="w-6 h-6 text-[#fbce07]" />
@@ -233,29 +234,46 @@ const AuditModal: React.FC<AuditModalProps> = ({
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { name: "ESSENCIAL", price: "149", features: ["Site de Alta Conversão", "Hospedagem Sniper", "SSL Integrado", "Suporte 24h"], color: "border-white/10" },
-                { name: "PERFORMANCE", price: "297", features: ["Tudo do Essencial", "Gestão de Maps Local", "Acompanhamento Mensal", "Relatório de Leads"], color: "border-[#fbce07]/50 bg-[#fbce07]/5", best: true },
-                { name: "ELITE", price: "Custom", features: ["Estratégia Full Stack", "ADS Regional Incluso", "Consultoria VIP", "Escala de Domínio"], color: "border-white/10" }
-              ].map((plan, i) => (
-                <div key={i} className={`p-6 border relative flex flex-col gap-4 print:border-gray-200 ${plan.color}`}>
-                  {plan.best && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#fbce07] text-black text-[8px] font-black px-3 py-1 uppercase tracking-widest">Mais Vendido</div>
-                  )}
-                  <h4 className="text-sm font-black text-white print:text-black tracking-widest">{plan.name}</h4>
+               <div className="p-6 border border-white/10 relative flex flex-col gap-4 print:border-gray-200">
+                  <h4 className="text-sm font-black text-white print:text-black tracking-widest uppercase italic">Plano Presença</h4>
                   <div className="text-3xl font-black text-[#fbce07] tracking-tighter">
-                    {plan.price !== "Custom" ? `R$ ${plan.price}` : plan.price}
-                    {plan.price !== "Custom" && <span className="text-[10px] text-slate-500 ml-1 font-bold">/mês</span>}
+                    R$ 100 <span className="text-[10px] text-slate-500 font-bold uppercase">/mês</span>
                   </div>
                   <ul className="space-y-2">
-                    {plan.features.map((f, fi) => (
-                      <li key={fi} className="flex items-center gap-2 text-[9px] text-slate-400 font-bold uppercase">
+                    {["Site One-Page Moderno", "Foco em Leads WhatsApp", "Domínio / SSL Incluso", "Hospedagem Gerenciada"].map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-[8px] text-slate-400 font-bold uppercase">
                         <CheckCircle2 className="w-3 h-3 text-[#fbce07]" /> {f}
                       </li>
                     ))}
                   </ul>
                 </div>
-              ))}
+
+                <div className="p-6 border border-[#fbce07]/50 bg-[#fbce07]/5 relative flex flex-col gap-4 print:border-gray-200">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#fbce07] text-black text-[8px] font-black px-3 py-1 uppercase tracking-widest italic">O Mais Escolhido</div>
+                  <h4 className="text-sm font-black text-white print:text-black tracking-widest uppercase italic">Plano Autoridade</h4>
+                  <div className="text-3xl font-black text-[#fbce07] tracking-tighter">
+                    R$ 150 <span className="text-[10px] text-slate-500 font-bold uppercase">/mês</span>
+                  </div>
+                  <ul className="space-y-2">
+                    {["Site Multi-Page Completo", "Galeria de Fotos", "SEO Local Otimizado", "Suporte Prioritário Whats"].map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-[8px] text-slate-400 font-bold uppercase">
+                        <CheckCircle2 className="w-3 h-3 text-[#fbce07]" /> {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-6 border border-white/10 relative flex flex-col gap-4 print:border-gray-200">
+                  <h4 className="text-sm font-black text-white print:text-black tracking-widest uppercase italic">Plano Elite</h4>
+                  <div className="text-3xl font-black text-[#fbce07] tracking-tighter">Sob Consulta</div>
+                  <ul className="space-y-2">
+                    {["Estratégia Full Stack", "ADS Regional Incluso", "Consultoria VIP", "Escala de Domínio"].map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-[8px] text-slate-400 font-bold uppercase">
+                        <CheckCircle2 className="w-3 h-3 text-[#fbce07]" /> {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
             </div>
           </div>
 
@@ -266,10 +284,10 @@ const AuditModal: React.FC<AuditModalProps> = ({
             </div>
             <div className="flex items-center gap-4">
               <Zap className="w-6 h-6 text-[#fbce07] fill-[#fbce07]" />
-              <h4 className="text-[10px] font-black text-[#fbce07] uppercase tracking-widest">Aceleração de Domínio Regional</h4>
+              <h4 className="text-[10px] font-black text-[#fbce07] uppercase tracking-widest">Protocolo de Recuperação SiteProx</h4>
             </div>
             <p className="text-2xl font-black text-white print:text-black italic leading-tight tracking-tighter uppercase">
-              &ldquo;Chegou a hora de parar de perder clientes para quem faz menos por eles. O SiteProx é a tecnologia que coloca sua empresa no topo do Google, recuperando seus R$ {projections.gap.toLocaleString('pt-BR')} mensais já na primeira semana.&rdquo;
+              &ldquo;No caos da web, nós somos a ordem. O SiteProx é a tecnologia que coloca sua empresa no topo do Google, recuperando seus R$ {projections.gap.toLocaleString('pt-BR')} mensais já na primeira semana.&rdquo;
             </p>
             
             <div className="pt-6 border-t border-[#fbce07]/20 flex flex-col gap-2">
