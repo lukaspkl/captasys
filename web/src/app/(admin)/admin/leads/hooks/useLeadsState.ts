@@ -137,6 +137,64 @@ export const useLeadsState = () => {
   const [isBlacklistModalOpen, setIsBlacklistModalOpen] = useState(false);
   const [newBlacklistEntry, setNewBlacklistEntry] = useState("");
 
+  // ==========================================
+  // PERSISTÊNCIA DE DADOS (MEMÓRIA HUD)
+  // ==========================================
+  useEffect(() => {
+    // Carrega dados salvos ao iniciar (Mount)
+    const savedLeads = localStorage.getItem("capta_leads_v4");
+    const savedParams = localStorage.getItem("capta_search_params_v4");
+    const savedVault = localStorage.getItem("capta_vault_v4");
+    const savedSwipe = localStorage.getItem("capta_swipe_v4");
+    const savedBlacklist = localStorage.getItem("capta_blacklist_v4");
+    const savedQuarantine = localStorage.getItem("capta_quarantine_v4");
+
+    if (savedLeads) try { setLeads(JSON.parse(savedLeads)); } catch { }
+    if (savedVault) try { setVaultLeads(JSON.parse(savedVault)); } catch { }
+    if (savedSwipe) try { setSwipeLeads(JSON.parse(savedSwipe)); } catch { }
+    if (savedBlacklist) try { setBlacklist(JSON.parse(savedBlacklist)); } catch { }
+    if (savedQuarantine) try { setQuarantinedLeads(JSON.parse(savedQuarantine)); } catch { }
+    
+    if (savedParams) {
+      try {
+        const params = JSON.parse(savedParams);
+        if (params.nicho) setNicho(params.nicho);
+        if (params.estado) setEstado(params.estado);
+        if (params.cidade) setCidade(params.cidade);
+        if (params.cidadeId) setCidadeId(params.cidadeId);
+        if (params.bairro) setBairro(params.bairro);
+        if (params.searchMode) setSearchMode(params.searchMode);
+      } catch { }
+    }
+  }, []);
+
+  // Auto-Save Effects
+  useEffect(() => {
+    if (leads.length > 0) localStorage.setItem("capta_leads_v4", JSON.stringify(leads));
+  }, [leads]);
+
+  useEffect(() => {
+    localStorage.setItem("capta_search_params_v4", JSON.stringify({
+      nicho, estado, cidade, cidadeId, bairro, searchMode
+    }));
+  }, [nicho, estado, cidade, cidadeId, bairro, searchMode]);
+
+  useEffect(() => {
+    localStorage.setItem("capta_vault_v4", JSON.stringify(vaultLeads));
+  }, [vaultLeads]);
+
+  useEffect(() => {
+    localStorage.setItem("capta_swipe_v4", JSON.stringify(swipeLeads));
+  }, [swipeLeads]);
+
+  useEffect(() => {
+    localStorage.setItem("capta_blacklist_v4", JSON.stringify(blacklist));
+  }, [blacklist]);
+
+  useEffect(() => {
+    localStorage.setItem("capta_quarantine_v4", JSON.stringify(quarantinedLeads));
+  }, [quarantinedLeads]);
+
   const calculateLeadScore = useCallback((lead: Lead) => {
     let score = 30;
     const reasons: string[] = [];
@@ -220,14 +278,12 @@ export const useLeadsState = () => {
     setLeads((prev) => [{ ...lead, blockedReason: undefined }, ...prev]);
     setQuarantinedLeads((prev) => {
       const updated = prev.filter((q) => q.url !== lead.url || q.title !== lead.title);
-      localStorage.setItem("capta_quarantine", JSON.stringify(updated));
       return updated;
     });
   };
 
   const clearQuarantine = () => {
     setQuarantinedLeads([]);
-    localStorage.removeItem("capta_quarantine");
   };
 
   const handleDeleteLead = (leadOrUrl: Lead | string) => {
