@@ -63,12 +63,12 @@ const DossierModal: React.FC<DossierModalProps> = ({
             top: 0 !important;
             left: 0 !important;
             width: 100% !important;
-            height: auto !important;
+            height: 100vh !important;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 10mm !important;
             background: white !important;
             z-index: 99999 !important;
-            overflow: visible !important;
+            overflow: hidden !important;
           }
 
           #dossier-modal-content {
@@ -76,11 +76,14 @@ const DossierModal: React.FC<DossierModalProps> = ({
             position: relative !important;
             width: 100% !important;
             max-width: none !important;
+            min-height: 0 !important;
+            height: auto !important;
             border: none !important;
             box-shadow: none !important;
             margin: 0 !important;
             background: white !important;
             padding: 0 !important;
+            page-break-after: avoid !important;
           }
 
           /* Tipografia e Cores de Impressão */
@@ -89,7 +92,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
           .bg-pink-500\\/5, .bg-white\\/5 { background: #f9f9f9 !important; border: 1px solid #ddd !important; }
           .text-pink-500 { color: #ec4899 !important; }
           
-          @page { size: A4; margin: 10mm; }
+          @page { size: A4; margin: 0; }
         }
       `}} />
 
