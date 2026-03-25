@@ -1774,133 +1774,135 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
           }
         `}</style>
         
-        {dossierLead && (
-          <div id="dossier-print-render" className="w-full bg-white font-outfit text-black print:p-0">
-             {/* Conteúdo estrito do Dossiê para Impressão */}
-             <div className="max-w-[210mm] mx-auto p-[20mm] bg-white space-y-12">
-              {/* Cabeçalho */}
-              <div className="border-b-[6px] border-pink-500 pb-10 flex justify-between items-start">
-                <div className="space-y-4">
-                   <div className="flex items-center gap-6">
-                      <div className="w-20 h-20 bg-pink-600 flex items-center justify-center -skew-x-6 text-white">
-                        <Radar className="w-10 h-10" />
+        {/*      UNIDADE DE ENTREGA DE PDF: DOSSIÊ TÁTICO & AUDITORIA ESTRATÉGICA */}
+        {selectedLeadDetails && (
+          <>
+            {/* 1. DOSSIÊ TÁTICO (COR: ROSA/HACKER) */}
+            {dossierLead && (
+              <div id="dossier-print-render" className="w-full bg-white font-outfit text-black print:p-0">
+                <div className="max-w-[210mm] mx-auto p-[20mm] bg-white space-y-12">
+                  {/* Cabeçalho */}
+                  <div className="border-b-[6px] border-pink-500 pb-10 flex justify-between items-start">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-6">
+                        <div className="w-20 h-20 bg-pink-600 flex items-center justify-center -skew-x-6 text-white">
+                          <Radar className="w-10 h-10" />
+                        </div>
+                        <div>
+                          <h1 className="text-4xl font-black uppercase italic tracking-tighter leading-none text-black">
+                            Dossiê de Inteligência <br/> <span className="text-pink-600 underline">Estratégica</span>
+                          </h1>
+                          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mt-3">
+                             Ref_ID: {dossierLead.id.split('-')[0].toUpperCase() + " // SITEPROX_MILITARY_GRADE"}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h1 className="text-4xl font-black uppercase italic tracking-tighter leading-none text-black">
-                          Dossiê de Inteligência <br/> <span className="text-pink-600 underline">Estratégica</span>
-                        </h1>
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mt-3">
-                           Ref_ID: {dossierLead.id.split('-')[0].toUpperCase() + " // SITEPROX_MILITARY_GRADE"}
+                      <div className="mt-8">
+                        <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest block mb-1">Target_Subject</span>
+                        <h2 className="text-2xl font-black uppercase italic text-black">{dossierLead.title}</h2>
+                        <p className="text-xs font-bold text-slate-500">{dossierLead.address}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2 text-right">
+                      <div className="bg-red-600 text-white px-4 py-1 text-[10px] font-black uppercase whitespace-nowrap">CONFI_LEVEL: ALPHA</div>
+                      <div className="border-2 border-black p-4 text-[9px] font-bold uppercase leading-tight italic text-black">
+                        Data do Relatório: <br/> {new Date().toLocaleDateString('pt-BR')} <br/> 
+                        <span className="text-pink-600">UNIDADE_SITEPROX_SYS</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Seção 1 */}
+                  <section className="space-y-10">
+                    <div className="flex items-center gap-4">
+                      <div className="h-0.5 flex-1 bg-slate-200"></div>
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Mapeamento de Hostilidade Local</h3>
+                      <div className="h-0.5 flex-1 bg-slate-200"></div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-8">
+                      <div className="border-2 border-slate-100 p-8 space-y-4 relative bg-white">
+                        <span className="text-[10px] font-black uppercase text-pink-600">Zona 01 // 2km</span>
+                        <h4 className="text-[10px] font-bold uppercase italic text-slate-400">Confronto Imediato</h4>
+                        <p className="text-6xl font-black italic tracking-tighter text-black">{competitorsCount.radius2km}</p>
+                        <p className="text-[9px] font-bold leading-tight text-slate-400 uppercase">Rivais Ativos Detectados.</p>
+                      </div>
+                      <div className="border-2 border-slate-100 p-8 space-y-4 relative bg-slate-50">
+                        <span className="text-[10px] font-black uppercase text-slate-800">Zona 02 // 5km</span>
+                        <h4 className="text-[10px] font-bold uppercase italic text-slate-400">Alcance Regional</h4>
+                        <p className="text-6xl font-black italic tracking-tighter text-black">{competitorsCount.radius5km}</p>
+                        <p className="text-[9px] font-bold leading-tight text-slate-400 uppercase">Ocupação de Mercado Alvo.</p>
+                      </div>
+                      <div className="border-2 border-slate-900 p-8 space-y-4 relative bg-white">
+                        <span className="text-[10px] font-black uppercase text-slate-800">Métrica Social</span>
+                        <h4 className="text-[10px] font-bold uppercase italic text-slate-400">Score de Reputação</h4>
+                        <p className={`text-6xl font-black italic tracking-tighter ${parseFloat(dossierLead.rating) < 4.6 ? 'text-red-600' : 'text-emerald-600'}`}>
+                          {dossierLead.rating}★
                         </p>
+                        <p className="text-[9px] font-bold leading-tight text-slate-400 uppercase">Qualidade Percebida.</p>
                       </div>
-                   </div>
-                   <div className="mt-8">
-                      <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest block mb-1">Target_Subject</span>
-                      <h2 className="text-2xl font-black uppercase italic text-black">{dossierLead.title}</h2>
-                      <p className="text-xs font-bold text-slate-500">{dossierLead.address}</p>
-                   </div>
-                </div>
-                <div className="flex flex-col items-end gap-2 text-right">
-                   <div className="bg-red-600 text-white px-4 py-1 text-[10px] font-black uppercase whitespace-nowrap">CONFI_LEVEL: ALPHA</div>
-                   <div className="border-2 border-black p-4 text-[9px] font-bold uppercase leading-tight italic text-black">
-                      Data do Relatório: <br/> {new Date().toLocaleDateString('pt-BR')} <br/> 
-                      <span className="text-pink-600">UNIDADE_SITEPROX_SYS</span>
-                   </div>
-                </div>
-              </div>
+                    </div>
+                  </section>
 
-              {/* Seção 1 */}
-              <section className="space-y-10">
-                <div className="flex items-center gap-4">
-                   <div className="h-0.5 flex-1 bg-slate-200"></div>
-                   <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Mapeamento de Hostilidade Local</h3>
-                   <div className="h-0.5 flex-1 bg-slate-200"></div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-8">
-                   <div className="border-2 border-slate-100 p-8 space-y-4 relative bg-white">
-                      <span className="text-[10px] font-black uppercase text-pink-600">Zona 01 // 2km</span>
-                      <h4 className="text-[10px] font-bold uppercase italic text-slate-400">Confronto Imediato</h4>
-                      <p className="text-6xl font-black italic tracking-tighter text-black">{competitorsCount.radius2km}</p>
-                      <p className="text-[9px] font-bold leading-tight text-slate-400 uppercase">Rivais Ativos Detectados.</p>
-                   </div>
-                   <div className="border-2 border-slate-100 p-8 space-y-4 relative bg-slate-50">
-                      <span className="text-[10px] font-black uppercase text-slate-800">Zona 02 // 5km</span>
-                      <h4 className="text-[10px] font-bold uppercase italic text-slate-400">Alcance Regional</h4>
-                      <p className="text-6xl font-black italic tracking-tighter text-black">{competitorsCount.radius5km}</p>
-                      <p className="text-[9px] font-bold leading-tight text-slate-400 uppercase">Ocupação de Mercado Alvo.</p>
-                   </div>
-                   <div className="border-2 border-slate-900 p-8 space-y-4 relative bg-white">
-                      <span className="text-[10px] font-black uppercase text-slate-800">Métrica Social</span>
-                      <h4 className="text-[10px] font-bold uppercase italic text-slate-400">Score de Reputação</h4>
-                      <p className={`text-6xl font-black italic tracking-tighter ${parseFloat(dossierLead.rating) < 4.6 ? 'text-red-600' : 'text-emerald-600'}`}>
-                        {dossierLead.rating}★
-                      </p>
-                      <p className="text-[9px] font-bold leading-tight text-slate-400 uppercase">Qualidade Percebida.</p>
-                   </div>
-                </div>
-              </section>
-
-              {/* Seção 2 */}
-              <section className="space-y-6">
-                <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 border-l-4 border-pink-500 pl-4 bg-slate-50 py-2">Monitoramento de Alvos Relevantes</h3>
-                <div className="border-2 border-slate-100 divide-y divide-slate-100">
-                   {competitorsList.length > 0 ? competitorsList.map((c, i) => (
-                      <div key={i} className="p-5 flex justify-between items-center bg-white">
-                        <div className="flex items-center gap-5">
-                          <div className="w-1.5 h-1.5 bg-pink-500 rounded-full"></div>
-                          <div>
-                            <p className="text-xs font-black uppercase text-black">{c.title}</p>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{c.address?.slice(0, 80)}...</p>
+                  {/* Seção 2 */}
+                  <section className="space-y-6">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 border-l-4 border-pink-500 pl-4 bg-slate-50 py-2">Monitoramento de Alvos Relevantes</h3>
+                    <div className="border-2 border-slate-100 divide-y divide-slate-100">
+                      {competitorsList.length > 0 ? competitorsList.map((c, i) => (
+                        <div key={i} className="p-5 flex justify-between items-center bg-white">
+                          <div className="flex items-center gap-5">
+                            <div className="w-1.5 h-1.5 bg-pink-500 rounded-full"></div>
+                            <div>
+                              <p className="text-xs font-black uppercase text-black">{c.title}</p>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{c.address?.slice(0, 80)}...</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-black italic text-black">{c.rating}★</span>
+                            <p className="text-[8px] font-bold text-pink-500 uppercase">{c.reviews} reviews</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                           <span className="text-xs font-black italic text-black">{c.rating}★</span>
-                           <p className="text-[8px] font-bold text-pink-500 uppercase">{c.reviews} reviews</p>
-                        </div>
+                      )) : (
+                        <p className="p-10 text-center text-xs font-bold text-slate-300 italic uppercase">Aguardando dados de sensores...</p>
+                      )}
+                    </div>
+                  </section>
+
+                  {/* Seção 3 */}
+                  <section className="border-[8px] border-slate-900 p-12 bg-white relative">
+                    <div className="absolute top-0 right-10 -translate-y-1/2 bg-black text-white px-4 py-1 text-[8px] font-black uppercase">PARECER_TÉCNICO</div>
+                    <p className="text-2xl font-black text-slate-900 leading-snug italic py-4">
+                      &ldquo;{dossierPitch}&rdquo;
+                    </p>
+                    <div className="mt-12 pt-10 border-t-2 border-slate-100 flex justify-between items-end">
+                      <div className="space-y-1">
+                        <p className="text-[9px] font-black uppercase text-slate-400">Certificado Digitalmente:</p>
+                        <p className="text-sm font-black italic uppercase tracking-tighter text-black">SiteProx_Strategic_Intelligence_Network</p>
                       </div>
-                   )) : (
-                     <p className="p-10 text-center text-xs font-bold text-slate-300 italic uppercase">Aguardando dados de sensores...</p>
-                   )}
+                      <div className="text-right">
+                        <div className="w-16 h-1.5 bg-pink-500 mb-2 ml-auto"></div>
+                        <p className="text-[8px] font-black uppercase opacity-50 text-black">Cód._Fiscal: SPX-HACK-V3-2024</p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <footer className="pt-20 text-center space-y-3 opacity-40">
+                    <div className="h-0.5 w-full bg-slate-100"></div>
+                    <p className="text-[8px] font-black uppercase tracking-[0.5em] text-black">Este documento contém dados confidenciais de inteligência. Uso proibido sem autorização do operador.</p>
+                  </footer>
                 </div>
-              </section>
+              </div>
+            )}
 
-              {/* Seção 3 */}
-              <section className="border-[8px] border-slate-900 p-12 bg-white relative">
-                 <div className="absolute top-0 right-10 -translate-y-1/2 bg-black text-white px-4 py-1 text-[8px] font-black uppercase">PARECER_TÉCNICO</div>
-                 <p className="text-2xl font-black text-slate-900 leading-snug italic py-4">
-                   &ldquo;{dossierPitch}&rdquo;
-                 </p>
-                 <div className="mt-12 pt-10 border-t-2 border-slate-100 flex justify-between items-end">
-                    <div className="space-y-1">
-                       <p className="text-[9px] font-black uppercase text-slate-400">Certificado Digitalmente:</p>
-                       <p className="text-sm font-black italic uppercase tracking-tighter text-black">SiteProx_Strategic_Intelligence_Network</p>
-                    </div>
-                    <div className="text-right">
-                       <div className="w-16 h-1.5 bg-pink-500 mb-2 ml-auto"></div>
-                       <p className="text-[8px] font-black uppercase opacity-50 text-black">Cód._Fiscal: SPX-HACK-V3-2024</p>
-                    </div>
-                 </div>
-              </section>
-
-              <footer className="pt-20 text-center space-y-3 opacity-40">
-                 <div className="h-0.5 w-full bg-slate-100"></div>
-                 <p className="text-[8px] font-black uppercase tracking-[0.5em] text-black">Este documento contém dados confidenciais de inteligência. Uso proibido sem autorização do operador.</p>
-              </footer>
-            </div>
-          </div>
-        )}
-
-        {/*      CAMADA NUCLEAR DE IMPRESSÃO: AUDITORIA */}
-        {selectedLeadDetails && (
-          <div className={`print-audit-overlay ${isPrinting && isAuditModalOpen ? 'active' : ''}`}>
-             <div className="w-full bg-white font-mono text-black p-[15mm]">
-                {/* Conteúdo Real da Auditoria para Impressão */}
-                <header className="border-b-[6px] border-cyan-500 pb-10 flex justify-between items-start">
-                  <div className="space-y-4">
-                     <div className="flex items-center gap-6">
+            {/* 2. AUDITORIA ESTRATÉGICA (COR: CIANO/DIGITAL) */}
+            {isAuditModalOpen && (
+              <div className={`print-audit-overlay ${isPrinting && isAuditModalOpen ? 'active' : ''}`}>
+                <div className="w-full bg-white font-mono text-black p-[15mm]">
+                  <header className="border-b-[6px] border-cyan-500 pb-10 flex justify-between items-start">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-6">
                         <div className="w-20 h-20 bg-cyan-600 flex items-center justify-center -skew-x-6 text-white text-3xl font-black">
-                         SPX
+                          SPX
                         </div>
                         <div>
                           <h1 className="text-4xl font-black uppercase italic tracking-tighter leading-none text-black">
@@ -1908,42 +1910,39 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                           </h1>
                           <p className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-[0.4em]">Protocolo_SiteProx_2025 // v4.0</p>
                         </div>
-                     </div>
-                  </div>
-                  <div className="text-right space-y-2">
-                     <div className="bg-black text-white px-6 py-2 text-xs font-black uppercase italic">STATUS: CRÍTICO</div>
-                     <p className="text-[10px] font-black text-slate-400 uppercase">Gerado em: {new Date().toLocaleDateString('pt-BR')}</p>
-                  </div>
-                </header>
+                      </div>
+                    </div>
+                    <div className="text-right space-y-2">
+                       <div className="bg-black text-white px-6 py-2 text-xs font-black uppercase italic">STATUS: CRÍTICO</div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase">Gerado em: {new Date().toLocaleDateString('pt-BR')}</p>
+                    </div>
+                  </header>
 
-                <section className="space-y-16 mt-12">
-                   {/* Diagnóstico HUD */}
-                   <div className="bg-slate-50 border border-slate-200 p-8 relative overflow-hidden">
+                  <section className="space-y-16 mt-12">
+                    <div className="bg-slate-50 border border-slate-200 p-8 relative overflow-hidden">
                       <div className="absolute top-0 right-0 p-6 opacity-5">
-                         <Target className="w-20 h-20 text-black" />
+                        <Target className="w-20 h-20 text-black" />
                       </div>
                       <h3 className="text-xs font-black text-cyan-600 uppercase tracking-widest mb-4">[::] DIAGNÓSTICO_PRIORITÁRIO</h3>
                       <p className="text-3xl font-black text-black italic uppercase tracking-tighter">{selectedLeadDetails.title}</p>
                       <p className="text-sm font-bold text-slate-500 mt-1 uppercase">{selectedLeadDetails.address}</p>
-                   </div>
+                    </div>
 
-                   {/* Score de Oportunidade */}
-                   <div className="flex gap-10">
+                    <div className="flex gap-10">
                       <div className="flex-1 bg-black p-10 text-white space-y-4 shadow-xl">
-                         <p className="text-[10px] text-cyan-400 font-black uppercase tracking-[0.4em]">SCORE_DE_OPORTUNIDADE</p>
-                         <p className="text-8xl font-black italic tracking-tighter leading-none">{selectedLeadDetails.score || '98'}%</p>
-                         <div className="h-1.5 w-full bg-white/10 mt-6 relative overflow-hidden">
-                            <div className="absolute top-0 left-0 h-full bg-cyan-400 w-[98%]"></div>
-                         </div>
+                        <p className="text-[10px] text-cyan-400 font-black uppercase tracking-[0.4em]">SCORE_DE_OPORTUNIDADE</p>
+                        <p className="text-8xl font-black italic tracking-tighter leading-none">{selectedLeadDetails.score || '98'}%</p>
+                        <div className="h-1.5 w-full bg-white/10 mt-6 relative overflow-hidden">
+                          <div className="absolute top-0 left-0 h-full bg-cyan-400 w-[98%]"></div>
+                        </div>
                       </div>
                       <div className="w-1/3 border-4 border-black p-8 flex flex-col justify-center items-center text-center">
-                         <Zap className="w-12 h-12 text-cyan-600 mb-4" />
-                         <p className="text-xs font-black uppercase text-black leading-tight">ENTREGA_PROMETIDA: REDUÇÃO_RESIDUO_ZERO</p>
+                        <Zap className="w-12 h-12 text-cyan-600 mb-4" />
+                        <p className="text-xs font-black uppercase text-black leading-tight">ENTREGA_PROMETIDA: REDUÇÃO_RESIDUO_ZERO</p>
                       </div>
-                   </div>
+                    </div>
 
-                   {/* ROI CALCULATOR CLONE */}
-                   <div className="bg-cyan-50 border-2 border-cyan-100 p-10 space-y-6">
+                    <div className="bg-cyan-50 border-2 border-cyan-100 p-10 space-y-6">
                       <h4 className="text-xl font-black uppercase text-cyan-900 tracking-widest flex items-center gap-3">
                         POTENCIAL_DE_LUCRO_VASSADO (MENSAL)
                       </h4>
@@ -1951,52 +1950,53 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                         R$ {(ticketMedio * fluxoMensal * (auditConversion / 100)).toLocaleString('pt-BR')}
                       </p>
                       <div className="grid grid-cols-2 gap-8 pt-6 border-t border-cyan-200">
-                         <div>
-                            <p className="text-[8px] font-black text-cyan-600 uppercase">Ticket_Médio_Ref:</p>
-                            <p className="text-lg font-black text-black">R$ {ticketMedio}</p>
-                         </div>
-                         <div>
-                            <p className="text-[8px] font-black text-cyan-600 uppercase">Fluxo_Mensal_Estimado:</p>
-                            <p className="text-lg font-black text-black">{fluxoMensal} Leads</p>
-                         </div>
+                        <div>
+                          <p className="text-[8px] font-black text-cyan-600 uppercase">Ticket_Médio_Ref:</p>
+                          <p className="text-lg font-black text-black">R$ {ticketMedio}</p>
+                        </div>
+                        <div>
+                          <p className="text-[8px] font-black text-cyan-600 uppercase">Fluxo_Mensal_Estimado:</p>
+                          <p className="text-lg font-black text-black">{fluxoMensal} Leads</p>
+                        </div>
                       </div>
-                   </div>
+                    </div>
 
-                   {/* Análise de Gaps */}
-                   <div className="grid grid-cols-2 gap-10">
+                    <div className="grid grid-cols-2 gap-10">
                       <div className="border border-slate-200 p-8 space-y-4">
-                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center font-black">01</div>
-                            <h5 className="text-sm font-black uppercase text-black italic">PRESENÇA_MOBILE_REATIVA</h5>
-                         </div>
-                         <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic border-l-2 border-rose-200 pl-4 text-justify">
-                            A falta de carregamento instantâneo e botões de ação direta no celular causa uma perda de leads de até 65%. 
-                         </p>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-rose-500 text-white flex items-center justify-center font-black">01</div>
+                          <h5 className="text-sm font-black uppercase text-black italic">PRESENÇA_MOBILE_REATIVA</h5>
+                        </div>
+                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic border-l-2 border-rose-200 pl-4 text-justify">
+                          A falta de carregamento instantâneo e botões de ação direta no celular causa uma perda de leads de até 65%. 
+                        </p>
                       </div>
                       <div className="border border-slate-200 p-8 space-y-4">
-                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-purple-500 text-white flex items-center justify-center font-black">02</div>
-                            <h5 className="text-sm font-black uppercase text-black italic">CONFIABILIDADE_VISUAL</h5>
-                         </div>
-                         <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic border-l-2 border-purple-200 pl-4 text-justify">
-                            Empresas sem site moderno perdem autoridade. O cliente decide pelo concorrente que transmite mais confiança digital.
-                         </p>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-purple-500 text-white flex items-center justify-center font-black">02</div>
+                          <h5 className="text-sm font-black uppercase text-black italic">CONFIABILIDADE_VISUAL</h5>
+                        </div>
+                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium italic border-l-2 border-purple-200 pl-4 text-justify">
+                          Empresas sem site moderno perdem autoridade. O cliente decide pelo concorrente que transmite mais confiança digital.
+                        </p>
                       </div>
-                   </div>
-                </section>
-                
-                <footer className="mt-24 pt-10 border-t-2 border-slate-200 flex justify-between items-end">
-                   <div className="space-y-4">
+                    </div>
+                  </section>
+                  
+                  <footer className="mt-24 pt-10 border-t-2 border-slate-200 flex justify-between items-end">
+                    <div className="space-y-4">
                       <p className="text-2xl font-black uppercase italic text-black border-b-4 border-cyan-500 inline-block pr-10">LUCAS_ESTRATEGISTA</p>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">SQUAD_SITEPROX // OPERAÇÃO_LUCRO_TOTAL</p>
-                   </div>
-                   <div className="text-right">
+                    </div>
+                    <div className="text-right">
                       <p className="text-3xl font-black italic text-black">SITE<span className="text-cyan-600">PROX</span></p>
                       <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2">RESIDUO_ZERO_PROTOCOL</p>
-                   </div>
-                </footer>
-             </div>
-          </div>
+                    </div>
+                  </footer>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
