@@ -38,35 +38,57 @@ const DossierModal: React.FC<DossierModalProps> = ({
     >
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          body * { visibility: hidden; }
-          #dossier-modal-content, #dossier-modal-content * { visibility: visible; }
-          #dossier-modal-content {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
+          /* Reset de containers superiores */
+          html, body, #__next, .min-h-screen, main, div[class*="flex"] { 
+            background: white !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+            position: static !important;
+            display: block !important;
+          }
+          
+          /* Esconde a "sujeira" do Dashboard */
+          aside, header, nav, .print\\:hidden, #manual-cmd-btn, button { 
+            display: none !important; 
+          }
+
+          /* O dossiê vira o rei da página única */
+          #dossier-root {
+            display: block !important;
+            position: relative !important;
             width: 100% !important;
             height: auto !important;
             margin: 0 !important;
             padding: 0 !important;
-            border: none !important;
             background: white !important;
-            box-shadow: none !important;
-            color: black !important;
+            z-index: 9999 !important;
           }
-          .print\\:hidden { display: none !important; }
-          .bg-black\\/40, .bg-\\[\\#0f172a\\], .bg-\\[\\#0a0a0a\\], .bg-dark-bg { background: white !important; }
-          .text-white { color: black !important; }
-          .text-slate-500, .text-cyan-600 { color: #666 !important; }
-          .border-white\\/5, .border-cyan-400\\/10 { border-color: #eee !important; }
-          .hacker-grid-bg { background: none !important; }
-          .shadow-\\[0_0_100px_rgba(236,72,153,0.1)\\] { box-shadow: none !important; }
-          @page { size: auto; margin: 15mm; }
+
+          #dossier-modal-content {
+            display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            max-width: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            background: white !important;
+          }
+
+          /* Tipografia e Cores de Impressão */
+          .text-white, h2, h3, h4, p, span { color: black !important; }
+          .bg-black\\/40, .bg-\\[\\#0f172a\\] { background: transparent !important; }
+          .bg-pink-500\\/5, .bg-white\\/5 { background: #f9f9f9 !important; border: 1px solid #ddd !important; }
+          .text-pink-500 { color: #ec4899 !important; }
+          
+          @page { size: A4; margin: 10mm; }
         }
       `}} />
 
       <div 
         id="dossier-modal-content"
-        className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] h-fit flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)] my-0 md:my-auto"
+        className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] h-fit flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)] my-0 md:my-auto print:bg-white print:border-none print:shadow-none"
       >
         <div className="absolute top-0 left-0 w-full h-1 bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)] print:hidden" />
 
