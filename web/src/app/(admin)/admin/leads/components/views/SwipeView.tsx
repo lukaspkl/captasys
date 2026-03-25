@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -17,13 +16,14 @@ import {
   Card, 
   CardContent 
 } from "@/components/ui/card";
+import { Lead } from "../../types";
 
 interface SwipeViewProps {
-  swipeLeads: any[];
-  removeFromSwipe: (lead: any) => void;
+  swipeLeads: Lead[];
+  removeFromSwipe: (lead: Lead) => void;
   stitchStatuses: Record<string, string>;
-  generateCloningPrompt: (lead: any) => void;
-  openStitchConfig: (lead: any) => void;
+  generateCloningPrompt: (lead: Lead) => void;
+  openStitchConfig: (lead: Lead) => void;
 }
 
 const SwipeView: React.FC<SwipeViewProps> = ({
@@ -78,11 +78,11 @@ const SwipeView: React.FC<SwipeViewProps> = ({
                 </Button>
               </div>
               <div className="space-y-2">
-                {stitchStatuses[lead.url] === 'generating' ? (
+                {stitchStatuses[lead.url || ""] === 'generating' ? (
                   <Button className="w-full h-11 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-black text-[9px] uppercase rounded-none cursor-wait">
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" /> SINTETIZANDO_INTERFACE...
                   </Button>
-                ) : stitchStatuses[lead.url] === 'completed' ? (
+                ) : stitchStatuses[lead.url || ""] === 'completed' ? (
                   <div className="space-y-2 animate-in fade-in zoom-in-95">
                      <Button className="w-full h-11 bg-emerald-500 text-black font-black text-[9px] uppercase tracking-tighter rounded-none shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                         <Check className="w-3.5 h-3.5 mr-2" /> TEMPLATE_PRONTO_NO_CORE
@@ -112,10 +112,10 @@ const SwipeView: React.FC<SwipeViewProps> = ({
                     </Button>
                     <Button 
                       onClick={() => openStitchConfig(lead)}
-                      className={`w-full h-11 ${stitchStatuses[lead.url] === 'error' ? 'bg-rose-500' : 'bg-cyan-500'} text-black font-black text-[9px] uppercase tracking-tighter hover:bg-white transition-all shadow-lg shadow-cyan-500/10`}
+                      className={`w-full h-11 ${stitchStatuses[lead.url || ""] === 'error' ? 'bg-rose-500' : 'bg-cyan-500'} text-black font-black text-[9px] uppercase tracking-tighter hover:bg-white transition-all shadow-lg shadow-cyan-500/10`}
                     >
                       <Zap className="w-3 h-3 mr-2" /> 
-                      {stitchStatuses[lead.url] === 'error' ? 'RE-TENTAR_AUTO_BUILD' : 'AUTO_STITCH_BUILD (FÁBRICA)'}
+                      {stitchStatuses[lead.url || ""] === 'error' ? 'RE-TENTAR_AUTO_BUILD' : 'AUTO_STITCH_BUILD (FÁBRICA)'}
                     </Button>
                   </>
                 )}

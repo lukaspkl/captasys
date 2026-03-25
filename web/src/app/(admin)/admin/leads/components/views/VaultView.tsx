@@ -18,12 +18,13 @@ import {
   CardContent, 
   CardFooter 
 } from "@/components/ui/card";
+import { Lead } from "../../types";
 
 interface VaultViewProps {
-  vaultLeads: any[];
-  setVaultLeads: (leads: any[]) => void;
-  removeFromVault: (lead: any) => void;
-  openLeadDetails: (lead: any) => void;
+  vaultLeads: Lead[];
+  setVaultLeads: (leads: Lead[]) => void;
+  removeFromVault: (lead: Lead) => void;
+  openLeadDetails: (lead: Lead) => void;
 }
 
 const VaultView: React.FC<VaultViewProps> = ({

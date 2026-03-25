@@ -2,10 +2,11 @@
 "use client";
 
 import React from "react";
+import { Lead } from "../../types";
 
 interface CRMViewProps {
-  leads: any[];
-  openLeadDetails: (lead: any) => void;
+  leads: Lead[];
+  openLeadDetails: (lead: Lead) => void;
   updateLeadStatus: (url: string, status: string) => void;
 }
 
@@ -63,7 +64,7 @@ const CRMView: React.FC<CRMViewProps> = ({
                               : status === "PROPOSTA"
                                 ? "FECHADO"
                                 : "NOVO";
-                        updateLeadStatus(lead.url, nextStatus);
+                        updateLeadStatus(lead.url || "", nextStatus);
                       }}
                       className="text-[9px] text-[#06b6d4] font-black hover:text-white uppercase italic tracking-tighter opacity-0 group-hover/card:opacity-100 transition-opacity"
                     >
