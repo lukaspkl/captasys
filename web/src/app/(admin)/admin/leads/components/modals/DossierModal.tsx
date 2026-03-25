@@ -39,51 +39,49 @@ const DossierModal: React.FC<DossierModalProps> = ({
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
           /* Reset de containers superiores */
-          html, body, #__next, .min-h-screen, main, div[class*="flex"] { 
+          html, body { 
             background: white !important;
-            height: auto !important;
+            height: 100% !important;
+            width: 100% !important;
             min-height: 0 !important;
-            overflow: visible !important;
-            position: static !important;
-            display: block !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
           
           /* Esconde a "sujeira" do Dashboard e Modais irmãos */
           #main-dashboard-container, aside, header, nav, .print\\:hidden, #manual-cmd-btn, button { 
             display: none !important; 
             visibility: hidden !important;
-            height: 0 !important;
-            overflow: hidden !important;
           }
 
           /* O dossiê vira o rei da página única */
           #dossier-root {
             display: block !important;
-            position: absolute !important;
+            position: fixed !important;
             top: 0 !important;
             left: 0 !important;
-            width: 100% !important;
-            height: 100vh !important;
+            width: 210mm !important;
+            height: 297mm !important;
             margin: 0 !important;
             padding: 10mm !important;
             background: white !important;
             z-index: 99999 !important;
             overflow: hidden !important;
+            box-sizing: border-box !important;
           }
 
           #dossier-modal-content {
             display: block !important;
             position: relative !important;
             width: 100% !important;
-            max-width: none !important;
+            height: 100% !important;
             min-height: 0 !important;
-            height: auto !important;
             border: none !important;
             box-shadow: none !important;
             margin: 0 !important;
             background: white !important;
             padding: 0 !important;
-            page-break-after: avoid !important;
           }
 
           /* Tipografia e Cores de Impressão */
