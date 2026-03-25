@@ -36,9 +36,7 @@ import {
   Send,
   Archive,
   ShieldOff,
-  ShieldAlert,
   RotateCcw,
-  Plus,
   Sparkles,
   Home,
   Check,
@@ -70,7 +68,6 @@ import LeadDetailsModal from "./components/modals/LeadDetailsModal";
 export default function DashboardPage() {
   const [currentView, setCurrentView] = useState("dashboard"); // dashboard, campaigns, active-sites, crm
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mercado, setMercado] = useState("nacional");
   const [nicho, setNicho] = useState("");
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
@@ -82,7 +79,6 @@ export default function DashboardPage() {
   const [searchMode, setSearchMode] = useState<"web" | "maps">("web");
   const [minReviewsCount, setMinReviewsCount] = useState<number>(10);
   const [numResults, setNumResults] = useState<number>(20);
-  const [citySearch, setCitySearch] = useState("");
 
   // --- IBGE API (Moved/Consolidated) ---
 
@@ -116,11 +112,7 @@ export default function DashboardPage() {
   const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(null);
   const [selectedLeadDetails, setSelectedLeadDetails] = useState<Lead | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [generatedMessage, setGeneratedMessage] = useState("");
-  const [targetSearch, setTargetSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [landingPageUrl, setLandingPageUrl] = useState("");
   const [leadAnalysis, setLeadAnalysis] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPromptCopied, setIsPromptCopied] = useState(false);
@@ -132,19 +124,14 @@ export default function DashboardPage() {
   const [ticketMedio, setTicketMedio] = useState<number>(500);
   const [fluxoMensal, setFluxoMensal] = useState<number>(60);
   const [auditConversion, setAuditConversion] = useState<number>(30);
-  const [roiVisibility, setRoiVisibility] = useState(false);
   const [isSiteOutdated, setIsSiteOutdated] = useState(false);
   const [isRenewalModalOpen, setIsRenewalModalOpen] = useState(false);
-  const [isLovableModalOpen, setIsLovableModalOpen] = useState(false);
-  const [lovablePromptText, setLovablePromptText] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [previewHtmlInput, setPreviewHtmlInput] = useState("");
   const [previewLink, setPreviewLink] = useState("");
   const [activeProjects, setActiveProjects] = useState<ActiveProject[]>([]);
   const [isProjectSettingsOpen, setIsProjectSettingsOpen] = useState(false);
-  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [manualInput, setManualInput] = useState("");
-  const [manualProcessing, setManualProcessing] = useState(false);
   const [editingProject, setEditingProject] = useState<ActiveProject | null>(null);
   const [projectSettings, setProjectSettings] = useState<ProjectSettings>({
     name: "",
@@ -153,6 +140,12 @@ export default function DashboardPage() {
     monthlyFee: "",
     liveUrl: "",
   });
+  const [whatsappPreviewMessage, setWhatsappPreviewMessage] = useState("");
+  const [isTemplatePreviewOpen, setIsTemplatePreviewOpen] = useState(false);
+  const [isLovableModalOpen, setIsLovableModalOpen] = useState(false);
+  const [lovablePromptText, setLovablePromptText] = useState("");
+  const [landingPageUrl, setLandingPageUrl] = useState("");
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
   const [templateConfig, setTemplateConfig] = useState<TemplateConfig>({
     sellerName: "Hacker",
@@ -229,8 +222,6 @@ export default function DashboardPage() {
       classificationMotivity: reasons.join("; "),
     };
   }, []);
-  const [isTemplatePreviewOpen, setIsTemplatePreviewOpen] = useState(false);
-  const [whatsappPreviewMessage, setWhatsappPreviewMessage] = useState("");
 
   // Blacklist Manager
   const DEFAULT_BLACKLIST = [
@@ -520,13 +511,6 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
     return () => { active = false; };
   }, [cidadeId]);
 
-  const handleEstadoChange = (val: string) => {
-    setEstado(val || "");
-    setCidade("");
-    setCidadeId(null);
-    setBairro("");
-    setBairrosList([]);
-  };
 
   const handleCidadeChange = (val: string) => {
     setCidade(val);
@@ -829,76 +813,6 @@ Estou por aqui, qualquer dúvida sobre o site ou as condições ({{preco}}). Me 
     }
   };
 
-  const handleManualScan = () => {
-    if (!manualInput.trim()) return;
-    setManualProcessing(true);
-
-    // Simular inteligência de extração
-    setTimeout(() => {
-      const input = manualInput.trim();
-
-      // Tentar extrair URL
-      const urlMatch = input.match(/(https?:\/\/[^\s]+)/);
-      const url = urlMatch ? urlMatch[0] : "";
-
-      // Tentar extrair Nome (o que vem antes da URL ou antes de um separador comum)
-      let title = "Lead Capturado Manualmente";
-
-      if (url) {
-        const beforeUrl = input.split(url)[0].trim();
-        const cleanBefore = beforeUrl.replace(/[  \-|:;,]+$/, "").trim();
-
-        if (cleanBefore && cleanBefore.length > 2 && cleanBefore.length < 100) {
-          title = cleanBefore;
-        } else if (
-          url.includes("google.com/maps") ||
-          url.includes("goo.gl/maps")
-        ) {
-          title = "Lead no Google Maps";
-        } else {
-          try {
-            const domain = new URL(url).hostname.replace("www.", "");
-            title = domain.charAt(0).toUpperCase() + domain.slice(1);
-          } catch {
-            title = "Lead (URL)";
-          }
-        }
-      } else {
-        if (input.length < 60) {
-          title = input;
-        }
-      }
-
-      const isMaps =
-        url.includes("google.com/maps") || url.includes("goo.gl/maps");
-
-      const newLead = {
-        id: crypto.randomUUID(),
-        title: title,
-        url:
-          url ||
-          (input.startsWith("http")
-            ? input
-            : `https://google.com/search?q=${encodeURIComponent(input)}`),
-        mapsUrl: isMaps ? url : null,
-        phone: "",
-        rating: "N/A",
-        reviewCount: "0",
-        address: isMaps ? "Analisando localização..." : "Informação manual",
-        status: "novo",
-        perceptions: ["Captação Manual", "Aguardando ANÁLISE Profunda"],
-        socials: {},
-      };
-
-      setLeads((prev) => [newLead, ...prev]);
-      setManualProcessing(false);
-      setIsManualModalOpen(false);
-      setManualInput("");
-      setStatusText("    Lead Manual Adicionado!");
-
-      openLeadDetails(newLead);
-    }, 1500);
-  };
 
   const handleStartSearch = async () => {
     if (!nicho || !cidade) {
@@ -3843,6 +3757,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
         </div>
       )}
 
+      {/* MODAIS GLOBAIS */}
+
       {isBlacklistModalOpen && (
         <BlacklistModal
           blacklist={blacklist}
@@ -3880,12 +3796,185 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
         onHtmlInputChange={setPreviewHtmlInput}
         previewLink={previewLink}
         onSave={() => savePreview()}
-        onClose={() => { setIsPreviewModalOpen(false); setPreviewLink(""); }}
+        onClose={() => {
+          setIsPreviewModalOpen(false);
+          setPreviewLink("");
+        }}
       />
 
+      <LeadDetailsModal
+        isOpen={isDetailsModalOpen}
+        selectedLeadDetails={selectedLeadDetails}
+        leadAnalysis={leadAnalysis}
+        isAnalyzing={isAnalyzing}
+        isSiteOutdated={isSiteOutdated}
+        generatedMessage={generatedMessage}
+        cidade={cidade}
+        estado={estado}
+        onClose={() => setIsDetailsModalOpen(false)}
+        onStartMapsAnalysis={startMapsAnalysis}
+        onUpdateLeadStatus={updateLeadStatus}
+        onSetSelectedLeadDetails={setSelectedLeadDetails}
+        onConvertToActive={convertToActive}
+        onGenerateLovablePrompt={generateLovablePrompt}
+        onSetIsRenewalModalOpen={setIsRenewalModalOpen}
+        onSetIsAuditModalOpen={setIsAuditModalOpen}
+        onGenerateTacticalDossier={generateTacticalDossier}
+        onSetIsPreviewModalOpen={setIsPreviewModalOpen}
+        onGenerateAIPitch={generateAIPitch}
+        onHandleSendZap={handleSendZap}
+        onSetIsSiteOutdated={setIsSiteOutdated}
+      />
 
+      {/* MODAL SCAN MANUAL V3 */}
+      {isManualModalOpen && (
+        <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-[900] flex items-center justify-center p-6 font-mono text-cyan-400 select-none animate-in fade-in zoom-in duration-300">
+          <div className="max-w-xl w-full border border-cyan-400/30 bg-black/40 p-8 space-y-8 shadow-[0_0_50px_rgba(34,211,238,0.1)] relative group">
+             {/* Decorativos Cyber */}
+             <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-cyan-400"></div>
+             <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-cyan-400"></div>
+             <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-cyan-400"></div>
+             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-cyan-400"></div>
+             
+             <div className="flex justify-between items-start">
+               <div>
+                 <h2 className="text-xl font-black italic tracking-widest flex items-center gap-3">
+                   <Cpu className="w-6 h-6 animate-pulse" /> CMD_INJECTION_MANUAL
+                 </h2>
+                 <p className="text-[10px] text-cyan-400/60 mt-1 uppercase">Entrada de alvos via processamento bruto de string.</p>
+               </div>
+               <Button onClick={() => setIsManualModalOpen(false)} className="bg-transparent hover:bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 p-2 h-10 w-10">
+                 <X className="w-5 h-5" />
+               </Button>
+             </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+             <div className="space-y-4">
+                <div className="flex justify-between items-end border-b border-cyan-400/20 pb-2">
+                   <span className="text-[9px] font-black uppercase text-cyan-400/40">Query_Buffer</span>
+                   <span className="text-[9px] font-black text-cyan-400 animate-pulse">Aguardando_Input...</span>
+                </div>
+                <textarea
+                  value={manualInput}
+                  onChange={(e) => setManualInput(e.target.value)}
+                  placeholder="Cole aqui a descrição do alvo ou URL crua..."
+                  className="w-full h-40 bg-slate-900/50 border border-cyan-400/20 p-4 text-cyan-400 text-xs focus:border-cyan-400/60 focus:ring-0 outline-none scrollbar-thin scrollbar-thumb-cyan-900 resize-none font-mono"
+                ></textarea>
+                <div className="flex gap-4">
+                   <div className="flex-1 bg-cyan-400/5 border border-cyan-400/10 p-4 text-[10px] space-y-2 opacity-60">
+                      <p className="font-black text-cyan-400 italic uppercase underline decorations-2">Sintaxe Protegida</p>
+                      <p>O motor de IA irá sanitizar seu input e tentar extrair Title, Site e Category automaticamente.</p>
+                   </div>
+                </div>
+             </div>
+
+             <Button 
+               onClick={() => {
+                 // handleManualScan logic restored
+                 if (!manualInput.trim()) return;
+                 setIsManualModalOpen(false);
+                 setStatusText("Injetando alvo manual...");
+                 
+                 // Mock logic simple enrichment
+                 const newLead: any = {
+                   id: "manual-" + Math.random().toString(36).substr(2, 9),
+                   title: manualInput.slice(0, 30) + (manualInput.length > 30 ? "..." : ""),
+                   snippet: manualInput,
+                   category: nicho || "Manual",
+                   status: "NOVO",
+                   analysisStatus: "PENDENTE",
+                   reviewCount: "0",
+                   rating: "5.0"
+                 };
+                 
+                 setLeads(prev => [newLead, ...prev]);
+                 setManualInput("");
+                 setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
+               }}
+               className="w-full bg-cyan-400 text-black font-black uppercase tracking-[0.3em] rounded-none py-6 h-auto hover:bg-white transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+             >
+               EXECUTAR_INJEÇÃO_DE_ALVO
+             </Button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL TEMPLATE WHATSAPP PREVIEW */}
+      {isTemplatePreviewOpen && (
+        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur z-[950] flex items-center justify-center p-6 font-mono text-emerald-400">
+          <div className="max-w-2xl w-full border border-emerald-400/30 bg-black p-8 space-y-6">
+            <div className="flex justify-between items-center border-b border-emerald-400/20 pb-4">
+               <h3 className="text-xl font-black italic tracking-widest uppercase">Preview_Proposta_WA</h3>
+               <Button onClick={() => setIsTemplatePreviewOpen(false)} className="bg-transparent hover:bg-emerald-400/10 text-emerald-400">
+                 <X className="w-5 h-5" />
+               </Button>
+            </div>
+            <div className="bg-slate-900/50 p-6 border border-emerald-400/10 h-80 overflow-y-auto font-mono text-sm leading-relaxed whitespace-pre-wrap">
+              {whatsappPreviewMessage}
+            </div>
+            <div className="flex gap-4">
+               <Button 
+                 onClick={() => {
+                   navigator.clipboard.writeText(whatsappPreviewMessage);
+                   setStatusText("Copiado com sucesso!");
+                   setTimeout(() => setStatusText("Dashboard Ativo."), 2000);
+                 }}
+                 className="flex-1 bg-emerald-500 text-black font-black uppercase h-14 rounded-none hover:bg-white"
+               >
+                 COPIAR_MENSAGEM
+               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* LOVABLE PROMPT MODAL */}
+      {isLovableModalOpen && (
+        <div className="fixed inset-0 bg-slate-950/98 backdrop-blur z-[1000] flex items-center justify-center p-6">
+          <div className="max-w-4xl w-full border border-pink-500/30 bg-black/80 p-10 space-y-8 relative shadow-[0_0_100px_rgba(255,0,255,0.1)]">
+             <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                   <h2 className="text-3xl font-black italic tracking-tighter text-white uppercase underline decoration-pink-500 decoration-4">Lovable_DNA_Exporter</h2>
+                   <p className="text-xs text-pink-500 font-bold uppercase tracking-widest">Prompt de clonagem tática e estruturação de site.</p>
+                </div>
+                <Button onClick={() => setIsLovableModalOpen(false)} className="text-pink-500 hover:bg-pink-500/10">
+                   <Trash2 className="w-6 h-6" />
+                </Button>
+             </div>
+             
+             <div className="bg-pink-500/5 border border-pink-500/20 p-8 h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-pink-900">
+                <p className="text-sm font-mono text-pink-400 leading-relaxed whitespace-pre-wrap">
+                  {lovablePromptText}
+                </p>
+             </div>
+
+             <div className="grid grid-cols-2 gap-6">
+                <Button 
+                  onClick={() => {
+                     navigator.clipboard.writeText(lovablePromptText);
+                     setStatusText("Prompt DNA Copiado!");
+                     setTimeout(() => setStatusText("Envie agora no Lovable.dev"), 3000);
+                  }}
+                  className="bg-pink-600 text-white font-black uppercase py-8 h-auto rounded-none hover:bg-white hover:text-pink-600 transition-all text-sm tracking-widest shadow-[0_0_30px_rgba(255,0,255,0.4)]"
+                >
+                  [ 01 ] COPIAR_PROMPT_DNA
+                </Button>
+                <a 
+                  href={landingPageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white text-black font-black uppercase py-8 h-auto rounded-none hover:bg-pink-500 hover:text-white transition-all text-sm tracking-widest flex items-center justify-center gap-4"
+                >
+                  [ 02 ] DISPARAR_BUILD_LOVABLE <ExternalLink className="w-5 h-5" />
+                </a>
+             </div>
+             <p className="text-[10px] text-pink-500/40 text-center font-black uppercase italic">
+                Atenção: Use o prompt (01) se o disparar build falhar ou para customizações profundas.
+             </p>
+          </div>
+        </div>
+      )}
+
+      <style>{`
         ::-webkit-scrollbar {
           width: 4px;
         }
@@ -3897,8 +3986,6 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
             size: A4;
             margin: 0;
           }
-          /* Como a div principal do app já tem print:hidden, 
-             aqui limpamos as formatações globais sem aplicar \`visibility: hidden\` no body */
           body {
             background-color: white !important;
             color: black !important;
@@ -3915,7 +4002,6 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
             background: white !important;
             z-index: 9999999 !important;
             overflow: visible !important;
-            /* Forçar a impressão das cores de fundo */
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -3923,7 +4009,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
             display: none !important;
           }
         }
-      `}} />
-      </>
+      `}</style>
+    </>
   );
 }
