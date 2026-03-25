@@ -5,7 +5,7 @@ import {
   X, Printer, ShieldAlert, TrendingDown, Zap, 
   BarChart3, AlertCircle, Smartphone, Globe, Activity,
   SmartphoneIcon, Gauge, MousePointer2, Megaphone,
-  CheckCircle2, Target, Cpu
+  CheckCircle2, Target, Cpu, Rocket, Star, ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Lead } from "../../types";
@@ -108,10 +108,10 @@ const AuditModal: React.FC<AuditModalProps> = ({
               </div>
               <div>
                 <h2 className="text-[10px] font-black text-[#fbce07] uppercase tracking-[0.4em] italic mb-1">
-                  Relatório de Auditoria de Performance // v4.0
+                  Relatório de Auditoria de Performance // v5.0
                 </h2>
                 <h1 className="text-4xl font-black text-white print:text-black uppercase tracking-tighter italic leading-none">
-                  ANÁLISE_DE_PERDA_<span className="text-[#fbce07]">SITEPROX</span>
+                  DIAGNÓSTICO_DE_RECEITA_<span className="text-[#fbce07]">SITEPROX</span>
                 </h1>
               </div>
             </div>
@@ -163,7 +163,7 @@ const AuditModal: React.FC<AuditModalProps> = ({
                   - R$ {projections.gap.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
                 <p className="text-[11px] text-slate-500 italic font-medium leading-relaxed pr-8">
-                  &ldquo;Este valor projeta os leads qualificados que buscam pelo seu serviço no Google, mas que hoje são capturados pela concorrência devido à obsolescência técnica da sua infraestrutura.&rdquo;
+                  &ldquo;Este valor projeta a lucratividade que sua empresa está deixando de faturar no Google por não possuir uma estrutura de alta conversão.&rdquo;
                 </p>
               </div>
             </div>
@@ -200,21 +200,21 @@ const AuditModal: React.FC<AuditModalProps> = ({
               <div className="flex-1 h-px bg-white/5" />
               <div className="flex items-center gap-4">
                 <AlertCircle className="w-5 h-5 text-[#fbce07]" />
-                <h3 className="text-xs font-black text-white print:text-black uppercase tracking-[0.3em] italic">Déficit de Infraestrutura Detectado</h3>
+                <h3 className="text-xs font-black text-white print:text-black uppercase tracking-[0.3em] italic">Análise de Pontos de Fuga</h3>
               </div>
               <div className="flex-1 h-px bg-white/5" />
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { icon: Smartphone, label: "Touch Navigation", status: "INOPERANTE", color: "text-rose-500" },
-                { icon: Gauge, label: "Latência LCP", status: "> 3.2 SEGUNDOS", color: "text-rose-500" },
-                { icon: MousePointer2, label: "CTA Conversion", status: "BAIXO_IMPACTO", color: "text-amber-500" },
-                { icon: Globe, label: "SEO Dominance", status: "ZONA_SOMBRA", color: "text-rose-500" },
-                { icon: Activity, label: "Tracking Real-time", status: "NÃO_DETECTADO", color: "text-slate-500" },
-                { icon: Megaphone, label: "Google ADS Score", status: "INSUFICIENTE", color: "text-rose-500" },
-                { icon: SmartphoneIcon, label: "Ajuste Responsivo", status: "REJEITADO", color: "text-rose-500" },
-                { icon: CheckCircle2, label: "Segurança SSL", status: "EXPIRANDO", color: "text-amber-500" },
+                { icon: Smartphone, label: "Touch Navigation", status: "FALHA CRÍTICA", color: "text-rose-500" },
+                { icon: Gauge, label: "Velocidade de Carregamento", status: "LENTO (> 3s)", color: "text-rose-500" },
+                { icon: MousePointer2, label: "Botões de Conversão", status: "INEFICIENTES", color: "text-amber-500" },
+                { icon: Globe, label: "SEO Regional (Buscas)", status: "INVISÍVEL", color: "text-rose-500" },
+                { icon: Activity, label: "Acompanhamento Real", status: "SEM DADOS", color: "text-slate-500" },
+                { icon: Megaphone, label: "Relacionamento Google", status: "AVISO_BAIXO", color: "text-rose-500" },
+                { icon: SmartphoneIcon, label: "Visualização Celular", status: "REJEITADO", color: "text-rose-500" },
+                { icon: Star, label: "Autoridade Digital", status: "FADIGA", color: "text-amber-500" },
               ].map((item, i) => (
                 <div key={i} className="border border-white/5 p-4 flex flex-col items-center text-center gap-2 group hover:bg-white/5 transition-all print:border-gray-100">
                   <item.icon className={`w-6 h-6 ${item.color}`} />
@@ -225,29 +225,82 @@ const AuditModal: React.FC<AuditModalProps> = ({
             </div>
           </div>
 
-          {/* Tactical Verdict */}
+          {/* Solution Plans Section */}
+          <div className="space-y-8">
+            <div className="flex items-center gap-4">
+              <Rocket className="w-6 h-6 text-[#fbce07]" />
+              <h3 className="text-xs font-black text-white print:text-black uppercase tracking-widest italic">Planos de Saturação SiteProx</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { name: "ESSENCIAL", price: "149", features: ["Site de Alta Conversão", "Hospedagem Sniper", "SSL Integrado", "Suporte 24h"], color: "border-white/10" },
+                { name: "PERFORMANCE", price: "297", features: ["Tudo do Essencial", "Gestão de Maps Local", "Acompanhamento Mensal", "Relatório de Leads"], color: "border-[#fbce07]/50 bg-[#fbce07]/5", best: true },
+                { name: "ELITE", price: "Custom", features: ["Estratégia Full Stack", "ADS Regional Incluso", "Consultoria VIP", "Escala de Domínio"], color: "border-white/10" }
+              ].map((plan, i) => (
+                <div key={i} className={`p-6 border relative flex flex-col gap-4 print:border-gray-200 ${plan.color}`}>
+                  {plan.best && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#fbce07] text-black text-[8px] font-black px-3 py-1 uppercase tracking-widest">Mais Vendido</div>
+                  )}
+                  <h4 className="text-sm font-black text-white print:text-black tracking-widest">{plan.name}</h4>
+                  <div className="text-3xl font-black text-[#fbce07] tracking-tighter">
+                    {plan.price !== "Custom" ? `R$ ${plan.price}` : plan.price}
+                    {plan.price !== "Custom" && <span className="text-[10px] text-slate-500 ml-1 font-bold">/mês</span>}
+                  </div>
+                  <ul className="space-y-2">
+                    {plan.features.map((f, fi) => (
+                      <li key={fi} className="flex items-center gap-2 text-[9px] text-slate-400 font-bold uppercase">
+                        <CheckCircle2 className="w-3 h-3 text-[#fbce07]" /> {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Persuasive Verdict */}
           <div className="bg-[#fbce07]/5 border-l-8 border-[#fbce07] p-12 space-y-6 relative overflow-hidden print:bg-gray-100 print:border-gray-300 print:p-8">
             <div className="absolute top-0 right-0 p-4 opacity-5">
-              <Cpu className="w-24 h-24 text-[#fbce07]" />
+              <Target className="w-24 h-24 text-[#fbce07]" />
             </div>
             <div className="flex items-center gap-4">
               <Zap className="w-6 h-6 text-[#fbce07] fill-[#fbce07]" />
-              <h4 className="text-[11px] font-black text-[#fbce07] uppercase tracking-widest">Protocolo de Recuperação SiteProx</h4>
+              <h4 className="text-[10px] font-black text-[#fbce07] uppercase tracking-widest">Aceleração de Domínio Regional</h4>
             </div>
-            <p className="text-3xl font-black text-white print:text-black italic leading-tight tracking-tighter uppercase">
-              &ldquo;Sua operação está sob ataque competitivo silencioso. O SiteProx irá estancar a perda mensal de R$ {projections.gap.toLocaleString('pt-BR')} ajustando os pilares de conversão e latência em tempo recorde.&rdquo;
+            <p className="text-2xl font-black text-white print:text-black italic leading-tight tracking-tighter uppercase">
+              &ldquo;Chegou a hora de parar de perder clientes para quem faz menos por eles. O SiteProx é a tecnologia que coloca sua empresa no topo do Google, recuperando seus R$ {projections.gap.toLocaleString('pt-BR')} mensais já na primeira semana.&rdquo;
             </p>
+            
+            <div className="pt-6 border-t border-[#fbce07]/20 flex flex-col gap-2">
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Auditoria Assinada por:</p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/10 rounded-full border border-[#fbce07]/30 flex items-center justify-center font-black text-[#fbce07]">LS</div>
+                <div>
+                  <h5 className="text-lg font-black text-white print:text-black uppercase italic leading-none">Lucas Especialista</h5>
+                  <p className="text-[8px] text-[#fbce07] font-black uppercase tracking-widest mt-1">Sênior Lead Acquisition // SiteProx</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Tactical Footer */}
-        <div className="p-6 bg-black/40 border-t border-white/5 flex justify-between items-center print:bg-white print:border-gray-200">
-          <p className="text-[8px] text-slate-500 font-black uppercase tracking-[0.5em]">
-            SiteProx // Performance Auditor v4 // Confidential Data
-          </p>
-          <p className="text-[8px] text-slate-700 font-black uppercase">
-            Lead_Track: {lead.id?.substring(0, 8).toUpperCase()}
-          </p>
+        {/* Tactical Footer with Slogan */}
+        <div className="p-8 bg-black/40 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 print:bg-white print:border-gray-200">
+          <div className="flex items-center gap-3">
+            <Rocket className="w-5 h-5 text-[#fbce07] animate-bounce" />
+            <p className="text-[10px] text-white print:text-black font-black uppercase tracking-[0.4em] italic">
+              SITEPROX: DECOLE SUA OPERAÇÃO DIGITAL_
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1 opacity-40 print:opacity-100">
+            <p className="text-[8px] text-slate-500 font-black uppercase tracking-[0.2em]">
+              © 2025 SITEPROX INTELLIGENCE SYSTEM
+            </p>
+            <p className="text-[7px] text-[#fbce07] font-black uppercase">
+              RECURSO_SNIPER_ID: {lead.id?.substring(0, 8).toUpperCase()}
+            </p>
+          </div>
         </div>
       </div>
     </div>
