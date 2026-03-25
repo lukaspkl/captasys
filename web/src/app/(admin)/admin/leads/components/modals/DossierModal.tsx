@@ -48,21 +48,27 @@ const DossierModal: React.FC<DossierModalProps> = ({
             display: block !important;
           }
           
-          /* Esconde a "sujeira" do Dashboard */
-          aside, header, nav, .print\\:hidden, #manual-cmd-btn, button { 
+          /* Esconde a "sujeira" do Dashboard e Modais irmãos */
+          #main-dashboard-container, aside, header, nav, .print\\:hidden, #manual-cmd-btn, button { 
             display: none !important; 
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
           }
 
           /* O dossiê vira o rei da página única */
           #dossier-root {
             display: block !important;
-            position: relative !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
             width: 100% !important;
             height: auto !important;
             margin: 0 !important;
             padding: 0 !important;
             background: white !important;
-            z-index: 9999 !important;
+            z-index: 99999 !important;
+            overflow: visible !important;
           }
 
           #dossier-modal-content {
@@ -74,6 +80,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
             box-shadow: none !important;
             margin: 0 !important;
             background: white !important;
+            padding: 0 !important;
           }
 
           /* Tipografia e Cores de Impressão */

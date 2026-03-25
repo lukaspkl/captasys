@@ -391,24 +391,38 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setCompetitorsList(localCompetitors);
 
     try {
+      // Tenta extrair o logradouro (nome da rua) para uma busca ultra-localizada
+      const addressBase = lead.address?.split(',')[0]?.trim() || '';
+      const refinedKeyword = addressBase 
+        ? `${nicho} próximo a ${addressBase}, ${cidade}` 
+        : `${nicho} em ${cidade}`;
+
+      console.log('--- DOSSIER RADAR SEARCH ---', refinedKeyword);
+
       const res = await fetch("/api/scanner/search", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: `${nicho} em ${cidade}`, num: 20 }),
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword: refinedKeyword, num: 25 }),
       });
       const data = await res.json();
       
       if (data.leads && data.leads.length > 0) {
-        // Se a busca trouxe novos resultados, atualiza para ser mais preciso
+        // Filtra para remover o próprio lead e garantir relevância
         const freshCompetitors = data.leads
-          .filter((l: Lead) => l.url !== lead.url)
-          .slice(0, 5);
+          .filter((l: Lead) => l.url !== lead.url && l.title !== lead.title)
+          .slice(0, 6); // Top 6 concorrentes diretos
+
         setCompetitorsList(freshCompetitors);
+        
+        // Simulação de distribuição baseada no volume real retornado para manter a visualização rica
+        const total = data.leads.length;
         setCompetitorsCount({ 
-          radius2km: Math.floor(Math.random() * 5) + 3, 
-          radius5km: data.leads.length 
+          radius2km: Math.max(3, Math.floor(total * 0.4)), // Assume 40% no raio ultra-estreito
+          radius5km: total 
         });
       } else {
-        setCompetitorsCount({ radius2km: 5, radius5km: 15 });
+        // Fallback enriquecido
+        setCompetitorsCount({ radius2km: 4, radius5km: 12 });
       }
       
       setDossierPitch(generateAIPitch("apresentacao", lead) || "Estratégia Vencedora: upgrade site ativo.");

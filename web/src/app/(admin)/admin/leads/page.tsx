@@ -152,191 +152,193 @@ export default function DashboardPage() {
   } = useLeadsState();
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white selection:bg-[#06b6d4] selection:text-black">
-      <div className="flex">
-        {/* NAVEGAÇÃO TÁTICA LATERAL */}
-        <aside className="w-24 min-h-screen bg-black/40 border-r border-[#06b6d4]/10 flex flex-col items-center py-10 gap-10 sticky top-0 h-screen z-50">
-          <div className="w-14 h-14 bg-[#06b6d4]/10 border border-[#06b6d4]/40 flex items-center justify-center group cursor-pointer hover:border-neon-pink transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-            <Database className="w-6 h-6 text-[#06b6d4] group-hover:text-neon-pink transition-all" />
-          </div>
+    <>
+      <div id="main-dashboard-container" className="min-h-screen bg-[#020617] text-white selection:bg-[#06b6d4] selection:text-black font-outfit">
+        <div className="flex">
+          {/* NAVEGAÇÃO TÁTICA LATERAL */}
+          <aside className="w-24 min-h-screen bg-black/40 border-r border-[#06b6d4]/10 flex flex-col items-center py-10 gap-10 sticky top-0 h-screen z-50">
+            <div className="w-14 h-14 bg-[#06b6d4]/10 border border-[#06b6d4]/40 flex items-center justify-center group cursor-pointer hover:border-pink-500 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+              <Database className="w-6 h-6 text-[#06b6d4] group-hover:text-pink-500 transition-all" />
+            </div>
 
-          <nav className="flex flex-col gap-6">
-            {(
-              [
-                { id: "dashboard", icon: LayoutDashboard, label: "MAIN_DASH" },
-                { id: "active-sites", icon: Globe, label: "PROD_CORE" },
-                { id: "crm", icon: Activity, label: "CRM_FLOW" },
-                { id: "templates", icon: Database, label: "TEMPLATES" },
-                { id: "swipe", icon: Sparkles, label: "SWIPE_FILE" },
-                { id: "vault", icon: Archive, label: "SECRET_VAULT" },
-                { id: "settings", icon: Settings, label: "SYS_CONFIG" },
-              ] as const
-            ).map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setCurrentView(item.id as View)}
-                className={`w-12 h-12 flex flex-col items-center justify-center gap-1 transition-all group relative ${currentView === item.id ? "text-[#06b6d4]" : "text-slate-600 hover:text-white"}`}
-              >
-                <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="text-[7px] font-black tracking-tighter uppercase font-mono">
-                  {item.label}
-                </span>
-                {currentView === item.id && (
-                  <div className="absolute -right-[25px] w-1 h-8 bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]" />
-                )}
-              </button>
-            ))}
-          </nav>
-
-          <Button
-            variant="ghost"
-            onClick={() => setIsBlacklistModalOpen(true)}
-            className="mt-auto w-12 h-12 p-0 text-slate-700 hover:text-rose-500 hover:bg-rose-500/5"
-            title="Blacklist Manager"
-          >
-            <Settings className="w-5 h-5" />
-          </Button>
-        </aside>
-
-        {/* CONTAINER PRINCIPAL */}
-        <div className="flex-1 flex flex-col">
-          {/* HEADER SUPERIOR (STATS_STRIP) */}
-          <header className="h-28 border-b border-[#06b6d4]/10 bg-black/20 backdrop-blur-xl flex items-center justify-between px-10 sticky top-0 z-40">
-            <div className="flex items-center gap-8">
-              <div>
-                <h1 className="font-hacker text-4xl font-black italic tracking-tighter text-white uppercase leading-none">
-                  CAPTA_SYSTEM <span className="text-[#06b6d4]">v4.0</span>
-                </h1>
-                <div className="flex items-center gap-4 mt-1">
-                  <span className="text-[9px] font-black tracking-[0.4em] text-slate-500 uppercase font-mono">
-                    NEON_HUD_ENGINE_ONLINE
+            <nav className="flex flex-col gap-6">
+              {(
+                [
+                  { id: "dashboard", icon: LayoutDashboard, label: "MAIN_DASH" },
+                  { id: "active-sites", icon: Globe, label: "PROD_CORE" },
+                  { id: "crm", icon: Activity, label: "CRM_FLOW" },
+                  { id: "templates", icon: Database, label: "TEMPLATES" },
+                  { id: "swipe", icon: Sparkles, label: "SWIPE_FILE" },
+                  { id: "vault", icon: Archive, label: "SECRET_VAULT" },
+                  { id: "settings", icon: Settings, label: "SYS_CONFIG" },
+                ] as const
+              ).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setCurrentView(item.id as View)}
+                  className={`w-12 h-12 flex flex-col items-center justify-center gap-1 transition-all group relative ${currentView === item.id ? "text-[#06b6d4]" : "text-slate-600 hover:text-white"}`}
+                >
+                  <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="text-[7px] font-black tracking-tighter uppercase font-mono">
+                    {item.label}
                   </span>
-                  <span className="text-[8px] px-2 py-0.5 bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 font-mono">
-                    STITCH_CONNECTED
-                  </span>
+                  {currentView === item.id && (
+                    <div className="absolute -right-[25px] w-1 h-8 bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]" />
+                  )}
+                </button>
+              ))}
+            </nav>
+
+            <Button
+              variant="ghost"
+              onClick={() => setIsBlacklistModalOpen(true)}
+              className="mt-auto w-12 h-12 p-0 text-slate-700 hover:text-rose-500 hover:bg-rose-500/5"
+              title="Blacklist Manager"
+            >
+              <Settings className="w-5 h-5" />
+            </Button>
+          </aside>
+
+          {/* CONTAINER PRINCIPAL */}
+          <div className="flex-1 flex flex-col">
+            {/* HEADER SUPERIOR (STATS_STRIP) */}
+            <header className="h-28 border-b border-[#06b6d4]/10 bg-black/20 backdrop-blur-xl flex items-center justify-between px-10 sticky top-0 z-40">
+              <div className="flex items-center gap-8">
+                <div>
+                  <h1 className="font-hacker text-4xl font-black italic tracking-tighter text-white uppercase leading-none">
+                    CAPTA_SYSTEM <span className="text-[#06b6d4]">v4.0</span>
+                  </h1>
+                  <div className="flex items-center gap-4 mt-1">
+                    <span className="text-[9px] font-black tracking-[0.4em] text-slate-500 uppercase font-mono">
+                      NEON_HUD_ENGINE_ONLINE
+                    </span>
+                    <span className="text-[8px] px-2 py-0.5 bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 font-mono">
+                      STITCH_CONNECTED
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-6">
-              <div className="hidden md:flex items-center gap-4 text-[9px] font-black tracking-widest uppercase text-cyan-400/40 font-mono">
-                <span className="text-pink-500">SYS_STATUS:</span>
-                <span className="flex items-center gap-2">
-                  <span
-                    className={`w-2 h-2 ${isSearching ? "bg-pink-500 animate-[ping_1.5s_infinite]" : "bg-cyan-500"} shadow-[0_0_8px_currentColor]`}
-                  />
-                  {isSearching ? "UPLOADING_DATA..." : "TERMINAL_IDLE"}
-                </span>
+              <div className="flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-4 text-[9px] font-black tracking-widest uppercase text-cyan-400/40 font-mono">
+                  <span className="text-pink-500">SYS_STATUS:</span>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 ${isSearching ? "bg-pink-500 animate-[ping_1.5s_infinite]" : "bg-cyan-500"} shadow-[0_0_8px_currentColor]`}
+                    />
+                    {isSearching ? "UPLOADING_DATA..." : "TERMINAL_IDLE"}
+                  </span>
+                </div>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => setIsManualModalOpen(true)}
+                    className="bg-transparent text-cyan-400 border border-cyan-400/30 hover:bg-cyan-400/10 hover:border-cyan-400 rounded-none px-6 h-10 font-mono font-black text-[10px] tracking-widest transition-all"
+                  >
+                    CMD_MANUAL
+                  </Button>
+                  <Button
+                    onClick={() => setIsModalOpen(true)}
+                    disabled={isSearching}
+                    className="bg-cyan-500 text-black hover:bg-pink-500 shadow-[0_0_15px_rgba(0,243,255,0.5)] rounded-none px-8 h-10 font-mono font-black tracking-widest border-none transition-all active:translate-y-1"
+                  >
+                    {isSearching ? "MOTOR_RUNNING" : "EXEC_SCAN_NEW"}
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-4">
-                <Button
-                  onClick={() => setIsManualModalOpen(true)}
-                  className="bg-transparent text-cyan-400 border border-cyan-400/30 hover:bg-cyan-400/10 hover:border-cyan-400 rounded-none px-6 h-10 font-mono font-black text-[10px] tracking-widest transition-all"
-                >
-                  CMD_MANUAL
-                </Button>
-                <Button
-                  onClick={() => setIsModalOpen(true)}
-                  disabled={isSearching}
-                  className="bg-cyan-500 text-black hover:bg-pink-500 shadow-[0_0_15px_rgba(0,243,255,0.5)] rounded-none px-8 h-10 font-mono font-black tracking-widest border-none transition-all active:translate-y-1"
-                >
-                  {isSearching ? "MOTOR_RUNNING" : "EXEC_SCAN_NEW"}
-                </Button>
-              </div>
-            </div>
-          </header>
+            </header>
 
-          {/*      CONTEÚDO DINÂMICO */}
-          <div className="p-10 space-y-12 max-w-[1600px] w-full mx-auto">
-            {currentView === "dashboard" ? (
-              <>
-                <DashboardHeader
-                  leads={leads}
-                  filterMode={filterMode}
-                  setFilterMode={setFilterMode}
-                  isSearching={isSearching}
-                />
-
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                  <RadarPanel
-                    statusText={statusText}
-                    progress={progress}
-                    nicho={nicho}
-                    quarantinedLeads={quarantinedLeads}
+            {/*      CONTEÚDO DINÂMICO */}
+            <div className="p-10 space-y-12 max-w-[1600px] w-full mx-auto">
+              {currentView === "dashboard" ? (
+                <>
+                  <DashboardHeader
                     leads={leads}
-                    cidade={cidade}
+                    filterMode={filterMode}
+                    setFilterMode={setFilterMode}
+                    isSearching={isSearching}
                   />
 
-                  <LeadsTable
-                    filteredLeads={filteredLeads}
-                    openLeadDetails={openLeadDetails}
-                    generateTacticalDossier={generateTacticalDossier}
-                    setSelectedLeadIndex={setSelectedLeadIndex}
-                    addToSwipe={addToSwipe}
-                    addToVault={addToVault}
-                    handleDeleteLead={handleDeleteLead}
-                    setLeads={setLeads}
-                  />
+                  <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+                    <RadarPanel
+                      statusText={statusText}
+                      progress={progress}
+                      nicho={nicho}
+                      quarantinedLeads={quarantinedLeads}
+                      leads={leads}
+                      cidade={cidade}
+                    />
+
+                    <LeadsTable
+                      filteredLeads={filteredLeads}
+                      openLeadDetails={openLeadDetails}
+                      generateTacticalDossier={generateTacticalDossier}
+                      setSelectedLeadIndex={setSelectedLeadIndex}
+                      addToSwipe={addToSwipe}
+                      addToVault={addToVault}
+                      handleDeleteLead={handleDeleteLead}
+                      setLeads={setLeads}
+                    />
+                  </div>
+                </>
+              ) : currentView === "active-sites" ? (
+                <ActiveSitesView
+                  activeProjects={activeProjects}
+                  toggleProjectStatus={toggleProjectStatus}
+                  openProjectSettings={openProjectSettings}
+                  generateBundle={generateBundle}
+                  deleteActiveProject={deleteActiveProject}
+                />
+              ) : currentView === "templates" ? (
+                <TemplatesView
+                  selectedTemplateLeadUrl={selectedTemplateLeadUrl}
+                  setSelectedTemplateLeadUrl={setSelectedTemplateLeadUrl}
+                  leads={leads}
+                  templateConfig={templateConfig}
+                  setTemplateConfig={setTemplateConfig}
+                  templatesList={templatesList}
+                  processTemplatePreview={processTemplatePreview}
+                />
+              ) : currentView === "crm" ? (
+                <CRMView
+                  leads={leads}
+                  openLeadDetails={openLeadDetails}
+                  updateLeadStatus={updateLeadStatus}
+                />
+              ) : currentView === "swipe" ? (
+                <SwipeView
+                  swipeLeads={swipeLeads}
+                  removeFromSwipe={removeFromSwipe}
+                  stitchStatuses={stitchStatuses}
+                  generateCloningPrompt={generateCloningPrompt}
+                  openStitchConfig={openStitchConfig}
+                />
+              ) : currentView === "vault" ? (
+                <VaultView
+                  vaultLeads={vaultLeads}
+                  setVaultLeads={setVaultLeads}
+                  removeFromVault={removeFromVault}
+                  openLeadDetails={openLeadDetails}
+                />
+              ) : (
+                <div className="h-[60vh] flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-none">
+                  <Database className="w-16 h-16 text-slate-800 mb-6" />
+                  <h2 className="font-hacker text-2xl font-black italic text-white uppercase tracking-widest">
+                    MÓDULO Externo
+                  </h2>
+                  <p className="text-xs font-bold text-slate-500 mt-2 uppercase tracking-tighter">
+                    CONEXÃO pendente com módulo de {currentView === "campaigns" ? "CAMPANHAS_ATIVAS" : "CONFIGURAÇÃO_SISTEMA"}.
+                  </p>
+
+                  <Button
+                    variant="outline"
+                    className="mt-8 rounded-none border-white/10 text-white font-bold text-[10px] tracking-widest"
+                    onClick={() => setCurrentView("dashboard")}
+                  >
+                    RETORNAR_AO_DASHBOARD
+                  </Button>
                 </div>
-              </>
-            ) : currentView === "active-sites" ? (
-              <ActiveSitesView
-                activeProjects={activeProjects}
-                toggleProjectStatus={toggleProjectStatus}
-                openProjectSettings={openProjectSettings}
-                generateBundle={generateBundle}
-                deleteActiveProject={deleteActiveProject}
-              />
-            ) : currentView === "templates" ? (
-              <TemplatesView
-                selectedTemplateLeadUrl={selectedTemplateLeadUrl}
-                setSelectedTemplateLeadUrl={setSelectedTemplateLeadUrl}
-                leads={leads}
-                templateConfig={templateConfig}
-                setTemplateConfig={setTemplateConfig}
-                templatesList={templatesList}
-                processTemplatePreview={processTemplatePreview}
-              />
-            ) : currentView === "crm" ? (
-              <CRMView
-                leads={leads}
-                openLeadDetails={openLeadDetails}
-                updateLeadStatus={updateLeadStatus}
-              />
-            ) : currentView === "swipe" ? (
-              <SwipeView
-                swipeLeads={swipeLeads}
-                removeFromSwipe={removeFromSwipe}
-                stitchStatuses={stitchStatuses}
-                generateCloningPrompt={generateCloningPrompt}
-                openStitchConfig={openStitchConfig}
-              />
-            ) : currentView === "vault" ? (
-              <VaultView
-                vaultLeads={vaultLeads}
-                setVaultLeads={setVaultLeads}
-                removeFromVault={removeFromVault}
-                openLeadDetails={openLeadDetails}
-              />
-            ) : (
-              <div className="h-[60vh] flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-none">
-                <Database className="w-16 h-16 text-slate-800 mb-6" />
-                <h2 className="font-hacker text-2xl font-black italic text-white uppercase tracking-widest">
-                  MÓDULO Externo
-                </h2>
-                <p className="text-xs font-bold text-slate-500 mt-2 uppercase tracking-tighter">
-                  CONEXÃO pendente com módulo de {currentView === "campaigns" ? "CAMPANHAS_ATIVAS" : "CONFIGURAÇÃO_SISTEMA"}.
-                </p>
-
-                <Button
-                  variant="outline"
-                  className="mt-8 rounded-none border-white/10 text-white font-bold text-[10px] tracking-widest"
-                  onClick={() => setCurrentView("dashboard")}
-                >
-                  RETORNAR_AO_DASHBOARD
-                </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -440,6 +442,6 @@ export default function DashboardPage() {
         onSave={savePreview}
         onClose={() => setIsPreviewModalOpen(false)}
       />
-    </div>
+    </>
   );
 }
