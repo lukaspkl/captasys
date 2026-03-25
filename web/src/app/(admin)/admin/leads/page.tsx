@@ -54,234 +54,18 @@ import {
 } from "lucide-react";
 import { updateProjectStatus } from "@/app/actions/nodes";
 import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
+import type { Lead, StitchConfig, ProjectSettings, TemplateConfig, ActiveProject } from "./types";
+import { NICHE_CONFIG } from "./types";
+
+// components/modals
+import BlacklistModal from "./components/modals/BlacklistModal";
+import StitchConfigModal from "./components/modals/StitchConfigModal";
+import PreviewModal from "./components/modals/PreviewModal";
+import LeadDetailsModal from "./components/modals/LeadDetailsModal";
 
 /**
  *          DESIGN COMMITMENT: NEON HUD ENGINE (Localizada & Funcional)
  */
-
-// ─── BLACKLIST MANAGER MODAL ────────────────────────────────────────────────
-function BlacklistModal({
-  blacklist,
-  quarantinedLeads,
-  newBlacklistEntry,
-  setNewBlacklistEntry,
-  onClose,
-  onAdd,
-  onRemove,
-  onRecover,
-  onClearQuarantine,
-}: {
-  blacklist: string[];
-  quarantinedLeads: any[];
-  newBlacklistEntry: string;
-  setNewBlacklistEntry: (v: string) => void;
-  onClose: () => void;
-  onAdd: (entry: string) => void;
-  onRemove: (entry: string) => void;
-  onRecover: (lead: any) => void;
-  onClearQuarantine: () => void;
-}) {
-  const [tab, setTab] = useState<"blacklist" | "quarantine">("blacklist");
-
-  return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[400] flex items-center justify-center p-4">
-      <div className="bg-dark-bg border border-red-500/30 w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_0_60px_rgba(239,68,68,0.15)] relative">
-        {/* Top bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-red-500/20 bg-red-950/10">
-          <div className="flex items-center gap-3">
-            <ShieldOff className="w-5 h-5 text-red-500" />
-            <div>
-              <h2 className="text-base font-black text-red-400 uppercase tracking-widest font-mono">
-                BLACKLIST_MANAGER
-              </h2>
-              <p className="text-[9px] text-red-500/50 font-mono uppercase tracking-wider">
-                {blacklist.length} tokens bloqueados · {quarantinedLeads.length}{" "}
-                na quarentena
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex border-b border-white/5">
-          {[
-            { key: "blacklist", label: "LISTA NEGRA", icon: ShieldAlert },
-            {
-              key: "quarantine",
-              label: `QUARENTENA (${quarantinedLeads.length})`,
-              icon: RotateCcw,
-            },
-          ].map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key as "blacklist" | "quarantine")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-[10px] font-black uppercase tracking-widest font-mono transition-all ${
-                tab === t.key
-                  ? "text-red-400 border-b-2 border-red-500 bg-red-950/10"
-                  : "text-slate-600 hover:text-slate-400"
-              }`}
-            >
-              <t.icon className="w-3 h-3" />
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {tab === "blacklist" && (
-            <div className="p-6 space-y-4">
-              {/* Add new */}
-              <div className="flex gap-2">
-                <input
-                  value={newBlacklistEntry}
-                  onChange={(e) => setNewBlacklistEntry(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && onAdd(newBlacklistEntry)
-                  }
-                  placeholder="ex: booking.com, trivago..."
-                  className="flex-1 bg-black/60 border border-white/10 px-4 py-2 text-[11px] text-white font-mono focus:outline-none focus:border-red-400/50 placeholder:text-slate-700 h-10"
-                />
-                <button
-                  onClick={() => onAdd(newBlacklistEntry)}
-                  className="w-10 h-10 flex items-center justify-center bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* List */}
-              <div className="space-y-1">
-                {blacklist.map((entry) => (
-                  <div
-                    key={entry}
-                    className="flex items-center justify-between px-4 py-2 bg-white/[0.02] border border-white/5 group hover:border-red-500/20 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 bg-red-500 flex-shrink-0" />
-                      <span className="text-[11px] font-mono text-slate-400 group-hover:text-white transition-colors">
-                        {entry}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => onRemove(entry)}
-                      className="w-6 h-6 flex items-center justify-center text-slate-700 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-                {blacklist.length === 0 && (
-                  <div className="text-center py-10 text-slate-700 text-[11px] font-mono uppercase tracking-widest">
-                    Blacklist vazia — nenhum domínio bloqueado
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {tab === "quarantine" && (
-            <div className="p-6 space-y-4">
-              {quarantinedLeads.length > 0 && (
-                <div className="flex justify-end">
-                  <button
-                    onClick={onClearQuarantine}
-                    className="text-[9px] font-black font-mono uppercase tracking-widest text-slate-600 hover:text-red-400 flex items-center gap-1 transition-colors"
-                  >
-                    <Trash2 className="w-3 h-3" /> LIMPAR TUDO
-                  </button>
-                </div>
-              )}
-              <div className="space-y-2">
-                {quarantinedLeads.map((lead, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between px-4 py-3 bg-white/[0.02] border border-white/5 group hover:border-amber-500/20 transition-all gap-3"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-bold text-slate-300 truncate">
-                        {lead.title || "Sem título"}
-                      </p>
-                      <p className="text-[9px] font-mono text-slate-600 truncate mt-0.5">
-                        {lead.url || "—"}
-                      </p>
-                      <span className="inline-block mt-1 text-[8px] font-black uppercase tracking-wider text-amber-500/70 bg-amber-500/10 px-2 py-0.5">
-                        {lead.blockedReason || "Bloqueado"}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => onRecover(lead)}
-                      className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-black font-mono uppercase tracking-wider text-cyan-400 border border-cyan-400/20 hover:bg-cyan-400/10 hover:border-cyan-400 transition-all"
-                    >
-                      <RotateCcw className="w-3 h-3" /> RECUPERAR
-                    </button>
-                  </div>
-                ))}
-                {quarantinedLeads.length === 0 && (
-                  <div className="text-center py-10 text-slate-700 text-[11px] font-mono uppercase tracking-widest">
-                    Nenhum lead na quarentena
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom bar */}
-        <div className="px-6 py-4 border-t border-white/5 bg-black/20 flex justify-between items-center">
-          <p className="text-[9px] font-mono text-slate-700 uppercase tracking-widest">
-            Alterações salvas automaticamente no localStorage
-          </p>
-          <button
-            onClick={onClose}
-            className="text-[10px] font-black font-mono uppercase tracking-widest text-slate-500 hover:text-white transition-colors px-4 py-2"
-          >
-            FECHAR
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const NICHE_CONFIG: Record<string, { emoji: string; keywords: string[] }> = {
-  "Energia Solar": { emoji: "☀️", keywords: ["Empresa de Energia Solar", "Energia Fotovoltaica", "Instalação Placas Solares", "Energia Solar Residencial"] },
-  "Odontologia": { emoji: "🦷", keywords: ["Clínica Odontológica", "Dentista", "Ortodontia", "Implante Dentário", "Harmonização Facial"] },
-  "Oficina Mecânica": { emoji: "🛠️", keywords: ["Oficina Mecânica", "Auto Elétrica", "Centro Automotivo", "Funilaria e Pintura", "Martelinho de Ouro"] },
-  "Ar Condicionado": { emoji: "❄️", keywords: ["Ar Condicionado", "Refrigeração", "Manutenção de Ar Condicionado", "Instalação de Ar Condicionado"] },
-  "Clínica de Estética": { emoji: "✨", keywords: ["Clínica de Estética", "Estética Avançada", "Biomedicina Estética", "Harmonização Facial"] },
-  "Salão de Beleza": { emoji: "💇‍♀️", keywords: ["Salão de Beleza", "Barbearia", "Cabelereiro", "Esmalteria"] },
-  "Clínica Veterinária": { emoji: "🐶", keywords: ["Clínica Veterinária", "Pet Shop", "Banho e Tosa", "Hospital Veterinário"] },
-  "Escritório de Advocacia": { emoji: "⚖️", keywords: ["Escritório de Advocacia", "Advogado Civil", "Advogado Trabalhista", "Advogado Criminalista"] },
-  "Segurança Eletrônica": { emoji: "🔐", keywords: ["Segurança Eletrônica", "CFTV", "Câmeras de Segurança", "Alarmes"] },
-  "Mudanças e Fretes": { emoji: "🚚", keywords: ["Mudanças Residenciais", "Fretes e Carretos", "Transportadora de Mudanças"] },
-  "Hamburgueria Gourmet": { emoji: "🍔", keywords: ["Hamburgueria Artesanal", "Delivery de Hamburguer", "Lanchonete"] },
-  "Pizzaria Delivery": { emoji: "🍕", keywords: ["Pizzaria Delivery", "Pizzaria Artesanal", "Forno a Lenha"] },
-  "Marmoraria e Granitos": { emoji: "🪨", keywords: ["Marmoraria", "Granitos e Mármores", "Cortes de Pedras", "Porcelanateria"] },
-  "Contabilidade": { emoji: "📊", keywords: ["Escritório de Contabilidade", "Contador", "Abertura de Empresa", "Consultoria Contábil"] },
-  "Pilates e Yoga": { emoji: "🧘", keywords: ["Estúdio de Pilates", "Aulas de Yoga", "Treinamento Funcional"] },
-  "Assistência Técnica": { emoji: "📱", keywords: ["Conserto de Celular", "Assistência Técnica Apple", "Manutenção de Notebook"] },
-  "Marcenaria e Planejados": { emoji: "🪚", keywords: ["Marcenaria", "Móveis Planejados", "Cozinha Planejada", "Marceneiro"] },
-  "Escola de Idiomas": { emoji: "🇬🇧", keywords: ["Escola de Inglês", "Curso de Idiomas", "Escola de Informática"] },
-  "Vidraçaria": { emoji: "🚿", keywords: ["Vidraçaria", "Box de Banheiro", "Esquadrias de Alumínio", "Vidro Temperado"] },
-  "Limpeza e Higienização": { emoji: "🧼", keywords: ["Limpeza de Sofá", "Higienização de Tapetes", "Limpeza Pós Obra"] },
-  "Imobiliária": { emoji: "🏠", keywords: ["Imobiliária", "Corretor de Imóveis", "Aluguel de Casas", "Venda de Apartamentos"] },
-  "Academia e Crossfit": { emoji: "🏋️", keywords: ["Academia Fitness", "Box de Crossfit", "Personal Trainer"] },
-  "Material de Construção": { emoji: "🧱", keywords: ["Material de Construção", "Depósito de Construção", "Loja de Ferragens"] },
-  "Martelinho de Ouro": { emoji: "🔨", keywords: ["Martelinho de Ouro", "Estética Automotiva", "Recuperação de Para-choque"] },
-  "Instalação de Gesso": { emoji: "🏗️", keywords: ["Gesseiro", "Forro de Gesso", "Sanca de Gesso", "Drywall"] },
-  "Clínica de Psicologia": { emoji: "🧠", keywords: ["Clínica de Psicologia", "Psicólogo Particular", "Terapia Online"] },
-  "Laboratório de Exames": { emoji: "🔬", keywords: ["Laboratório de Análises Clínicas", "Exame de Sangue", "Checkup Médico"] },
-  "Corretora de Seguros": { emoji: "🛡️", keywords: ["Corretora de Seguros", "Seguro Auto", "Seguro de Vida"] },
-  "Buffet e Eventos": { emoji: "🎊", keywords: ["Buffet Infantil", "Espaço para Eventos", "Aluguel de Salão de Festas"] },
-  "Desentupidora 24h": { emoji: "🚽", keywords: ["Desentupidora 24h", "Limpeza de Fossa", "Caça Vazamento"] }
-};
 
 export default function DashboardPage() {
   const [currentView, setCurrentView] = useState("dashboard"); // dashboard, campaigns, active-sites, crm
@@ -329,27 +113,21 @@ export default function DashboardPage() {
   };
   const [customBairro, setCustomBairro] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(
-    null,
-  );
-  const [selectedLeadDetails, setSelectedLeadDetails] = useState<any>(null);
+  const [selectedLeadIndex, setSelectedLeadIndex] = useState<number | null>(null);
+  const [selectedLeadDetails, setSelectedLeadDetails] = useState<Lead | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [generatedMessage, setGeneratedMessage] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [targetSearch, setTargetSearch] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeTab, setActiveTab] = useState("all");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [landingPageUrl, setLandingPageUrl] = useState("");
   const [leadAnalysis, setLeadAnalysis] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPromptCopied, setIsPromptCopied] = useState(false);
   const [stitchStatuses, setStitchStatuses] = useState<Record<string, 'idle' | 'generating' | 'completed' | 'error'>>({});
   const [isStitchConfigOpen, setIsStitchConfigOpen] = useState(false);
-  const [stitchConfig, setStitchConfig] = useState({ name: '', themeId: '', segment: 'geral', lead: null as any });
-  const [filterMode, setFilterMode] = useState("all"); // all, no-site, no-pixel, no-mobile, low-rating
+  const [stitchConfig, setStitchConfig] = useState<StitchConfig>({ name: '', themeId: '', segment: 'geral', lead: null });
+  const [filterMode, setFilterMode] = useState("all");
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [ticketMedio, setTicketMedio] = useState<number>(500);
   const [fluxoMensal, setFluxoMensal] = useState<number>(60);
@@ -362,13 +140,13 @@ export default function DashboardPage() {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [previewHtmlInput, setPreviewHtmlInput] = useState("");
   const [previewLink, setPreviewLink] = useState("");
-  const [activeProjects, setActiveProjects] = useState<any[]>([]);
+  const [activeProjects, setActiveProjects] = useState<ActiveProject[]>([]);
   const [isProjectSettingsOpen, setIsProjectSettingsOpen] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [manualInput, setManualInput] = useState("");
   const [manualProcessing, setManualProcessing] = useState(false);
-  const [editingProject, setEditingProject] = useState<any>(null);
-  const [projectSettings, setProjectSettings] = useState({
+  const [editingProject, setEditingProject] = useState<ActiveProject | null>(null);
+  const [projectSettings, setProjectSettings] = useState<ProjectSettings>({
     name: "",
     slug: "",
     whatsapp: "",
@@ -376,7 +154,7 @@ export default function DashboardPage() {
     liveUrl: "",
   });
 
-  const [templateConfig, setTemplateConfig] = useState({
+  const [templateConfig, setTemplateConfig] = useState<TemplateConfig>({
     sellerName: "Hacker",
     basePrice: "R$ 149,00",
     installments: "3",
@@ -1593,13 +1371,12 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
   const convertToActive = (lead: any) => {
     if (!lead) return;
 
-    const id = crypto.randomUUID().split("-")[0];
     const slug = lead.title.toLowerCase().replace(/[^a-z0-9]/g, "-");
-    const newProject = {
-      id,
+    const newProject: ActiveProject = {
+      id: Math.random().toString(36).substring(7),
       name: lead.title,
-      slug,
-      status: "active",
+      slug: slug,
+      status: "active" as "active" | "suspended",
       renewal: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
         .toLocaleDateString("pt-BR")
         .substring(0, 5), // +30 dias
@@ -1631,7 +1408,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
   };
 
   const toggleProjectStatus = async (id: string) => {
-    let newStatus = "";
+    let newStatus: "active" | "suspended" = "active";
     const updated = activeProjects.map((p) => {
       if (p.id === id) {
         newStatus = p.status === "active" ? "suspended" : "active";
@@ -3074,12 +2851,9 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
                   MÓDULO Externo
                 </h2>
                 <p className="text-xs font-bold text-slate-500 mt-2 uppercase tracking-tighter">
-                  CONEXÃO pendente com módulo de{" "}
-                  {currentView === "campaigns"
-                    ? "CAMPANHAS_ATIVAS"
-                    : "CONFIGURAÇÃO_SISTEMA"}
-                  .
+                  CONEXÃO pendente com módulo de {currentView === "campaigns" ? "CAMPANHAS_ATIVAS" : "CONFIGURAÇÃO_SISTEMA"}.
                 </p>
+
                 <Button
                   variant="outline"
                   className="mt-8 rounded-none border-white/10 text-white font-bold text-[10px] tracking-widest"
@@ -3091,436 +2865,36 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
             )}
           </div>
         </div>
-        </div>
       </div>
+    </div>
 
 
-      {isDetailsModalOpen && selectedLeadDetails && (
-        <div className="fixed inset-0 bg-[#020617]/90 backdrop-blur-3xl z-150 flex items-center justify-center p-4 print:hidden">
-          <div className="bg-[#0f172a] border border-white/10 w-full max-w-6xl h-[90vh] flex flex-col relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
 
-            <div className="p-8 border-b border-white/5 flex justify-between items-center bg-black/20">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-white/5 flex items-center justify-center border border-white/10 group overflow-hidden relative">
-                  <Globe className="w-8 h-8 text-[#06b6d4] group-hover:scale-110 transition-transform" />
-                  <div className="absolute inset-0 bg-[#06b6d4]/5 animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="font-outfit text-3xl font-black italic text-white uppercase tracking-tighter leading-none">
-                    {selectedLeadDetails.title}
-                  </h2>
-                  <div className="flex items-center gap-4 mt-2">
-                    <Badge
-                      className={`text-[10px] font-black uppercase rounded-none px-3 border ${
-                        (selectedLeadDetails.temperature || "Morno") ===
-                        "Quente"
-                          ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
-                          : (selectedLeadDetails.temperature || "Morno") ===
-                              "Frio"
-                            ? "bg-cyan-500/10 text-cyan-400 border-cyan-400/20"
-                            : "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                      }`}
-                    >
-                      {selectedLeadDetails.temperature || "Morno"}
-                    </Badge>
-                    <div className="flex items-center gap-1">
-                      {selectedLeadDetails.rating ? (
-                        <>
-                          <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                          <span className="text-[10px] font-bold text-white ml-1">
-                            {selectedLeadDetails.rating} (
-                            {selectedLeadDetails.reviewCount || "N/A"}{" "}
-                            AVALIAÇÕES)
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">
-                          Sem Rating Pública
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Target className="w-3 h-3 text-[#06b6d4]" />
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        {cidade}, {estado}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsDetailsModalOpen(false)}
-                className="w-12 h-12 flex items-center justify-center border border-white/10 text-slate-500 hover:text-white hover:bg-white/5 transition-all"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
 
-            <div className="flex-1 overflow-y-auto p-8 grid grid-cols-12 gap-8">
-              {/* Coluna Esquerda: ANÁLISE */}
-              <div className="col-span-12 lg:col-span-7 space-y-8">
-                <section className="bg-black/20 border border-white/5 p-6 rounded-none">
-                  <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#06b6d4]" /> ANÁLISE de
-                    OPERAÇÃO Digital
-                  </h3>
-                  <div className="grid grid-cols-2 gap-y-4 text-sm font-bold">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        Website / Fonte
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white italic truncate max-w-[150px]">
-                          {selectedLeadDetails.url.includes("google.com")
-                            ? "Google Profile"
-                            : "Direto (URL)"}
-                        </span>
-                        {selectedLeadDetails.mapsUrl && (
-                          <button
-                            onClick={() =>
-                              window.open(selectedLeadDetails.mapsUrl, "_blank")
-                            }
-                            className="text-yellow-500 hover:text-white"
-                            title="Ver Perfil no Maps"
-                          >
-                            <MapPin className="w-3 h-3" />
-                          </button>
-                        )}
-                        <button
-                          onClick={() =>
-                            window.open(selectedLeadDetails.url, "_blank")
-                          }
-                          className="text-[#06b6d4] hover:text-white"
-                          title="Abrir Site"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        Plataforma
-                      </span>
-                      <span
-                        className={`italic uppercase text-[10px] tracking-widest ${leadAnalysis ? "text-[#06b6d4]" : "text-slate-500"}`}
-                      >
-                        {isAnalyzing
-                          ? "DETECTANDO..."
-                          : leadAnalysis?.platform || "Aguardando..."}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        Score Mobile
-                      </span>
-                      <span
-                        className={`italic uppercase text-[10px] tracking-widest ${leadAnalysis ? (leadAnalysis.score < 50 ? "text-rose-500" : "text-emerald-500") : "text-slate-500"}`}
-                      >
-                        {leadAnalysis
-                          ? `${leadAnalysis.score}/100`
-                          : "Indefinido"}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        Site / DOMÍNIO
-                      </span>
-                      <span
-                        className={`italic uppercase text-[10px] tracking-widest ${selectedLeadDetails.url && !selectedLeadDetails.url.includes("google.com") ? "text-emerald-400" : "text-rose-500"}`}
-                      >
-                        {selectedLeadDetails.url &&
-                        !selectedLeadDetails.url.includes("google.com")
-                          ? "DETERMINADO"
-                          : "AUSENTE"}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        WhatsApp / Celular
-                      </span>
-                      <span
-                        className={`italic uppercase text-[10px] tracking-widest ${selectedLeadDetails.phone ? "text-emerald-400" : "text-slate-500"}`}
-                      >
-                        {selectedLeadDetails.phone
-                          ? selectedLeadDetails.phone
-                          : "NÃO_DETECTADO"}
-                      </span>
-                    </div>
-                  </div>
+      <LeadDetailsModal
+        isOpen={isDetailsModalOpen}
+        selectedLeadDetails={selectedLeadDetails}
+        leadAnalysis={leadAnalysis}
+        isAnalyzing={isAnalyzing}
+        isSiteOutdated={isSiteOutdated}
+        generatedMessage={generatedMessage}
+        cidade={cidade}
+        estado={estado}
+        onClose={() => setIsDetailsModalOpen(false)}
+        onStartMapsAnalysis={() => startMapsAnalysis()}
+        onUpdateLeadStatus={(url, status) => updateLeadStatus(url, status)}
+        onSetSelectedLeadDetails={(details) => setSelectedLeadDetails(details)}
+        onConvertToActive={(lead) => convertToActive(lead)}
+        onGenerateLovablePrompt={() => generateLovablePrompt()}
+        onSetIsRenewalModalOpen={(open) => setIsRenewalModalOpen(open)}
+        onSetIsAuditModalOpen={(open) => setIsAuditModalOpen(open)}
+        onGenerateTacticalDossier={(lead) => generateTacticalDossier(lead)}
+        onSetIsPreviewModalOpen={(open) => setIsPreviewModalOpen(open)}
+        onGenerateAIPitch={(type) => generateAIPitch(type)}
+        onHandleSendZap={(lead) => handleSendZap(lead)}
+        onSetIsSiteOutdated={(outdated) => setIsSiteOutdated(outdated)}
+      />
 
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        Social Score
-                      </span>
-                      <span className="text-white italic uppercase text-[10px] tracking-widest">
-                        {selectedLeadDetails.socials?.instagram ||
-                        selectedLeadDetails.socials?.facebook
-                          ? "PRESENÇA_ALTA"
-                          : "FRACA"}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-600 uppercase">
-                        Maps Overall
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-emerald-400 italic uppercase text-[10px] tracking-widest">
-                          {selectedLeadDetails.rating
-                            ? `${selectedLeadDetails.rating}     (${selectedLeadDetails.reviewCount || 0})`
-                            : "SEM_DADOS"}
-                        </span>
-                        {selectedLeadDetails.mapsUrl && (
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() =>
-                                window.open(
-                                  selectedLeadDetails.mapsUrl,
-                                  "_blank",
-                                )
-                              }
-                              className="text-slate-500 hover:text-white text-[9px] font-black uppercase italic underline decoration-[#06b6d4]"
-                            >
-                              VER_NO_MAPS
-                            </button>
-                            <button
-                              onClick={startMapsAnalysis}
-                              className="bg-[#06b6d4]/10 text-[#06b6d4] px-1 hover:bg-[#06b6d4] hover:text-black transition-all text-[8px] font-black uppercase tracking-tighter border border-[#06b6d4]/20"
-                            >
-                              SINCRONIZAR_MAPS
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {selectedLeadDetails.classificationMotivity && (
-                    <div className="mt-8 bg-black/40 border-l-4 border-cyan-500 p-5 group hover:bg-cyan-500/3 transition-all">
-                      <div className="flex items-center gap-3 mb-2">
-                        <ShieldAlert className="w-4 h-4 text-cyan-500 animate-pulse" />
-                        <span className="text-[11px] font-black text-white uppercase tracking-[0.2em]">
-                          Motivo da classificaç&atilde;o
-                        </span>
-                      </div>
-                      <p className="text-[12px] text-slate-300 font-medium leading-relaxed italic pr-4">
-                        {selectedLeadDetails.classificationMotivity}
-                      </p>
-                    </div>
-                  )}
-
-                  {leadAnalysis?.perceptions && (
-                    <div className="mt-6 pt-6 border-t border-white/5">
-                      <span className="text-[11px] text-[#06b6d4] font-black uppercase tracking-[0.2em] block mb-4">
-                        {" "}
-                        Pontos Cr&iacute;ticos Detectados
-                      </span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {leadAnalysis.perceptions.map(
-                          (p: string, i: number) => (
-                            <div
-                              key={i}
-                              className="flex items-start gap-3 bg-white/5 p-3 group hover:bg-white/10 transition-colors"
-                            >
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#06b6d4] mt-1.5 shadow-[0_0_5px_#06b6d4]" />
-                              <p className="text-[11px] font-bold text-slate-300 leading-tight uppercase tracking-tight">
-                                {p}
-                              </p>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </section>
-
-                <section className="bg-black/20 border border-white/5 p-6 rounded-none">
-                  <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">
-                    Mudar Status Operacional
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["NOVO", "CONTATADO", "PROPOSTA", "FECHADO"].map(
-                      (status) => (
-                        <button
-                          key={status}
-                          onClick={() => {
-                            updateLeadStatus(selectedLeadDetails.url, status);
-                            setSelectedLeadDetails(
-                              (prev: Record<string, unknown>) => ({
-                                ...prev,
-                                status,
-                              }),
-                            );
-                          }}
-                          className={`h-10 px-4 text-[10px] font-black italic tracking-widest border border-white/10 hover:bg-[#06b6d4] hover:text-black transition-all ${(selectedLeadDetails.status || "NOVO") === status ? "bg-[#06b6d4] text-black border-[#06b6d4]" : "text-slate-500"}`}
-                        >
-                          {status}
-                        </button>
-                      ),
-                    )}
-                  </div>
-
-                  {(selectedLeadDetails.status === "FECHADO" ||
-                    selectedLeadDetails.status === "PROPOSTA") && (
-                    <div className="mt-4 pt-4 border-t border-white/10 animate-in fade-in zoom-in duration-300">
-                      <Button
-                        onClick={() => convertToActive(selectedLeadDetails)}
-                        className="w-full h-14 bg-emerald-500 hover:bg-white text-black font-black italic tracking-[0.2em] transition-all flex items-center justify-center gap-3 rounded-none shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-                      >
-                        <Zap className="w-5 h-5 fill-current" />
-                        ATIVAR_SITE_EM_PRODUÇÃO
-                      </Button>
-                      <p className="text-[9px] text-center text-emerald-500 font-bold uppercase tracking-widest mt-2">
-                        Pronto para iniciar faturamento recorrente
-                      </p>
-                    </div>
-                  )}
-                </section>
-              </div>
-
-              {/* Coluna Direita: Gerador de PressKit */}
-              <div className="col-span-12 lg:col-span-5 space-y-8">
-                <section className="bg-black/40 border border-[#06b6d4]/20 p-6 rounded-none border-t-4 border-t-[#06b6d4]">
-                  <h3 className="text-[11px] font-bold text-[#06b6d4] uppercase tracking-[0.2em] mb-4">
-                    Gerar PressKit de Venda
-                  </h3>
-                  <div className="space-y-4">
-                    <p className="text-[10px] text-slate-500 italic">
-                      Copie o prompt estruturado para o Lovable ou Switch
-                      abaixo:
-                    </p>
-                    <Button
-                      onClick={generateLovablePrompt}
-                      className="w-full h-12 bg-white text-black font-black italic tracking-widest hover:bg-[#06b6d4] hover:text-black transition-all"
-                    >
-                      GERAR_PROMPT_LOVABLE_GPT
-                    </Button>
-
-                    {selectedLeadDetails?.url && (
-                      <div
-                        onClick={() => setIsSiteOutdated(!isSiteOutdated)}
-                        className={`flex items-center gap-3 p-4 border transition-all cursor-pointer ${isSiteOutdated ? "bg-[#ff00ff]/10 border-[#ff00ff]/50" : "bg-black border-white/10 hover:border-white/30"}`}
-                      >
-                        <div className={`w-4 h-4 border flex items-center justify-center transition-colors ${isSiteOutdated ? 'bg-[#ff00ff] border-[#ff00ff]' : 'border-slate-500'}`}>
-                          {isSiteOutdated && <Check className="w-3 h-3 text-black" />}
-                        </div>
-                        <div>
-                          <p className={`text-[10px] font-black uppercase tracking-widest ${isSiteOutdated ? "text-[#ff00ff]" : "text-slate-400"}`}>
-                            Marcador: Site Desatualizado / Lento
-                          </p>
-                          <p className="text-[8px] text-slate-500 uppercase leading-none mt-1">
-                            Ativa Proposta de Renovação (-30%)
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    {isSiteOutdated ? (
-                      <Button
-                        onClick={() => setIsRenewalModalOpen(true)}
-                        className="w-full h-12 bg-[#ff00ff] text-white font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none shadow-[0_0_20px_rgba(255,0,255,0.4)]"
-                      >
-                        DIAGNÓSTICO_RENOVAÇÃO_PRO
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => setIsAuditModalOpen(true)}
-                        className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
-                      >
-                        GERAR_DOSSIÊ_AUDITORIA_V2
-                      </Button>
-                    )}
-                    <Button
-                      onClick={() => generateTacticalDossier(selectedLeadDetails)}
-                      className="w-full h-12 bg-pink-500 text-white font-black italic tracking-widest hover:bg-white hover:text-pink-500 transition-all border-none shadow-[0_0_20px_rgba(236,72,153,0.3)] my-4"
-                    >
-                      <Radar className="w-5 h-5 mr-2" /> GERAR_DOSSIÊ_TÁTICO_V4
-                    </Button>
-                    <button
-                      onClick={() => {
-                        generateLovablePrompt();
-                        setTimeout(
-                          () =>
-                            window.open(
-                              "https://stitch.withgoogle.com",
-                              "_blank",
-                            ),
-                          600,
-                        );
-                      }}
-                      className="w-full h-10 bg-gradient-to-r from-[#fbce07] to-[#f59e0b] text-black font-black italic text-[9px] uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 fill-current" />
-                      GOOGLE_STITCH_MCP
-                    </button>
-                    <Button
-                      onClick={() => setIsPreviewModalOpen(true)}
-                      className="w-full h-10 bg-black border border-[#06b6d4]/40 text-[#06b6d4] font-black italic text-[9px] uppercase tracking-widest hover:bg-[#06b6d4]/10 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Activity className="w-3.5 h-3.5" />
-                      SUBIR_PREVIEW_48H
-                    </Button>
-                  </div>
-                </section>
-
-                <section className="bg-black/20 border border-white/5 p-6 rounded-none">
-                  <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">
-                    Gatilhos de Mensagem (Whats)
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        onClick={() => generateAIPitch("venda")}
-                        className="h-10 bg-white/5 border border-white/10 text-white font-bold text-[9px] uppercase italic tracking-tighter hover:bg-emerald-500 hover:text-black"
-                      >
-                        Chamada_Venda
-                      </Button>
-                      <Button
-                        onClick={() => generateAIPitch("recall")}
-                        className="h-10 bg-white/5 border border-white/10 text-white font-bold text-[9px] uppercase italic tracking-tighter hover:bg-[#06b6d4] hover:text-black"
-                      >
-                        Chamada_Recall
-                      </Button>
-                      <Button
-                        onClick={() => generateAIPitch("apresentacao")}
-                        className="h-10 bg-white/5 border border-white/10 text-white font-bold text-[9px] uppercase italic tracking-tighter hover:bg-amber-500 hover:text-black col-span-2"
-                      >
-                        Apresentação_Empresarial
-                      </Button>
-                    </div>
-
-                    {generatedMessage && (
-                      <div className="mt-6 space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                        <div className="p-4 bg-black/60 border border-white/5 font-bold text-[11px] text-slate-400 italic leading-relaxed whitespace-pre-wrap">
-                          {generatedMessage}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleSendZap(selectedLeadDetails)}
-                            className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black tracking-widest h-12 flex items-center justify-center gap-2 uppercase italic text-[10px]"
-                          >
-                            <Zap className="w-4 h-4" /> Enviar WhatsApp
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() =>
-                              navigator.clipboard.writeText(generatedMessage)
-                            }
-                            className="w-12 h-12 border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all"
-                          >
-                            <Database className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* DOSSIÊ TÁTICO MODAL */}
       {isDossierModalOpen && dossierLead && (
@@ -4492,122 +3866,23 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO use o estilo Cyberpunk.`
         </div>
       )}
 
-      {isStitchConfigOpen && (
-        <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
-           <div className="hud-panel w-full max-w-lg p-10 bg-slate-950 border-cyan-500/40 space-y-8 shadow-[0_0_50px_rgba(6,182,212,0.15)]">
-              <div className="space-y-1">
-                 <Badge className="bg-cyan-500 text-black font-black uppercase text-[9px]">SÍNTESE_CONFIG</Badge>
-                 <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">PREPARAR_CLONAGEM</h3>
-              </div>
+      <StitchConfigModal
+        isOpen={isStitchConfigOpen}
+        config={stitchConfig}
+        onConfigChange={setStitchConfig}
+        onClose={() => setIsStitchConfigOpen(false)}
+        onSubmit={() => handleAutoBuild()}
+      />
 
-              <div className="space-y-6">
-                 <div className="space-y-2">
-                    <label className="text-[9px] font-black text-slate-500 uppercase">IDENTIFICADOR_PUBLICO (BIBLIOTECA)</label>
-                    <Input 
-                      value={stitchConfig.name}
-                      onChange={(e) => setStitchConfig({ ...stitchConfig, name: e.target.value })}
-                      className="bg-black/60 border-cyan-500/20 text-white rounded-none uppercase text-xs h-12 focus:border-cyan-500"
-                    />
-                 </div>
+      <PreviewModal
+        isOpen={isPreviewModalOpen}
+        htmlInput={previewHtmlInput}
+        onHtmlInputChange={setPreviewHtmlInput}
+        previewLink={previewLink}
+        onSave={() => savePreview()}
+        onClose={() => { setIsPreviewModalOpen(false); setPreviewLink(""); }}
+      />
 
-                 <div className="space-y-2">
-                    <label className="text-[9px] font-black text-slate-500 uppercase">ID_UNICO_TEMA (ARQUIVO .TSX)</label>
-                    <Input 
-                      value={stitchConfig.themeId}
-                      onChange={(e) => setStitchConfig({ ...stitchConfig, themeId: e.target.value })}
-                      className="bg-black/60 border-cyan-500/20 text-white rounded-none text-xs h-12 font-mono focus:border-cyan-500"
-                    />
-                    <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest">* SERÁ CRIADO EM: /templates/{stitchConfig.themeId}.tsx</p>
-                 </div>
-
-                 <div className="space-y-2">
-                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">NICHO_ALVO (REGRAS_DE_DESIGN)</label>
-                     <select 
-                       value={stitchConfig.segment}
-                       onChange={(e) => setStitchConfig({ ...stitchConfig, segment: e.target.value })}
-                       className="w-full bg-black/60 border border-cyan-500/20 text-white rounded-none h-12 text-[10px] uppercase font-bold px-4 outline-none focus:border-cyan-500"
-                     >
-                       <option value="energia-solar">☀️ ENERGIA SOLAR</option>
-                       <option value="odontologia">🦷 ODONTOLOGIA</option>
-                       <option value="mecanica">🛠️ OFICINA MECÂNICA</option>
-                       <option value="climatizacao">❄️ AR / REFRIGERAÇÃO</option>
-                       <option value="estetica">✨ ESTÉTICA</option>
-                       <option value="beleza">💇‍♀️ SALÃO / BELEZA</option>
-                       <option value="veterinaria">🐶 PET SHOP / VET</option>
-                       <option value="advocacia">⚖️ ADVOCACIA</option>
-                       <option value="seguranca">🔐 SEGURANÇA / CFTV</option>
-                       <option value="mudancas">🚚 MUDANÇAS / FRETES</option>
-                       <option value="limpeza">🧼 HIGIENIZAÇÃO / SOFÁ</option>
-                       <option value="chaveiro">🔑 CHAVEIRO 24H</option>
-                       <option value="vidracaria">🚿 VIDRAÇARIA</option>
-                       <option value="hamburgueria">🍔 HAMBURGUERIA</option>
-                       <option value="pizzaria">🍕 PIZZARIA</option>
-                       <option value="academia">🏋️‍♀️ ACADEMIA</option>
-                       <option value="construcao">🧱 MAT. CONSTRUÇÃO</option>
-                       <option value="geral">💼 SERVIÇOS GERAIS</option>
-                     </select>
-                 </div>
-              </div>
-
-              <div className="flex gap-4 pt-4">
-                 <Button 
-                    className="flex-1 bg-cyan-500 text-black font-black h-16 rounded-none uppercase tracking-widest hover:bg-white transition-colors"
-                    onClick={() => handleAutoBuild()}
-                 >
-                    <Zap className="w-4 h-4 mr-2" /> INICIAR_SÍNTESE_FINAL
-                 </Button>
-                 <Button 
-                    variant="outline"
-                    className="px-8 border-white/10 text-slate-400 h-16 rounded-none uppercase text-[10px] font-black hover:bg-white/5"
-                    onClick={() => setIsStitchConfigOpen(false)}
-                 >
-                    CANCELAR
-                 </Button>
-              </div>
-           </div>
-        </div>
-      )}
-      {isPreviewModalOpen && (
-        <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in duration-300">
-           <div className="hud-panel w-full max-w-2xl p-10 bg-slate-950 border-cyan-500/40 space-y-8 shadow-[0_0_50px_rgba(6,182,212,0.15)]">
-              <div className="space-y-1">
-                 <Badge className="bg-cyan-500 text-black font-black uppercase text-[9px]">UPLOADER_v4.0</Badge>
-                 <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">SUBIR_AO_STITCH_CORE (48H)</h3>
-                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Injete o código gerado pelo motor de IA para criar o link de expiração.</p>
-              </div>
-
-              <div className="space-y-4">
-                 <textarea 
-                   value={previewHtmlInput}
-                   onChange={(e) => setPreviewHtmlInput(e.target.value)}
-                   className="w-full h-64 bg-black/60 border border-cyan-500/20 text-cyan-400 p-6 font-mono text-[10px] focus:border-cyan-500 outline-none rounded-none"
-                   placeholder="Cole o código do site aqui... (Next.js/HTML exportado)"
-                 />
-                 {previewLink && (
-                   <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black font-mono text-xs break-all">
-                     LINK_GERADO: {previewLink}
-                   </div>
-                 )}
-              </div>
-
-              <div className="flex gap-4">
-                 <Button 
-                    className="flex-1 bg-cyan-500 text-black font-black h-16 rounded-none uppercase tracking-widest hover:bg-white transition-colors"
-                    onClick={() => savePreview()}
-                 >
-                    <Activity className="w-5 h-5 mr-3" /> GERAR_LINK_E_COPIAR_WHATS
-                 </Button>
-                 <Button 
-                    variant="outline"
-                    className="px-8 border-white/10 text-slate-400 h-16 rounded-none uppercase text-[10px] font-black hover:bg-white/5"
-                    onClick={() => { setIsPreviewModalOpen(false); setPreviewLink(""); }}
-                 >
-                    FECHAR
-                 </Button>
-              </div>
-           </div>
-        </div>
-      )}
 
 
       <style dangerouslySetInnerHTML={{ __html: `
