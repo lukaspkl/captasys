@@ -378,6 +378,12 @@ export default function DashboardPage() {
         onGenerateAIPitch={generateAIPitch}
         onHandleSendZap={handleSendZap}
         onSetIsSiteOutdated={setIsSiteOutdated}
+        ticketMedio={ticketMedio}
+        onSetTicketMedio={setTicketMedio}
+        fluxoMensal={fluxoMensal}
+        onSetFluxoMensal={setFluxoMensal}
+        auditConversion={auditConversion}
+        onSetAuditConversion={setAuditConversion}
       />
 
       <DossierModal

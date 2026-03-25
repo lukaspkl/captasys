@@ -30,6 +30,12 @@ interface LeadDetailsModalProps {
   onGenerateAIPitch: (type: "venda" | "recall" | "apresentacao") => void;
   onHandleSendZap: (lead: Lead) => void;
   onSetIsSiteOutdated: (outdated: boolean) => void;
+  ticketMedio: number;
+  onSetTicketMedio: (val: number) => void;
+  fluxoMensal: number;
+  onSetFluxoMensal: (val: number) => void;
+  auditConversion: number;
+  onSetAuditConversion: (val: number) => void;
 }
 
 const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
@@ -54,6 +60,12 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
   onGenerateAIPitch,
   onHandleSendZap,
   onSetIsSiteOutdated,
+  ticketMedio,
+  onSetTicketMedio,
+  fluxoMensal,
+  onSetFluxoMensal,
+  auditConversion,
+  onSetAuditConversion,
 }) => {
   if (!isOpen || !selectedLeadDetails) return null;
 
@@ -301,18 +313,50 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                     DIAGNÓSTICO_RENOVAÇÃO_PRO
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => onSetIsAuditModalOpen(true)}
-                    className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
-                  >
-                    GERAR_DOSSIÊ_AUDITORIA_V2
-                  </Button>
+                  <>
+                    <div className="space-y-3 p-4 bg-black/40 border border-white/5">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Ticket Médio (R$)</label>
+                        <input 
+                          type="number" 
+                          value={ticketMedio}
+                          onChange={(e) => onSetTicketMedio(Number(e.target.value))}
+                          className="w-full bg-black border border-white/10 p-2 text-xs font-bold text-white focus:border-[#fbce07] outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Fluxo Mensal (Clientes)</label>
+                        <input 
+                          type="number" 
+                          value={fluxoMensal}
+                          onChange={(e) => onSetFluxoMensal(Number(e.target.value))}
+                          className="w-full bg-black border border-white/10 p-2 text-xs font-bold text-white focus:border-[#fbce07] outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Taxa de Conversão (%)</label>
+                        <input 
+                          type="number" 
+                          value={auditConversion}
+                          onChange={(e) => onSetAuditConversion(Number(e.target.value))}
+                          className="w-full bg-black border border-white/10 p-2 text-xs font-bold text-white focus:border-[#fbce07] outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={() => onSetIsAuditModalOpen(true)}
+                      className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
+                    >
+                      GERAR_DOSSIÊ_AUDITORIA
+                    </Button>
+                  </>
                 )}
                 <Button
                   onClick={() => onGenerateTacticalDossier(selectedLeadDetails)}
                   className="w-full h-12 bg-pink-500 text-white font-black italic tracking-widest hover:bg-white hover:text-pink-500 transition-all border-none shadow-[0_0_20px_rgba(236,72,153,0.3)] my-4"
                 >
-                  <Radar className="w-5 h-5 mr-2" /> GERAR_DOSSIÊ_TÁTICO_V4
+                  <Radar className="w-5 h-5 mr-2" /> GERAR_DOSSIÊ_TÁTICO
                 </Button>
                   <button
                     onClick={() => {
