@@ -33,20 +33,51 @@ const DossierModal: React.FC<DossierModalProps> = ({
 
   return (
     <div
-      id="dossier-print-zone"
-      className="fixed inset-0 bg-[#020617]/95 backdrop-blur-2xl z-200 flex items-center justify-center p-4 overflow-y-auto"
+      id="dossier-root"
+      className="fixed inset-0 bg-[#020617]/95 backdrop-blur-2xl z-200 flex items-start justify-center p-0 md:p-4 overflow-y-auto"
     >
-      <div className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] h-fit flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)] my-auto">
-        <div className="absolute top-0 left-0 w-full h-1 bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)]" />
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body * { visibility: hidden; }
+          #dossier-modal-content, #dossier-modal-content * { visibility: visible; }
+          #dossier-modal-content {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            background: white !important;
+            box-shadow: none !important;
+            color: black !important;
+          }
+          .print\\:hidden { display: none !important; }
+          .bg-black\\/40, .bg-\\[\\#0f172a\\], .bg-\\[\\#0a0a0a\\], .bg-dark-bg { background: white !important; }
+          .text-white { color: black !important; }
+          .text-slate-500, .text-cyan-600 { color: #666 !important; }
+          .border-white\\/5, .border-cyan-400\\/10 { border-color: #eee !important; }
+          .hacker-grid-bg { background: none !important; }
+          .shadow-\\[0_0_100px_rgba(236,72,153,0.1)\\] { box-shadow: none !important; }
+          @page { size: auto; margin: 15mm; }
+        }
+      `}} />
 
-        <div className="p-8 border-b border-white/5 flex flex-col gap-4 bg-black/40">
+      <div 
+        id="dossier-modal-content"
+        className="bg-[#0f172a] border border-pink-500/30 w-full max-w-4xl min-h-[80vh] h-fit flex flex-col relative shadow-[0_0_100px_rgba(236,72,153,0.1)] my-0 md:my-auto"
+      >
+        <div className="absolute top-0 left-0 w-full h-1 bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)] print:hidden" />
+
+        <div className="p-8 border-b border-white/5 flex flex-col gap-4 bg-black/40 print:bg-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-6">
-              <div className="w-16 h-16 bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
-                <Radar className="w-8 h-8 text-pink-500 animate-pulse" />
+              <div className="w-16 h-16 bg-pink-500/10 flex items-center justify-center border border-pink-500/20 print:border-pink-500">
+                <Radar className="w-8 h-8 text-pink-500" />
               </div>
               <div>
-                <h2 className="font-outfit text-2xl font-black italic text-white uppercase tracking-tighter">
+                <h2 className="font-outfit text-2xl font-black italic text-white print:text-black uppercase tracking-tighter">
                   Dossiê de Inteligência Tática
                 </h2>
                 <p className="text-[10px] text-pink-500 font-black uppercase tracking-[0.3em] flex items-center gap-2">
@@ -68,7 +99,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
               <label className="text-[9px] text-slate-500 font-black uppercase tracking-widest">
                 Alvo da Análise
               </label>
-              <h3 className="text-xl font-bold text-white uppercase italic">
+              <h3 className="text-xl font-bold text-white print:text-black uppercase italic">
                 {lead.title}
               </h3>
             </div>
@@ -78,7 +109,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
           </div>
         </div>
 
-        <div className="p-10 flex-1 space-y-12">
+        <div className="p-10 flex-1 space-y-12 print:p-6 print:space-y-6">
           {isLoading ? (
             <div className="h-64 flex flex-col items-center justify-center space-y-6">
               <div className="w-20 h-20 border-2 border-transparent border-t-pink-500 rounded-full animate-spin" />
@@ -89,30 +120,30 @@ const DossierModal: React.FC<DossierModalProps> = ({
           ) : (
             <>
               {/* Radar Section */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="bg-black/40 border border-white/5 p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 print:gap-4 print:grid-cols-3">
+                <div className="bg-black/40 border border-white/5 p-6 space-y-4 print:border-gray-200">
                   <p className="text-[10px] text-slate-500 font-black uppercase">
                     Densidade Local 2km
                   </p>
-                  <h3 className="text-4xl font-black text-white italic">
+                  <h3 className="text-4xl font-black text-white print:text-black italic">
                     {competitorsCount.radius2km}
                   </h3>
                   <p className="text-[9px] text-pink-500 font-bold uppercase tracking-tighter">
                     Concorrentes Diretos Detectados
                   </p>
                 </div>
-                <div className="bg-black/40 border border-white/5 p-6 space-y-4">
+                <div className="bg-black/40 border border-white/5 p-6 space-y-4 print:border-gray-200">
                   <p className="text-[10px] text-slate-500 font-black uppercase">
                     Alcance Regional 5km
                   </p>
-                  <h3 className="text-4xl font-black text-white italic">
+                  <h3 className="text-4xl font-black text-white print:text-black italic">
                     {competitorsCount.radius5km}
                   </h3>
                   <p className="text-[9px] text-pink-500 font-bold uppercase tracking-tighter">
                     Projeção de Mercado Ativo
                   </p>
                 </div>
-                <div className="bg-black/40 border border-white/5 p-6 space-y-4">
+                <div className="bg-black/40 border border-white/5 p-6 space-y-4 print:border-gray-200">
                   <p className="text-[10px] text-slate-500 font-black uppercase">
                     Métrica de Percepção
                   </p>
@@ -132,30 +163,29 @@ const DossierModal: React.FC<DossierModalProps> = ({
               </div>
 
               {/* Competitors List */}
-              <div className="space-y-6">
-                <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                  <Crosshair className="w-4 h-4 text-pink-500" /> Alvos de Monitoramento
-                  Próximos
+              <div className="space-y-6 print:space-y-3">
+                <h4 className="text-[11px] font-black text-white print:text-black uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Crosshair className="w-4 h-4 text-pink-500" /> Alvos de Monitoramento Próximos
                 </h4>
-                <div className="grid grid-cols-1 gap-3">
-                  {competitorsList.map((c: Lead, i: number) => (
+                <div className="grid grid-cols-1 gap-3 print:gap-2">
+                  {competitorsList.length > 0 ? competitorsList.map((c: Lead, i: number) => (
                     <div
                       key={i}
-                      className="bg-white/5 border border-white/5 p-4 flex justify-between items-center group hover:bg-white/10 transition-all"
+                      className="bg-white/5 border border-white/5 p-4 flex justify-between items-center group transition-all print:border-gray-200 print:p-2"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-1.5 h-1.5 bg-pink-500 rounded-full group-hover:animate-ping" />
+                        <div className="w-1.5 h-1.5 bg-pink-500 rounded-full" />
                         <div>
-                          <p className="text-xs font-bold text-white uppercase">
+                          <p className="text-xs font-bold text-white print:text-black uppercase">
                             {c.title}
                           </p>
-                          <p className="text-[9px] text-slate-500 tracking-tighter uppercase">
+                          <p className="text-[9px] text-slate-500 tracking-tighter uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[300px]">
                             {c.address || "Localização Oculta"}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-black text-pink-300 italic">
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="text-[10px] font-black text-pink-300 print:text-pink-600 italic">
                           {c.rating}★
                         </span>
                         <Badge className="bg-pink-500/10 text-pink-500 border-none text-[8px] uppercase">
@@ -163,16 +193,20 @@ const DossierModal: React.FC<DossierModalProps> = ({
                         </Badge>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="p-10 border-2 border-dashed border-white/5 text-center">
+                      <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">Aguardando dados de vizinhança...</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Pitch Final */}
-              <div className="bg-pink-500/5 border-l-4 border-pink-500 p-8 space-y-4">
+              <div className="bg-pink-500/5 border-l-4 border-pink-500 p-8 space-y-4 print:p-4 print:bg-gray-50">
                 <h4 className="text-[11px] font-black text-pink-500 uppercase tracking-[0.2em] flex items-center gap-2">
                   <Cpu className="w-4 h-4" /> Recomendação Tática do System
                 </h4>
-                <p className="text-lg font-bold text-white leading-relaxed italic pr-12">
+                <p className="text-lg font-bold text-white print:text-black leading-relaxed italic">
                   &ldquo;{pitch}&rdquo;
                 </p>
                 <div className="pt-6 flex gap-4 print:hidden">
@@ -194,7 +228,7 @@ const DossierModal: React.FC<DossierModalProps> = ({
           )}
         </div>
 
-        <div className="p-4 bg-black/20 border-t border-white/5 text-center">
+        <div className="p-4 bg-black/20 border-t border-white/5 text-center print:bg-white print:border-gray-200">
           <p className="text-[8px] text-slate-600 font-black uppercase tracking-[0.5em]">
             SiteProx Intelligence System // Confidential Data
           </p>

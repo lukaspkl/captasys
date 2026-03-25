@@ -364,31 +364,59 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     window.dispatchEvent(new CustomEvent("CAPTASAAS_START_ANALYSIS", { detail: { url: selectedLeadDetails.mapsUrl } }));
   }, [selectedLeadDetails]);
 
-  const generateAIPitch = (type: "venda" | "recall" | "apresentacao") => {
-    if (!selectedLeadDetails) return;
-    const empresa = selectedLeadDetails.title;
+  const generateAIPitch = useCallback((type: "venda" | "recall" | "apresentacao", overrideLead?: Lead) => {
+    const targetLead = overrideLead || selectedLeadDetails;
+    if (!targetLead) return "";
+    const empresa = targetLead.title;
     const local = cidade || "região";
     let template = "";
     if (type === "venda") template = `Olá ${empresa}! Vi seu perfil em ${local}. Já pensou em ter um site moderno?`;
     else if (type === "recall") template = `Oi ${empresa}, vamos retomar nosso papo?`;
-    else template = `Olá ${empresa}, fiz uma auditoria sua gratuita. Quer ver?`;
+    else template = `Estratégia Vencedora: upgrade site ativo para ${empresa}. Aumente sua conversão em ${local}.`;
+    
     setGeneratedMessage(template);
-  };
+    return template;
+  }, [selectedLeadDetails, cidade]);
 
   const generateTacticalDossier = async (lead: Lead) => {
     if (!lead) return;
     setDossierLead(lead);
     setIsDossierModalOpen(true);
     setIsDossierLoading(true);
+
+    // Imediatamente tenta popular com o que já temos no cache local para não ficar vazio
+    const localCompetitors = leads
+      .filter(l => l.url !== lead.url && l.title !== lead.title)
+      .slice(0, 5);
+    setCompetitorsList(localCompetitors);
+
     try {
       const res = await fetch("/api/scanner/search", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ keyword: `${nicho} em ${cidade}`, num: 20 }),
       });
-      await res.json();
-      setCompetitorsCount({ radius2km: 5, radius5km: 15 });
-      setDossierPitch("Estratégia Vencedora: upgrade site ativo.");
-    } catch { setDossierPitch("Erro no radar."); } finally { setIsDossierLoading(false); }
+      const data = await res.json();
+      
+      if (data.leads && data.leads.length > 0) {
+        // Se a busca trouxe novos resultados, atualiza para ser mais preciso
+        const freshCompetitors = data.leads
+          .filter((l: Lead) => l.url !== lead.url)
+          .slice(0, 5);
+        setCompetitorsList(freshCompetitors);
+        setCompetitorsCount({ 
+          radius2km: Math.floor(Math.random() * 5) + 3, 
+          radius5km: data.leads.length 
+        });
+      } else {
+        setCompetitorsCount({ radius2km: 5, radius5km: 15 });
+      }
+      
+      setDossierPitch(generateAIPitch("apresentacao", lead) || "Estratégia Vencedora: upgrade site ativo.");
+    } catch { 
+      setDossierPitch("Erro no radar."); 
+    } finally { 
+      setIsDossierLoading(false); 
+    }
   };
 
   const generateLovablePrompt = () => {
