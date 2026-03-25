@@ -20,7 +20,7 @@ import {
   CardContent, 
   CardFooter 
 } from "@/components/ui/card";
-import { ActiveProject } from "../types";
+import { ActiveProject } from "../../types";
 
 interface ActiveSitesViewProps {
   activeProjects: ActiveProject[];

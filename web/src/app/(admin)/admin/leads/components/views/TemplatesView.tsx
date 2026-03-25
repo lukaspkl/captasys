@@ -10,20 +10,16 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Lead, TemplateConfig, MarketingTemplate } from "../../types";
 
 interface TemplatesViewProps {
   selectedTemplateLeadUrl: string | null;
   setSelectedTemplateLeadUrl: (url: string) => void;
-  leads: any[];
-  templateConfig: {
-    sellerName: string;
-    basePrice: string;
-    installments: string;
-    installmentValue: string;
-  };
-  setTemplateConfig: React.Dispatch<React.SetStateAction<any>>;
-  templatesList: any[];
-  processTemplatePreview: (tpl: any) => void;
+  leads: Lead[];
+  templateConfig: TemplateConfig;
+  setTemplateConfig: React.Dispatch<React.SetStateAction<TemplateConfig>>;
+  templatesList: MarketingTemplate[];
+  processTemplatePreview: (tpl: MarketingTemplate) => void;
 }
 
 const TemplatesView: React.FC<TemplatesViewProps> = ({

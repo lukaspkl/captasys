@@ -70,6 +70,14 @@ export interface TemplateConfig {
   demoBaseUrl: string;
 }
 
+// ─── MARKETING TEMPLATE ───────────────────────────────────────────────────
+export interface MarketingTemplate {
+  id: string;
+  name: string;
+  description: string;
+  content: string;
+}
+
 // ─── NICHE CONFIG ───────────────────────────────────────────────────────────
 export interface NicheConfig {
   emoji: string;

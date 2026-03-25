@@ -21,16 +21,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Lead } from "../../types";
 
 interface LeadsTableProps {
-  filteredLeads: any[];
-  openLeadDetails: (lead: any) => void;
-  generateTacticalDossier: (lead: any) => void;
+  filteredLeads: Lead[];
+  openLeadDetails: (lead: Lead) => void;
+  generateTacticalDossier: (lead: Lead) => void;
   setSelectedLeadIndex: (idx: number | null) => void;
-  addToSwipe: (lead: any) => void;
-  addToVault: (lead: any) => void;
-  handleDeleteLead: (lead: any) => void;
-  setLeads: (leads: any[]) => void;
+  addToSwipe: (lead: Lead) => void;
+  addToVault: (lead: Lead) => void;
+  handleDeleteLead: (lead: Lead) => void;
+  setLeads: (leads: Lead[]) => void;
 }
 
 const LeadsTable: React.FC<LeadsTableProps> = ({
