@@ -13,14 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Globe,
   Database,
   Activity,
@@ -56,7 +48,9 @@ import BlacklistModal from "./components/modals/BlacklistModal";
 import StitchConfigModal from "./components/modals/StitchConfigModal";
 import PreviewModal from "./components/modals/PreviewModal";
 import LeadDetailsModal from "./components/modals/LeadDetailsModal";
-import { NICHE_CONFIG } from "./types";
+import DashboardHeader from "./components/views/DashboardHeader";
+import RadarPanel from "./components/views/RadarPanel";
+import LeadsTable from "./components/views/LeadsTable";
 
 /**
  *          DESIGN COMMITMENT: NEON HUD ENGINE (Localizada & Funcional)
@@ -540,391 +534,37 @@ export default function DashboardPage() {
           <div className="p-10 space-y-12 max-w-[1600px] w-full mx-auto">
             {currentView === "dashboard" ? (
               <>
-                {/*         HEADER DE VARREDURA (HACKER STYLE) */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                  <div className="space-y-4">
-                    <h2 className="font-hacker text-5xl font-black text-cyan-400 uppercase tracking-tighter hacker-glow animate-[text-flicker_3s_infinite]">
-                      TERMINAL_SCANNER
-                    </h2>
-                    <div className="flex items-center gap-4">
-                      <Badge className="bg-pink-500 text-black font-black font-mono rounded-none px-4 py-1 text-[9px] tracking-widest uppercase shadow-[0_0_10px_rgba(255,0,255,0.4)]">
-                        LOCAL_HACK_ENGINE_V1.9
-                      </Badge>
-                      <Badge className="bg-transparent text-cyan-400 font-black font-mono rounded-none px-4 py-1 text-[9px] tracking-widest border border-cyan-400/40 uppercase shadow-[inset_0_0_5px_rgba(0,243,255,0.2)]">
-                        [{leads.length}] SECTORS_IN_CACHE
-                      </Badge>
-                    </div>
-                  </div>
-
-                  {/*         FILTROS DE ESTRAT  GIA (TABBED CONSOLE) */}
-                  <div className="flex flex-wrap gap-1 bg-cyan-950/20 p-1 border border-cyan-400/20">
-                    {[
-                      { id: "all", label: "SYS_ALL", icon: Globe },
-                      { id: "no-site", label: "MISSING_WEB", icon: X },
-                      { id: "no-pixel", label: "NO_TRACKING", icon: Activity },
-                      {
-                        id: "no-mobile",
-                        label: "LEGACY_UI",
-                        icon: LayoutDashboard,
-                      },
-                      {
-                        id: "low-rating",
-                        label: "LOW_REPUTATION",
-                        icon: Target,
-                      },
-                    ].map((f) => (
-                      <button
-                        key={f.id}
-                        onClick={() => setFilterMode(f.id)}
-                        className={`h-9 px-4 text-[8px] font-black tracking-widest transition-all uppercase font-mono flex items-center gap-2 ${filterMode === f.id ? "bg-cyan-500 text-black shadow-[0_0_10px_rgba(0,243,255,0.4)]" : "text-cyan-400/50 hover:text-cyan-400 hover:bg-cyan-500/5"}`}
-                      >
-                        <f.icon className="w-3 h-3" />
-                        {f.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/*     STATS DASHBOARD (CYBER-GRID) */}
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {[
-                    {
-                      label: "MEMORY_CACHE_LEADS",
-                      value: leads.length,
-                      icon: Target,
-                      suffix: "OBJ",
-                    },
-                    {
-                      label: "BUFFER_SYSTRON_SPEED",
-                      value: isSearching ? "98.4" : "0.0",
-                      icon: Activity,
-                      suffix: "MHZ",
-                    },
-                    {
-                      label: "ENCRYPTED_ZONES",
-                      value: leads.length > 0 ? "12" : "0",
-                      icon: Globe,
-                      suffix: "LOC",
-                    },
-                  ].map((stat, i) => (
-                    <div
-                      key={i}
-                      className="p-8 bg-[#0a0a0a] hacker-border group hover:bg-cyan-500/5 transition-all cursor-crosshair relative overflow-hidden"
-                    >
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-cyan-500/5 rotate-45 translate-x-8 -translate-y-8 border-b border-l border-cyan-400 opacity-20"></div>
-                      <p className="text-[9px] font-black tracking-[0.3em] text-cyan-400/40 uppercase mb-4 flex items-center gap-2 font-mono">
-                        <span className="w-1 h-1 bg-pink-500"></span>{" "}
-                        {stat.label}
-                      </p>
-                      <div className="flex items-baseline gap-2">
-                        <h3 className="font-hacker text-6xl font-black text-cyan-400 tracking-tighter hacker-glow">
-                          {stat.value}
-                        </h3>
-                        <span className="text-[10px] font-black text-pink-500 uppercase tracking-widest font-mono">
-                          {stat.suffix}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </section>
+                <DashboardHeader 
+                  leads={leads}
+                  filterMode={filterMode}
+                  setFilterMode={setFilterMode}
+                  isSearching={isSearching}
+                />
 
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                  <div className="xl:col-span-4 space-y-8">
-                    <Card className="bg-[#0a0a0a] border border-cyan-400/30 rounded-none shadow-[0_0_20px_rgba(0,243,255,0.1)] backdrop-blur-md relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-full h-[1px] bg-cyan-400/50 animate-[scanline_4s_linear_infinite]"></div>
-                      <CardHeader className="border-b border-cyan-400/20 bg-cyan-950/10">
-                        <CardTitle className="font-mono text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                          <Activity className="w-3 h-3 animate-pulse" />{" "}
-                          RADAR_OP_CONSOLE
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="pt-8 space-y-6">
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-[9px] font-black text-cyan-400 uppercase font-mono tracking-widest">
-                            <span className="animate-pulse">
-                              &gt; {statusText}
-                            </span>
-                            <span className="text-pink-500">{progress}%</span>
-                          </div>
-                          <div className="h-6 bg-black border border-cyan-400/30 p-1 relative overflow-hidden">
-                            <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_4px,rgba(0,243,255,0.1)_4px,rgba(0,243,255,0.1)_5px)]"></div>
-                            <div
-                              className="h-full bg-cyan-500 transition-all duration-500 shadow-[0_0_15px_#00f3ff]"
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-cyan-950/20 p-4 border-l-4 border-pink-500">
-                            <p className="text-[8px] font-black text-cyan-400/50 uppercase mb-1 font-mono tracking-widest">
-                              LAST_TARGET_RECOGNITION
-                            </p>
-                            <p className="font-black text-cyan-400 uppercase tracking-tighter font-hacker text-xl leading-none">
-                              {nicho || "NODATA"}
-                            </p>
-                          </div>
-                          <div className="bg-rose-950/20 p-4 border-l-4 border-rose-500">
-                            <p className="text-[8px] font-black text-rose-400/50 uppercase mb-1 font-mono tracking-widest">
-                              QUARANTINED_TARGETS
-                            </p>
-                            <p className="font-black text-rose-400 uppercase tracking-tighter font-hacker text-xl leading-none">
-                              {quarantinedLeads.length}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                  <RadarPanel 
+                    statusText={statusText}
+                    progress={progress}
+                    nicho={nicho}
+                    quarantinedLeads={quarantinedLeads}
+                    leads={leads}
+                    cidade={cidade}
+                  />
 
-                    {leads.length > 0 && (
-                      <Card className="bg-[#06b6d4] text-black border-none rounded-none skew-x-[-2deg] transition-all">
-                        <CardHeader>
-                          <CardTitle className="font-outfit text-lg font-black italic uppercase">
-                            PITCH_RÁPIDO
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <p className="text-xs font-bold leading-relaxed">
-                            Sugerimos focar no nicho de{" "}
-                            <span className="underline">{nicho}</span> na região
-                            de <span className="underline">{cidade}</span>. O
-                            score médio de oportunidade alto.
-                          </p>
-                          <Button className="w-full bg-black text-pink-500 border border-black hover:bg-black/80 font-mono font-black rounded-none transition-all uppercase text-[9px] h-11 tracking-[0.2em] shadow-[0_4px_0_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-none">
-                            START_HACK_PROSPECTION
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-
-                  {/*      TABELA DE LEADS (HACKER TERMINAL) */}
-                  <div className="xl:col-span-8 space-y-6">
-                    <div className="flex items-center justify-between border-b border-cyan-400/20 pb-4">
-                      <h3 className="font-hacker text-2xl font-black text-cyan-400 uppercase tracking-widest hacker-glow">
-                        SCAN_RESULTS_STREAM ({filteredLeads.length})
-                      </h3>
-                      <Button
-                        variant="ghost"
-                        className="text-[9px] text-pink-500 font-black hover:text-white font-mono tracking-widest"
-                        onClick={() => {
-                          localStorage.removeItem("capta_leads_cache");
-                          setLeads([]);
-                        }}
-                      >
-                        WIPE_MEMORY_CACHE
-                      </Button>
-                    </div>
-                    <div className="bg-[#0a0a0a] border border-cyan-400/20 p-1">
-                      <style dangerouslySetInnerHTML={{ __html: `
-                        @keyframes neonBlink1 { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-                        @keyframes neonBlink2 { 0%, 49% { opacity: 0; } 50%, 100% { opacity: 1; } }
-                        .blink-1 { animation: neonBlink1 1.5s infinite; }
-                        .blink-2 { animation: neonBlink2 1.5s infinite; }
-                        
-                        @media print {
-                          body * { visibility: hidden !important; }
-                          #dossier-print-zone, #dossier-print-zone * { visibility: visible !important; }
-                          #dossier-print-zone {
-                            position: absolute !important;
-                            left: 0 !important;
-                            top: 0 !important;
-                            width: 100% !important;
-                            display: block !important;
-                            background: white !important;
-                            color: black !important;
-                            height: auto !important;
-                          }
-                          #dossier-print-zone > div {
-                            border: none !important;
-                            width: 100% !important;
-                            max-width: 100% !important;
-                            background: white !important;
-                          }
-                          #dossier-print-zone .bg-[#0f172a] { background: white !important; color: black !important; }
-                          #dossier-print-zone .text-white { color: black !important; }
-                          #dossier-print-zone .bg-black\/40 { background: #f8fafc !important; border: 1px solid #e2e8f0 !important; }
-                          #dossier-print-zone .bg-white\/5 { background: #f1f5f9 !important; border: 1px solid #e2e8f0 !important; }
-                          #dossier-print-zone .bg-pink-500\/5 { background: #fff1f2 !important; border: 2px solid #ec4899 !important; }
-                          #dossier-print-zone .text-slate-500 { color: #475569 !important; }
-                          #dossier-print-zone .text-pink-500 { color: #ec4899 !important; }
-                          #dossier-print-zone button { display: none !important; }
-                        }
-                      `}} />
-                      <Table>
-                        <TableHeader className="bg-cyan-950/20">
-                          <TableRow className="border-cyan-400/10 hover:bg-transparent text-[8px] font-black uppercase tracking-[0.3em] text-cyan-400/60 font-mono">
-                            <TableHead className="h-10">
-                              HEX_IDENTIFIER
-                            </TableHead>
-                            <TableHead className="h-10">OP_INDEX</TableHead>
-                            <TableHead className="h-10">COMMS_LINK</TableHead>
-                            <TableHead className="h-10 text-right">
-                              EXE_CMDS
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {filteredLeads.map((lead, idx) => (
-                            <TableRow
-                              key={idx}
-                              onClick={() => openLeadDetails(lead)}
-                              className="border-b border-cyan-400/5 group hover:bg-cyan-500/5 transition-colors cursor-crosshair h-20"
-                            >
-                              <TableCell className="py-2">
-                                <div className="flex flex-col">
-                                  <span className="text-xs font-black text-cyan-400 uppercase font-mono truncate max-w-[200px] group-hover:hacker-glow">
-                                    {lead.title}
-                                  </span>
-                                  <span className="text-[9px] text-cyan-700 font-mono truncate max-w-[250px]">
-                                    {lead.snippet}
-                                  </span>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center gap-2">
-                                  {((lead.temperature || "Morno") === "Quente" && (!lead.url || lead.url.includes("google.com"))) ? (
-                                    <div className="relative w-20 h-5 flex items-center justify-center border border-pink-500/40 bg-pink-500/10 shadow-[0_0_15px_rgba(236,72,153,0.3)]">
-                                      <span className="absolute text-[8px] font-black uppercase tracking-widest text-rose-500 blink-1">
-                                        QUENTE
-                                      </span>
-                                      <span className="absolute text-[7px] font-black uppercase tracking-[0.2em] text-pink-400 blink-2 shadow-pink-500">
-                                        SEM_WEBSITE
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <Badge
-                                      className={`text-[8px] font-black uppercase tracking-widest rounded-none border ${
-                                        (lead.temperature || "Morno") === "Quente"
-                                          ? "bg-rose-500/10 text-rose-500 border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.2)]"
-                                          : (lead.temperature || "Morno") ===
-                                              "Frio"
-                                            ? "bg-cyan-500/10 text-cyan-400 border-cyan-400/20"
-                                            : "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                                      }`}
-                                    >
-                                      {lead.temperature || "Morno"}
-                                    </Badge>
-                                  )}
-                                  <div className="flex flex-col gap-0.5 ml-2">
-                                    <div className="w-16 h-1 bg-white/5 relative overflow-hidden">
-                                      <div
-                                        className={`h-full transition-all ${lead.score > 70 ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : lead.score > 40 ? "bg-amber-500" : "bg-rose-500"}`}
-                                        style={{ width: `${lead.score || 0}%` }}
-                                      />
-                                    </div>
-                                    <span className="text-[10px] font-mono text-white/40">
-                                      {lead.score || 0}%_OP
-                                    </span>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                {lead.phone ? (
-                                  <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-400/20 rounded-none text-[8px] font-black font-mono">
-                                    {lead.phone}
-                                  </Badge>
-                                ) : lead.analysisStatus === "ANALISANDO" ? (
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-pink-500 animate-pulse rounded-full shadow-[0_0_8px_#ec4899]" />
-                                    <span className="text-[8px] text-pink-500 font-black animate-pulse font-mono uppercase tracking-widest">
-                                      SCANNING_DATA...
-                                    </span>
-                                  </div>
-                                ) : lead.email ? (
-                                  <Badge className="bg-pink-500/10 text-pink-400 border border-pink-500/20 rounded-none text-[8px] font-black font-mono">
-                                    {lead.email}
-                                  </Badge>
-                                ) : (
-                                  <span className="text-[8px] text-cyan-900 font-black tracking-widest font-mono">
-                                    WAITING_ENRICHMENT
-                                  </span>
-                                )}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openLeadDetails(lead);
-                                    }}
-                                    className="w-8 h-8 flex items-center justify-center border border-cyan-400/30 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all"
-                                    title="READ_DOSSIER"
-                                  >
-                                    <Activity className="w-3.5 h-3.5" />
-                                  </button>
-                                  {lead.mapsUrl && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        window.open(lead.mapsUrl, "_blank");
-                                      }}
-                                      className="w-8 h-8 flex items-center justify-center border border-yellow-500/30 text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all"
-                                      title="MAPS_PROFILE"
-                                    >
-                                      <MapPin className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      generateTacticalDossier(lead);
-                                    }}
-                                    className="w-8 h-8 flex items-center justify-center border border-pink-500/30 text-pink-500 hover:bg-pink-500 hover:text-white transition-all"
-                                    title="TÁTICO_DOSSIÊ"
-                                  >
-                                    <FileText className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedLeadIndex(idx);
-                                    }}
-                                    className="w-8 h-8 flex items-center justify-center border border-pink-400/30 text-pink-400 hover:bg-pink-500 hover:text-black transition-all"
-                                    title="MARK_TARGET"
-                                  >
-                                    <Sparkles className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      addToSwipe(lead);
-                                    }}
-                                    className="w-8 h-8 flex items-center justify-center border border-amber-400/30 text-amber-400 hover:bg-amber-500 hover:text-black transition-all"
-                                    title="SWIPE_FOR_CLONING"
-                                  >
-                                    <Layers className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      addToVault(lead);
-                                    }}
-                                    className="w-8 h-8 flex items-center justify-center border border-[#06b6d4]/30 text-[#06b6d4] hover:bg-[#06b6d4] hover:text-black transition-all"
-                                    title="SAVE_TO_VAULT"
-                                  >
-                                    <Archive className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteLead(lead);
-                                    }}
-                                    className="w-8 h-8 flex items-center justify-center border border-pink-600/30 text-pink-600 hover:bg-pink-600 hover:text-white transition-all"
-                                    title="PURGE_RECORD"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
+                  <LeadsTable 
+                    filteredLeads={filteredLeads}
+                    openLeadDetails={openLeadDetails}
+                    generateTacticalDossier={generateTacticalDossier}
+                    setSelectedLeadIndex={setSelectedLeadIndex}
+                    addToSwipe={addToSwipe}
+                    addToVault={addToVault}
+                    handleDeleteLead={handleDeleteLead}
+                    setLeads={setLeads}
+                  />
                 </div>
               </>
             ) : currentView === "active-sites" ? (
+
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <section className="grid grid-cols-1 md:grid-cols-4 gap-0 border border-white/10 divide-x divide-white/10 bg-dark-bg/20">
                   {[
