@@ -324,20 +324,22 @@ const SiteProxPage = () => {
                              </div>
                           </div>
 
-                          <div className="p-10 bg-white/5 border border-white/10 rounded-[2.5rem] backdrop-blur-xl relative group hover:border-emerald-500/30 transition-all duration-700 flex flex-col justify-between">
+                          <div className="p-10 bg-white/5 border border-white/10 rounded-[2.5rem] backdrop-blur-xl relative group hover:border-emerald-500/30 transition-all duration-700 flex flex-col justify-between text-center md:text-right">
                              <div>
-                                <div className="flex gap-2.5 mb-10">
+                                <div className="flex justify-center md:justify-end gap-2.5 mb-10">
                                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                                 </div>
-                                 <h4 className="text-sm font-black uppercase tracking-widest flex items-center gap-3 mb-4">
-                                    <History className="w-4 h-4 text-emerald-500 animate-spin-slow" />
-                                    AUDITORIA PERFORMANCE 360º
-                                 </h4>
-                                 <p className="text-[11px] md:text-xs text-slate-400 leading-relaxed font-medium">
-                                    Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas para garantir performance absoluta.
-                                 </p>
+                                <div className="mb-8">
+                                   <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">
+                                      AUDITORIA PERFORMANCE
+                                   </h4>
+                                   <p className={`text-6xl font-black text-white italic tracking-tighter leading-none ${sora.className}`}>360º</p>
+                                </div>
+                                <p className="text-[11px] md:text-xs text-slate-400 leading-relaxed font-medium max-w-sm mx-auto md:ml-auto md:mr-0">
+                                   Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas para garantir performance absoluta.
+                                </p>
                              </div>
                              <div className="pt-10 mt-10 border-t border-white/5 space-y-5">
                                 <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
