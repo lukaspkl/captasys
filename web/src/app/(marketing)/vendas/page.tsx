@@ -284,63 +284,67 @@ const SiteProxPage = () => {
                     <div className="absolute top-0 right-0 w-[40%] h-full bg-emerald-500/5 blur-[120px] -rotate-12 pointer-events-none" />
                     
                     <div className="relative space-y-16">
-                       <div className="flex flex-col md:flex-row items-center gap-12">
-                          <div className="w-24 h-24 md:w-32 md:h-32 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center shrink-0 shadow-[0_0_40px_rgba(16,185,129,0.1)]">
-                             <ShieldCheck className="w-12 h-12 md:w-16 md:h-16 text-emerald-500" />
+                       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-14">
+                          <div className="w-20 h-20 md:w-28 md:h-28 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_40px_rgba(16,185,129,0.1)] rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                             <ShieldCheck className="w-10 h-10 md:w-14 md:h-14 text-emerald-500" />
                           </div>
                           <div className="space-y-4 text-center md:text-left">
-                             <h2 className={`text-4xl md:text-7xl font-black tracking-tighter uppercase italic leading-none ${sora.className}`}>
+                             <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.9] ${sora.className}`}>
                                 ALÉM DO CÓDIGO: <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">INTELIGÊNCIA_DE_GUERRA.</span>
                              </h2>
-                             <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] text-slate-500">Exclusividade SiteProx Labs</p>
+                             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-slate-500">Protocolo de Elite SiteProx Labs</p>
                           </div>
                        </div>
 
-                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20">
-                          <div className="space-y-10 group">
-                             <div className="space-y-6">
-                                <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter flex items-center gap-4">
-                                   <div className="w-2 h-8 bg-emerald-500" />
-                                   DOSSIÊ_TÁTICO_PREMIUM
-                                </h3>
-                                <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed italic">
-                                   Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-white font-black underline decoration-emerald-500/50 underline-offset-8">predadores no mercado local.</span>
+                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-stretch">
+                          <div className="space-y-10 group flex flex-col justify-between">
+                             <div className="space-y-8">
+                                <div className="space-y-4">
+                                   <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+                                      <div className="w-1.5 h-6 bg-emerald-500" />
+                                      DOSSIÊ_TÁTICO_PREMIUM
+                                   </h3>
+                                   <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed italic border-l-2 border-emerald-500/20 pl-6">
+                                      Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-white font-black underline decoration-emerald-500/50 underline-offset-8">predadores no mercado local.</span>
+                                   </p>
+                                </div>
+                                <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-bold uppercase tracking-widest max-w-md">
+                                   Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado.
                                 </p>
                              </div>
-                             <p className="text-sm md:text-lg text-slate-500 leading-relaxed font-bold uppercase tracking-tight">
-                                Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado.
-                             </p>
-                             <div className="flex flex-wrap gap-4">
-                                <span className="px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-xl">Análise de Concorrência</span>
-                                <span className="px-6 py-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-black uppercase tracking-widest rounded-xl">Mapa de Oportunidades</span>
+                             <div className="flex flex-wrap gap-3 pt-6">
+                                <span className="px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded-lg">Análise de Concorrência</span>
+                                <span className="px-5 py-2.5 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] font-black uppercase tracking-widest rounded-lg">Mapa de Oportunidades</span>
                              </div>
                           </div>
 
-                          <div className="space-y-10 p-10 bg-white/5 border border-white/10 rounded-[2.5rem] backdrop-blur-xl relative group hover:border-emerald-500/30 transition-all duration-700">
-                             <div className="flex gap-4 mb-8">
-                                <div className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]" />
-                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                                <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                             </div>
-                             <h4 className="text-xl font-black uppercase tracking-widest flex items-center gap-4">
-                                <History className="w-6 h-6 text-emerald-500 animate-spin-slow" />
-                                DOSSIÊ_DE_AUDITORIA_360º
-                             </h4>
-                             <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
-                                Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas. Você recebe um link de acesso estratégico para agir com precisão cirúrgica.
-                             </p>
-                             <div className="pt-8 border-t border-white/5 space-y-4">
-                                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                                   <span className="text-slate-500">Status da Varredura</span>
-                                   <span className="text-emerald-500 animate-pulse">● Ativo</span>
+                          <div className="p-10 bg-white/5 border border-white/10 rounded-[2.5rem] backdrop-blur-xl relative group hover:border-emerald-500/30 transition-all duration-700 flex flex-col justify-between">
+                             <div>
+                                <div className="flex gap-2.5 mb-10">
+                                   <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                                   <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                                 </div>
-                                <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                                <h4 className="text-xl font-black uppercase tracking-widest flex items-center gap-4 mb-6">
+                                   <History className="w-6 h-6 text-emerald-500 animate-spin-slow" />
+                                   AUDITORIA_PERFORMANCE_360º
+                                </h4>
+                                <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
+                                   Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas. 
+                                </p>
+                             </div>
+                             <div className="pt-10 mt-10 border-t border-white/5 space-y-5">
+                                <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+                                   <span className="text-slate-500">Status da Varredura Digital</span>
+                                   <span className="text-emerald-500 animate-pulse">● Protocolo Ativo</span>
+                                </div>
+                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                                    <motion.div 
                                       initial={{ width: 0 }}
                                       whileInView={{ width: "100%" }}
-                                      transition={{ duration: 2 }}
-                                      className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500" 
+                                      transition={{ duration: 2.5, ease: "circOut" }}
+                                      className="h-full bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-500 bg-[length:200%_auto] animate-gradient-flow" 
                                    />
                                 </div>
                              </div>
