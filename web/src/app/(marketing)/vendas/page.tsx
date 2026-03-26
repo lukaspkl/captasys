@@ -325,10 +325,10 @@ const SiteProxPage = () => {
                              </div>
                              <h4 className="text-xl font-black uppercase tracking-widest flex items-center gap-4">
                                 <History className="w-6 h-6 text-emerald-500 animate-spin-slow" />
-                                PROTOCOLO_DE_AUDITORIA
+                                DOSSIÊ_DE_AUDITORIA_360º
                              </h4>
                              <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
-                                Monitoramos sua saúde digital e entregamos auditorias trimestrais para garantir que seu site continue sendo a máquina de vendas mais rápida da sua região.
+                                Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas. Você recebe um link de acesso estratégico com validade de 48h para agir com precisão cirúrgica.
                              </p>
                              <div className="pt-8 border-t border-white/5 space-y-4">
                                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
