@@ -303,18 +303,18 @@ const SiteProxPage = () => {
                        </div>
 
                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-stretch">
-                          <div className="space-y-12 group flex flex-col justify-between">
+                          <div className="space-y-12 group flex flex-col justify-between text-center md:text-left">
                              <div className="space-y-10">
                                 <div className="space-y-6">
-                                   <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight flex items-center gap-3">
+                                   <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight flex items-center justify-center md:justify-start gap-3">
                                       <div className="w-1 h-5 bg-emerald-500 rounded-full" />
                                       DOSSIÊ TÁTICO PREMIUM
                                    </h3>
-                                   <p className="text-2xl md:text-3xl text-white font-bold leading-[1.15] tracking-tight max-w-xl">
+                                   <p className="text-2xl md:text-3xl text-white font-bold leading-[1.15] tracking-tight max-w-xl mx-auto md:mx-0 text-center md:text-left">
                                       Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-emerald-400">predadores</span> no mercado local.
                                    </p>
                                 </div>
-                                <p className="text-sm md:text-base text-slate-400 leading-relaxed font-medium max-w-sm">
+                                <p className="text-sm md:text-base text-slate-400 leading-relaxed font-medium max-w-sm mx-auto md:mx-0">
                                    Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado para dominar a região.
                                 </p>
                              </div>
