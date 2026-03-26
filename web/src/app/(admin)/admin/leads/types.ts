@@ -117,6 +117,7 @@ export const NICHE_CONFIG: Record<string, NicheConfig> = {
   "Pizzaria": { emoji: "🍕", keywords: ["Pizzaria Delivery", "Pizza Forno a Lenha", "Rodízio de Pizza"] },
   "Academia": { emoji: "🏋️‍♀️", keywords: ["Academia de Musculação", "Crossfit", "Personal Trainer", "Natação"] },
   "Construção": { emoji: "🧱", keywords: ["Material de Construção", "Reforma Residencial", "Pintura Comercial", "Engenharia Civil"] },
+  "Tech-Hub & Consertos": { emoji: "📱", keywords: ["Assistência Técnica Celular", "Conserto de Celular", "Loja de Celulares", "Acessórios para Celular", "Eletrônicos"] },
   "Geral": { emoji: "💼", keywords: ["Prestação de Serviços", "Consultoria de Negócios", "Marketing Digital"] }
 };
 export type View = "dashboard" | "active-sites" | "crm" | "templates" | "swipe" | "vault" | "settings" | "campaigns";
