@@ -318,7 +318,7 @@ const SiteProxPage = () => {
                                    Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado para dominar a região.
                                 </p>
                              </div>
-                             <div className="flex flex-wrap gap-3 pt-4">
+                             <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-4">
                                 <span className="px-4 py-2 bg-emerald-500/5 border border-emerald-500/10 text-emerald-500/70 text-[10px] font-bold uppercase tracking-widest rounded-md">Análise de Concorrência</span>
                                 <span className="px-4 py-2 bg-cyan-500/5 border border-cyan-500/10 text-cyan-400/70 text-[10px] font-bold uppercase tracking-widest rounded-md">Mapa de Oportunidades</span>
                              </div>
