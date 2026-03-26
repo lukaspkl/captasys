@@ -554,30 +554,34 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
                 setStatusText(`Alvo [${targetLead.title}] Localizado!`);
                 setProgress(50);
 
-                // VARREDURA DE CONCORRÊNCIA AUTOMÁTICA EM SEGUNDO PLANO
-                const targetKeyword = targetLead.classification || nicho || "Empresas";
-                const targetLocation = targetLead.addressBase || targetLead.address || cidade || "";
+                // VARREDURA DE CONCORRÊNCIA AUTOMÁTICA (APENAS SE TIVER LOCALIZAÇÃO VÁLIDA)
+                const targetKeyword = targetLead.category || targetLead.classification || nicho || "Empresas";
+                const targetLocation = targetLead.address || targetLead.addressBase || cidade || "";
                 
-                setStatusText(`Mapeando Concorrência Local para [${targetLead.title}]...`);
-                
-                const compRes = await fetch("/api/scanner/search", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        keyword: `${targetKeyword} em ${targetLocation}`,
-                        num: 20
-                    })
-                });
-                
-                const compData = await compRes.json();
-                if (compData.leads && compData.leads.length > 0) {
-                    // Adiciona concorrentes sem duplicar o alvo
-                    const competitors = compData.leads
-                        .filter((l: Lead) => l.title !== targetLead.title)
-                        .map((l: Lead) => ({ ...l, id: crypto.randomUUID(), status: "cold" }));
+                // Só dispara se tivermos uma localização que não seja vazia ou "undefined"
+                if (targetLocation && targetLocation !== "undefined" && targetLocation !== "") {
+                    setStatusText(`Mapeando Vizinhança de [${targetLead.title}]...`);
                     
-                    setLeads(prev => [...prev, ...competitors]);
-                    setStatusText(`Radar Sincronizado: ${competitors.length} alvos secundários detectados.`);
+                    const compRes = await fetch("/api/scanner/search", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ 
+                            keyword: `${targetKeyword} em ${targetLocation}`,
+                            num: 15 // Reduzido para não poluir demais
+                        })
+                    });
+                    
+                    const compData = await compRes.json();
+                    if (compData.leads && compData.leads.length > 0) {
+                        const competitors = compData.leads
+                            .filter((l: Lead) => l.title !== targetLead.title)
+                            .map((l: Lead) => ({ ...l, id: crypto.randomUUID(), status: "cold" }));
+                        
+                        setLeads(prev => [...prev, ...competitors]);
+                        setStatusText(`Radar Sincronizado: ${competitors.length} vizinhos detectados.`);
+                    }
+                } else {
+                    setStatusText("Alvo Sincronizado (Localidade isolada).");
                 }
             }
         } catch (err) {
