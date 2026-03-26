@@ -275,6 +275,84 @@ const SiteProxPage = () => {
          </div>
       </section>
 
+      {/* --- DOSSIER MERCHANDISE (NOVA SEÇÃO) --- */}
+      <section className="py-20 z-10 relative">
+        <div className="container mx-auto px-6">
+           <FadeIn>
+              <div className="relative p-1 bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-emerald-500/20 rounded-[3rem] md:rounded-[5rem]">
+                 <div className="bg-[#0a0a0f] rounded-[3rem] md:rounded-[5rem] p-10 md:p-24 overflow-hidden relative">
+                    <div className="absolute top-0 right-0 w-[40%] h-full bg-emerald-500/5 blur-[120px] -rotate-12 pointer-events-none" />
+                    
+                    <div className="relative space-y-16">
+                       <div className="flex flex-col md:flex-row items-center gap-12">
+                          <div className="w-24 h-24 md:w-32 md:h-32 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center shrink-0 shadow-[0_0_40px_rgba(16,185,129,0.1)]">
+                             <ShieldCheck className="w-12 h-12 md:w-16 md:h-16 text-emerald-500" />
+                          </div>
+                          <div className="space-y-4 text-center md:text-left">
+                             <h2 className={`text-4xl md:text-7xl font-black tracking-tighter uppercase italic leading-none ${sora.className}`}>
+                                ALÉM DO CÓDIGO: <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">INTELIGÊNCIA_DE_GUERRA.</span>
+                             </h2>
+                             <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] text-slate-500">Exclusividade SiteProx Labs</p>
+                          </div>
+                       </div>
+
+                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20">
+                          <div className="space-y-10 group">
+                             <div className="space-y-6">
+                                <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter flex items-center gap-4">
+                                   <div className="w-2 h-8 bg-emerald-500" />
+                                   DOSSIÊ_TÁTICO_PREMIUM
+                                </h3>
+                                <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed italic">
+                                   Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-white font-black underline decoration-emerald-500/50 underline-offset-8">predadores no mercado local.</span>
+                                </p>
+                             </div>
+                             <p className="text-sm md:text-lg text-slate-500 leading-relaxed font-bold uppercase tracking-tight">
+                                Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado.
+                             </p>
+                             <div className="flex flex-wrap gap-4">
+                                <span className="px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-xl">Análise de Concorrência</span>
+                                <span className="px-6 py-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-black uppercase tracking-widest rounded-xl">Mapa de Oportunidades</span>
+                             </div>
+                          </div>
+
+                          <div className="space-y-10 p-10 bg-white/5 border border-white/10 rounded-[2.5rem] backdrop-blur-xl relative group hover:border-emerald-500/30 transition-all duration-700">
+                             <div className="flex gap-4 mb-8">
+                                <div className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]" />
+                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                             </div>
+                             <h4 className="text-xl font-black uppercase tracking-widest flex items-center gap-4">
+                                <History className="w-6 h-6 text-emerald-500 animate-spin-slow" />
+                                PROTOCOLO_DE_AUDITORIA
+                             </h4>
+                             <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
+                                Monitoramos sua saúde digital e entregamos auditorias trimestrais para garantir que seu site continue sendo a máquina de vendas mais rápida da sua região.
+                             </p>
+                             <div className="pt-8 border-t border-white/5 space-y-4">
+                                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                   <span className="text-slate-500">Status da Varredura</span>
+                                   <span className="text-emerald-500 animate-pulse">● Ativo</span>
+                                </div>
+                                <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                                   <motion.div 
+                                      initial={{ width: 0 }}
+                                      whileInView={{ width: "100%" }}
+                                      transition={{ duration: 2 }}
+                                      className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500" 
+                                   />
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </FadeIn>
+        </div>
+      </section>
+
       {/* --- MANTRA --- */}
       <section className="relative py-60 z-10 overflow-hidden bg-[#05050a]">
          <div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-[#8b5cf6]/50 to-transparent top-0" />
