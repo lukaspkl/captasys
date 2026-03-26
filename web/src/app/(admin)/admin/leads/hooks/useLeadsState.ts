@@ -531,9 +531,9 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setProgress(5);
     setLeads([]);
 
-    // SE FOR LINK DIRETO, PULA O SCAN DE NICHOS
+    // SE FOR LINK DIRETO (MODO FISGADA COMPLETA)
     if (mapsLink) {
-        setStatusText("Extraindo Alvo Direto...");
+        setStatusText("Iniciando Radar Tático...");
         try {
             const res = await fetch("/api/scanner/search", {
                 method: "POST",
@@ -541,24 +541,54 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
                 body: JSON.stringify({ keyword: mapsLink })
             });
             const data = await res.json();
+            
             if (data.leads && data.leads.length > 0) {
-                setLeads(data.leads.map((l: Lead) => ({
-                    ...l,
+                const targetLead = {
+                    ...data.leads[0],
                     id: crypto.randomUUID(),
                     status: "extração_direta"
-                })));
-                setStatusText("Alvo Sincronizado!");
+                };
+                
+                setLeads([targetLead]);
                 setMapsLink(""); // Limpa após sucesso
+                setStatusText(`Alvo [${targetLead.title}] Localizado!`);
+                setProgress(50);
+
+                // VARREDURA DE CONCORRÊNCIA AUTOMÁTICA EM SEGUNDO PLANO
+                const targetKeyword = targetLead.classification || nicho || "Empresas";
+                const targetLocation = targetLead.addressBase || targetLead.address || cidade || "";
+                
+                setStatusText(`Mapeando Concorrência Local para [${targetLead.title}]...`);
+                
+                const compRes = await fetch("/api/scanner/search", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        keyword: `${targetKeyword} em ${targetLocation}`,
+                        num: 20
+                    })
+                });
+                
+                const compData = await compRes.json();
+                if (compData.leads && compData.leads.length > 0) {
+                    // Adiciona concorrentes sem duplicar o alvo
+                    const competitors = compData.leads
+                        .filter((l: Lead) => l.title !== targetLead.title)
+                        .map((l: Lead) => ({ ...l, id: crypto.randomUUID(), status: "cold" }));
+                    
+                    setLeads(prev => [...prev, ...competitors]);
+                    setStatusText(`Radar Sincronizado: ${competitors.length} alvos secundários detectados.`);
+                }
             }
         } catch (err) {
-            console.error("Erro na extração direta:", err);
+            console.error("Erro na extração tática completa:", err);
             setStatusText("Falha na Extração.");
         } finally {
             setProgress(100);
             setTimeout(() => {
                 setIsSearching(false);
                 setProgress(0);
-            }, 2000);
+            }, 3000);
         }
         return;
     }
