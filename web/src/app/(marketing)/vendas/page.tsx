@@ -284,16 +284,22 @@ const SiteProxPage = () => {
                     <div className="absolute top-0 right-0 w-[40%] h-full bg-emerald-500/5 blur-[120px] -rotate-12 pointer-events-none" />
                     
                     <div className="relative space-y-16">
-                       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-14">
-                          <div className="w-20 h-20 md:w-28 md:h-28 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_40px_rgba(16,185,129,0.1)] rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                             <ShieldCheck className="w-10 h-10 md:w-14 md:h-14 text-emerald-500" />
+                       <div className="flex flex-col md:flex-row items-center gap-8 md:gap-14">
+                          <div className="w-24 h-24 md:w-36 md:h-36 bg-emerald-500/10 border border-emerald-500/30 rounded-[2.5rem] flex items-center justify-center shrink-0 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative group">
+                             <div className="absolute inset-0 bg-emerald-500/5 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                             <ShieldCheck className="w-12 h-12 md:w-20 md:h-20 text-emerald-500 relative z-10" />
                           </div>
-                          <div className="space-y-4 text-center md:text-left">
-                             <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.9] ${sora.className}`}>
-                                ALÉM DO CÓDIGO: <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">INTELIGÊNCIA_DE_GUERRA.</span>
+                          <div className="flex flex-col gap-3 text-center md:text-left">
+                             <h2 className={`text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase italic leading-[0.75] ${sora.className}`}>
+                                <span className="block text-white opacity-90">ALÉM DO CÓDIGO:</span>
+                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+                                   INTELIGÊNCIA
+                                </span>
+                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 pr-4">
+                                   DE_GUERRA.
+                                </span>
                              </h2>
-                             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-slate-500">Protocolo de Elite SiteProx Labs</p>
+                             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-emerald-500/50">Elite Strategy Proto_Lab .v2</p>
                           </div>
                        </div>
 
