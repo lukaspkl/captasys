@@ -23,8 +23,8 @@ interface LeadDetailsModalProps {
   onSetSelectedLeadDetails: React.Dispatch<React.SetStateAction<Lead | null>>;
   onConvertToActive: (lead: Lead) => void;
   onGenerateLovablePrompt: () => void;
-  onSetIsRenewalModalOpen: (open: boolean) => void;
-  onSetIsAuditModalOpen: (open: boolean) => void;
+  onGenerateRenewalDossier: (lead: Lead) => void;
+  onGenerateAuditDossier: (lead: Lead) => void;
   onGenerateTacticalDossier: (lead: Lead) => void;
   onSetIsPreviewModalOpen: (open: boolean) => void;
   onGenerateAIPitch: (type: "venda" | "recall" | "apresentacao") => void;
@@ -53,8 +53,8 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
   onSetSelectedLeadDetails,
   onConvertToActive,
   onGenerateLovablePrompt,
-  onSetIsRenewalModalOpen,
-  onSetIsAuditModalOpen,
+  onGenerateRenewalDossier,
+  onGenerateAuditDossier,
   onGenerateTacticalDossier,
   onSetIsPreviewModalOpen,
   onGenerateAIPitch,
@@ -307,7 +307,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
 
                 {isSiteOutdated ? (
                   <Button
-                    onClick={() => onSetIsRenewalModalOpen(true)}
+                    onClick={() => onGenerateRenewalDossier(selectedLeadDetails)}
                     className="w-full h-12 bg-neon-pink text-white font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none shadow-[0_0_20px_rgba(255,0,255,0.4)]"
                   >
                     DIAGNÓSTICO_RENOVAÇÃO_PRO
@@ -344,19 +344,19 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                       </div>
                     </div>
 
-                    <Button
-                      onClick={() => onSetIsAuditModalOpen(true)}
-                      className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
-                    >
-                      GERAR_DOSSIÊ_AUDITORIA
-                    </Button>
+                  <Button
+                    onClick={() => onGenerateAuditDossier(selectedLeadDetails)}
+                    className="w-full h-12 bg-[#fbce07] text-black font-black italic tracking-widest hover:bg-white hover:text-black transition-all border-none"
+                  >
+                    GERAR_DOSSIÊ_AUDITORIA
+                  </Button>
                   </>
                 )}
                 <Button
                   onClick={() => onGenerateTacticalDossier(selectedLeadDetails)}
-                  className="w-full h-12 bg-pink-500 text-white font-black italic tracking-widest hover:bg-white hover:text-pink-500 transition-all border-none shadow-[0_0_20px_rgba(236,72,153,0.3)] my-4"
+                  className="w-full h-14 bg-[#ff1493] text-white font-black italic tracking-widest hover:bg-white hover:text-[#ff1493] transition-all border-none shadow-[0_0_25px_rgba(255,20,147,0.4)] my-4 rounded-2xl flex items-center justify-center gap-4 text-sm"
                 >
-                  <Radar className="w-5 h-5 mr-2" /> GERAR_DOSSIÊ_TÁTICO
+                  <Target className="w-5 h-5" /> GERAR_DOSSIÊ_TÁTICO
                 </Button>
                   <button
                     onClick={() => {

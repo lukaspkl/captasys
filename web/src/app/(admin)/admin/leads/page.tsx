@@ -15,13 +15,14 @@ import {
 
 // MODALS
 import SearchModal from "./components/modals/SearchModal";
-import DossierModal from "./components/modals/DossierModal";
 import AuditModal from "./components/modals/AuditModal";
 import BlacklistModal from "./components/modals/BlacklistModal";
 import StitchConfigModal from "./components/modals/StitchConfigModal";
 import PreviewModal from "./components/modals/PreviewModal";
 import LeadDetailsModal from "./components/modals/LeadDetailsModal";
 import ProjectSettingsModal from "./components/modals/ProjectSettingsModal";
+import TacticalModal from "./components/modals/TacticalModal";
+import RenewalModal from "./components/modals/RenewalModal";
 
 // VIEWS
 import DashboardHeader from "./components/views/DashboardHeader";
@@ -86,18 +87,10 @@ export default function DashboardPage() {
     setIsSiteOutdated,
     isRenewalModalOpen,
     setIsRenewalModalOpen,
-    isManualModalOpen,
-    setIsManualModalOpen,
-    isLovableModalOpen,
-    setIsLovableModalOpen,
     generatedMessage,
     isDossierModalOpen,
     setIsDossierModalOpen,
     dossierLead,
-    isDossierLoading,
-    competitorsCount,
-    competitorsList,
-    dossierPitch,
     activeProjects,
     isProjectSettingsOpen,
     setIsProjectSettingsOpen,
@@ -135,7 +128,8 @@ export default function DashboardPage() {
     openLeadDetails,
     updateLeadStatus,
     generateTacticalDossier,
-    handlePrintDossier,
+    generateAuditDossier,
+    generateRenewalDossier,
     handleSendZap,
     startMapsAnalysis,
     convertToActive,
@@ -165,7 +159,10 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div id="main-dashboard-container" className="min-h-screen bg-[#020617] text-white selection:bg-[#06b6d4] selection:text-black font-outfit">
+      <div
+        id="main-dashboard-container"
+        className="min-h-screen bg-[#020617] text-white selection:bg-[#06b6d4] selection:text-black font-outfit"
+      >
         <div className="flex">
           {/* NAVEGAÇÃO TÁTICA LATERAL */}
           <aside className="w-24 min-h-screen bg-black/40 border-r border-[#06b6d4]/10 flex flex-col items-center py-10 gap-10 sticky top-0 h-screen z-50">
@@ -176,7 +173,11 @@ export default function DashboardPage() {
             <nav className="flex flex-col gap-6">
               {(
                 [
-                  { id: "dashboard", icon: LayoutDashboard, label: "MAIN_DASH" },
+                  {
+                    id: "dashboard",
+                    icon: LayoutDashboard,
+                    label: "MAIN_DASH",
+                  },
                   { id: "active-sites", icon: Globe, label: "PROD_CORE" },
                   { id: "crm", icon: Activity, label: "CRM_FLOW" },
                   { id: "templates", icon: Database, label: "TEMPLATES" },
@@ -242,12 +243,6 @@ export default function DashboardPage() {
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <Button
-                    onClick={() => setIsManualModalOpen(true)}
-                    className="bg-transparent text-cyan-400 border border-cyan-400/30 hover:bg-cyan-400/10 hover:border-cyan-400 rounded-none px-6 h-10 font-mono font-black text-[10px] tracking-widest transition-all"
-                  >
-                    CMD_MANUAL
-                  </Button>
                   <Button
                     onClick={() => setIsModalOpen(true)}
                     disabled={isSearching}
@@ -338,7 +333,11 @@ export default function DashboardPage() {
                     MÓDULO Externo
                   </h2>
                   <p className="text-xs font-bold text-slate-500 mt-2 uppercase tracking-tighter">
-                    CONEXÃO pendente com módulo de {currentView === "campaigns" ? "CAMPANHAS_ATIVAS" : "CONFIGURAÇÃO_SISTEMA"}.
+                    CONEXÃO pendente com módulo de{" "}
+                    {currentView === "campaigns"
+                      ? "CAMPANHAS_ATIVAS"
+                      : "CONFIGURAÇÃO_SISTEMA"}
+                    .
                   </p>
 
                   <Button
@@ -371,8 +370,8 @@ export default function DashboardPage() {
         onSetSelectedLeadDetails={setSelectedLeadDetails}
         onConvertToActive={convertToActive}
         onGenerateLovablePrompt={generateLovablePrompt}
-        onSetIsRenewalModalOpen={setIsRenewalModalOpen}
-        onSetIsAuditModalOpen={setIsAuditModalOpen}
+        onGenerateRenewalDossier={generateRenewalDossier}
+        onGenerateAuditDossier={generateAuditDossier}
         onGenerateTacticalDossier={generateTacticalDossier}
         onSetIsPreviewModalOpen={setIsPreviewModalOpen}
         onGenerateAIPitch={generateAIPitch}
@@ -386,16 +385,11 @@ export default function DashboardPage() {
         onSetAuditConversion={setAuditConversion}
       />
 
-      <DossierModal
+      <TacticalModal
         isOpen={isDossierModalOpen}
         onClose={() => setIsDossierModalOpen(false)}
         lead={dossierLead}
-        isLoading={isDossierLoading}
-        competitorsCount={competitorsCount}
-        competitorsList={competitorsList}
-        pitch={dossierPitch}
-        onPrint={handlePrintDossier}
-        onSendZap={handleSendZap}
+        onPrint={() => window.print()}
       />
 
       <SearchModal
@@ -468,6 +462,13 @@ export default function DashboardPage() {
         ticketMedio={ticketMedio}
         fluxoMensal={fluxoMensal}
         conversaoAtual={auditConversion}
+        onPrint={() => window.print()}
+      />
+
+      <RenewalModal
+        isOpen={isRenewalModalOpen}
+        onClose={() => setIsRenewalModalOpen(false)}
+        lead={selectedLeadDetails}
         onPrint={() => window.print()}
       />
     </>

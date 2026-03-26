@@ -498,6 +498,18 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     }
   };
 
+  const generateAuditDossier = (lead: Lead) => {
+    if (!lead) return;
+    setSelectedLeadDetails(lead);
+    setIsAuditModalOpen(true);
+  };
+
+  const generateRenewalDossier = (lead: Lead) => {
+    if (!lead) return;
+    setSelectedLeadDetails(lead);
+    setIsRenewalModalOpen(true);
+  };
+
   const generateLovablePrompt = () => {
     if (!selectedLeadDetails) return "";
     const lostRev = (fluxoMensal * 0.3 * ticketMedio).toLocaleString("pt-BR");
@@ -862,6 +874,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     startMapsAnalysis,
     generateAIPitch,
     generateTacticalDossier,
+    generateAuditDossier,
+    generateRenewalDossier,
     generateLovablePrompt,
     handleStartSearch,
     handlePrintDossier,
