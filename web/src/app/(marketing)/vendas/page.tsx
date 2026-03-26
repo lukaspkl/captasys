@@ -284,22 +284,21 @@ const SiteProxPage = () => {
                     <div className="absolute top-0 right-0 w-[40%] h-full bg-emerald-500/5 blur-[120px] -rotate-12 pointer-events-none" />
                     
                     <div className="relative space-y-16">
-                       <div className="flex flex-col md:flex-row items-center gap-8 md:gap-14">
-                          <div className="w-24 h-24 md:w-36 md:h-36 bg-emerald-500/10 border border-emerald-500/30 rounded-[2.5rem] flex items-center justify-center shrink-0 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative group">
-                             <div className="absolute inset-0 bg-emerald-500/5 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                             <ShieldCheck className="w-12 h-12 md:w-20 md:h-20 text-emerald-500 relative z-10" />
+                       <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                          <div className="w-16 h-16 md:w-24 md:h-24 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_30px_rgba(16,185,129,0.1)] group transition-all duration-500 hover:bg-emerald-500/20">
+                             <ShieldCheck className="w-8 h-8 md:w-12 md:h-12 text-emerald-500" />
                           </div>
-                          <div className="flex flex-col gap-3 text-center md:text-left">
-                             <h2 className={`text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase italic leading-[0.75] ${sora.className}`}>
-                                <span className="block text-white opacity-90">ALÉM DO CÓDIGO:</span>
+                          <div className="flex flex-col gap-1 text-center md:text-left">
+                             <h2 className={`text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[1] ${sora.className}`}>
+                                <span className="block text-white/80 text-[0.8em]">ALÉM DO CÓDIGO:</span>
                                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
                                    INTELIGÊNCIA
                                 </span>
-                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 pr-4">
-                                   DE_GUERRA.
+                                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+                                   DE GUERRA.
                                 </span>
                              </h2>
-                             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-emerald-500/50">Elite Strategy Proto_Lab .v2</p>
+                             <p className="text-[9px] md:text-xs font-black uppercase tracking-[0.5em] text-slate-500/60 mt-2">Protocolo de Elite SiteProx Labs</p>
                           </div>
                        </div>
 
@@ -307,11 +306,11 @@ const SiteProxPage = () => {
                           <div className="space-y-10 group flex flex-col justify-between">
                              <div className="space-y-8">
                                 <div className="space-y-4">
-                                   <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
-                                      <div className="w-1.5 h-6 bg-emerald-500" />
+                                   <h3 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+                                      <div className="w-1 h-5 bg-emerald-500" />
                                       DOSSIÊ_TÁTICO_PREMIUM
                                    </h3>
-                                   <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed italic border-l-2 border-emerald-500/20 pl-6">
+                                   <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed italic border-l-2 border-emerald-500/20 pl-6">
                                       Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-white font-black underline decoration-emerald-500/50 underline-offset-8">predadores no mercado local.</span>
                                    </p>
                                 </div>
@@ -332,8 +331,8 @@ const SiteProxPage = () => {
                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                                 </div>
-                                <h4 className="text-xl font-black uppercase tracking-widest flex items-center gap-4 mb-6">
-                                   <History className="w-6 h-6 text-emerald-500 animate-spin-slow" />
+                                <h4 className="text-lg font-black uppercase tracking-widest flex items-center gap-4 mb-6">
+                                   <History className="w-5 h-5 text-emerald-500 animate-spin-slow" />
                                    AUDITORIA_PERFORMANCE_360º
                                 </h4>
                                 <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
