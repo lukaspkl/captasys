@@ -19,37 +19,50 @@ export async function POST(req: Request) {
     let isDirectLink = false;
     if (keyword && (keyword.includes("maps.app.goo.gl") || keyword.includes("goo.gl/maps") || keyword.includes("google.com/maps"))) {
       isDirectLink = true;
-      console.log(`[SCANNER_API] Detectado link direto/curto do Maps: ${keyword}`);
+      console.log(`[SCANNER_API] Processando link direto: ${keyword}`);
+      
       try {
+        // Tenta resolver redirecionamento via fetch
         const res = await fetch(keyword, { 
           method: 'GET', 
-          redirect: 'follow',
+          redirect: 'manual', // Usar manual para pegar o location header se necessário
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
           }
         });
-        const finalUrl = res.url;
         
-        if (finalUrl !== keyword && finalUrl.includes('/place/')) {
-          const parts = finalUrl.split('/place/');
-          query = decodeURIComponent(parts[1].split('/')[0].replace(/\+/g, ' '));
+        let targetUrl = res.url;
+        const locationHeader = res.headers.get("location");
+        if (locationHeader) targetUrl = locationHeader;
+
+        if (targetUrl.includes('/place/')) {
+          const namePart = targetUrl.split('/place/')[1].split('/')[0];
+          query = decodeURIComponent(namePart.replace(/\+/g, ' '));
+          console.log(`[SCANNER_API] Alvo extraído via URL: "${query}"`);
         } else {
-          // FALLBACK TÁTICO: Se não resolveu, pergunta pro Google Search quem é esse link
+          // Fallback: Usa Serper Search para descobrir o título do lugar
           const traceRes = await fetch("https://google.serper.dev/search", {
             method: "POST",
             headers: { "X-API-KEY": apiKey, "Content-Type": "application/json" },
-            body: JSON.stringify({ q: keyword })
+            body: JSON.stringify({ q: keyword, gl: "br", hl: "pt-br" })
           });
+          
           if (traceRes.ok) {
             const traceData = await traceRes.json();
-            if (traceData.organic && traceData.organic.length > 0) {
-              const rawTitle = traceData.organic[0].title;
-              query = rawTitle.split(' - ')[0].split(' | ')[0].trim();
+            // Se tiver Knowledge Graph, é a forma mais precisa
+            if (traceData.knowledgeGraph?.title) {
+              query = traceData.knowledgeGraph.title;
+              console.log(`[SCANNER_API] Alvo extraído via KG: "${query}"`);
+            } else if (traceData.organic && traceData.organic.length > 0) {
+              // Pega o título do primeiro resultado orgânico (limpando o sufixo do Google Maps)
+              const rawTitle = traceData.organic[0].title || "";
+              query = rawTitle.split(' - ')[0].split(' | ')[0].split(' – ')[0].trim();
+              console.log(`[SCANNER_API] Alvo extraído via Organic: "${query}"`);
             }
           }
         }
       } catch (err) {
-        console.error("[SCANNER_API] Erro no resolutor:", err);
+        console.error("[SCANNER_API] Falha crítica no resolutor:", err);
       }
     }
 
