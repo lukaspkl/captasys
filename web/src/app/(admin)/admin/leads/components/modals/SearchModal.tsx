@@ -30,6 +30,8 @@ interface SearchModalProps {
   setMinReviewsCount: (val: number) => void;
   numResults: number;
   setNumResults: (val: number) => void;
+  mapsLink: string;
+  setMapsLink: (val: string) => void;
   onStartSearch: () => void;
 }
 
@@ -56,6 +58,8 @@ const SearchModal: React.FC<SearchModalProps> = ({
   setMinReviewsCount,
   numResults,
   setNumResults,
+  mapsLink,
+  setMapsLink,
   onStartSearch,
 }) => {
   if (!isOpen) return null;
@@ -80,6 +84,22 @@ const SearchModal: React.FC<SearchModalProps> = ({
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="space-y-4">
+            {/* NOVO: CAMPO DE LINK DIRETO (EXTRAÇÃO TÁTICA) */}
+            <div className="space-y-2 pb-2 border-b border-white/5">
+              <label className="text-[9px] font-black text-pink-500 uppercase tracking-widest pl-1">
+                EXTRAÇÃO DIRETA (Link do Google Maps / Link Curto)
+              </label>
+              <Input
+                value={mapsLink}
+                onChange={(e) => setMapsLink(e.target.value)}
+                placeholder="https://maps.app.goo.gl/..."
+                className="bg-pink-500/5 border border-pink-500/20 rounded-none h-12 text-xs font-bold text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all font-mono placeholder:text-pink-500/20"
+              />
+              <p className="text-[7px] text-slate-500 font-bold uppercase tracking-tighter pl-1">
+                Use para extrair dados instantâneos de um alvo específico que o scanner não detectou.
+              </p>
+            </div>
+
             <div className="space-y-2">
               <label className="text-[9px] font-black text-cyan-500 uppercase tracking-widest pl-1">
                 Nicho Alvo (Sistemas Locais)
@@ -87,7 +107,8 @@ const SearchModal: React.FC<SearchModalProps> = ({
               <select
                 value={nicho}
                 onChange={(e) => setNicho(e.target.value)}
-                className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
+                disabled={!!mapsLink}
+                className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono disabled:opacity-20"
               >
                 <option value="" className="bg-[#0f172a] text-cyan-400">
                   SELECIONE O ALVO DA EXTRAÇÃO...
@@ -108,7 +129,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                 <select
                   value={estado}
                   onChange={(e) => setEstado(e.target.value)}
-                  className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
+                  className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono disabled:opacity-20"
                 >
                   <option value="" className="bg-[#0f172a] text-cyan-400">
                     UF...
@@ -131,8 +152,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                 <select
                   value={cidade}
                   onChange={(e) => handleCidadeChange(e.target.value)}
-                  disabled={!estado || cidadesList.length === 0}
-                  className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono disabled:opacity-50"
+                  className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono disabled:opacity-20"
                 >
                   <option value="" className="bg-[#0f172a] text-cyan-400">
                     SELECIONE A CIDADE...
@@ -254,12 +274,13 @@ const SearchModal: React.FC<SearchModalProps> = ({
           <div className="pt-6">
             <Button
               onClick={onStartSearch}
-              disabled={!nicho || !cidade}
-              className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black font-mono text-[11px] tracking-[0.2em] rounded-none py-6 uppercase border-none shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all flex items-center justify-center gap-2"
+              disabled={!mapsLink && (!nicho || !cidade)}
+              className={`w-full ${mapsLink ? 'bg-pink-500 hover:bg-pink-400' : 'bg-cyan-500 hover:bg-cyan-400'} text-black font-black font-mono text-[11px] tracking-[0.2em] rounded-none py-6 uppercase border-none shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all flex items-center justify-center gap-2`}
             >
-              <Zap className="w-5 h-5 fill-black/20" /> INICIAR_VARREDURA_TÁTICA
+              <Zap className="w-5 h-5 fill-black/20" /> 
+              {mapsLink ? 'EXECUTAR_EXTRAÇÃO_DIRETA' : 'INICIAR_VARREDURA_TÁTICA'}
             </Button>
-            {(!nicho || !cidade) && (
+            {!mapsLink && (!nicho || !cidade) && (
               <p className="text-[9px] text-red-400 font-mono text-center mt-3 uppercase tracking-widest">
                 Preencha Nicho e Cidade para iniciar
               </p>

@@ -421,6 +421,8 @@ export default function DashboardPage() {
         setMinReviewsCount={setMinReviewsCount}
         numResults={numResults}
         setNumResults={setNumResults}
+        mapsLink={mapsLink}
+        setMapsLink={setMapsLink}
         onStartSearch={handleStartSearch}
       />
 

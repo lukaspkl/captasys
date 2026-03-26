@@ -61,6 +61,7 @@ export const useLeadsState = () => {
   const [searchMode, setSearchMode] = useState<"web" | "maps">("web");
   const [minReviewsCount, setMinReviewsCount] = useState<number>(10);
   const [numResults, setNumResults] = useState<number>(20);
+  const [mapsLink, setMapsLink] = useState("");
 
   const [isSearching, setIsSearching] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -176,9 +177,9 @@ export const useLeadsState = () => {
 
   useEffect(() => {
     localStorage.setItem("capta_search_params_v4", JSON.stringify({
-      nicho, estado, cidade, cidadeId, bairro, searchMode
+      nicho, estado, cidade, cidadeId, bairro, searchMode, mapsLink
     }));
-  }, [nicho, estado, cidade, cidadeId, bairro, searchMode]);
+  }, [nicho, estado, cidade, cidadeId, bairro, searchMode, mapsLink]);
 
   useEffect(() => {
     localStorage.setItem("capta_vault_v4", JSON.stringify(vaultLeads));
@@ -522,11 +523,43 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   };
 
   const handleStartSearch = async () => {
-    if (!nicho || !cidade) return;
+    if (!mapsLink && (!nicho || !cidade)) return;
     setIsModalOpen(false);
     setIsSearching(true);
     setProgress(5);
     setLeads([]);
+
+    // SE FOR LINK DIRETO, PULA O SCAN DE NICHOS
+    if (mapsLink) {
+        setStatusText("Extraindo Alvo Direto...");
+        try {
+            const res = await fetch("/api/scanner/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ keyword: mapsLink })
+            });
+            const data = await res.json();
+            if (data.leads && data.leads.length > 0) {
+                setLeads(data.leads.map((l: Lead) => ({
+                    ...l,
+                    id: crypto.randomUUID(),
+                    status: "extração_direta"
+                })));
+                setStatusText("Alvo Sincronizado!");
+                setMapsLink(""); // Limpa após sucesso
+            }
+        } catch (err) {
+            console.error("Erro na extração direta:", err);
+            setStatusText("Falha na Extração.");
+        } finally {
+            setProgress(100);
+            setTimeout(() => {
+                setIsSearching(false);
+                setProgress(0);
+            }, 2000);
+        }
+        return;
+    }
 
     const runScan = async (targetKeyword: string, targetBairro?: string) => {
       try {
