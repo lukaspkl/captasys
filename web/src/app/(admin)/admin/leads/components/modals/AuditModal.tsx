@@ -38,9 +38,13 @@ const AuditModal: React.FC<AuditModalProps> = ({
 
       <AuditDossier 
         lead={{
+          ...lead,
           name: lead.title,
           site: lead.url || "SEM SITE DETECTADO",
         }} 
+        ticketMedio={ticketMedio}
+        fluxoMensal={fluxoMensal}
+        conversaoAtual={conversaoAtual}
         onPrint={onPrint} 
       />
     </div>

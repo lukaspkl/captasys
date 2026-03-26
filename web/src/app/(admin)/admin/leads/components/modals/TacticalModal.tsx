@@ -9,6 +9,9 @@ interface TacticalModalProps {
   isOpen: boolean;
   onClose: () => void;
   lead: Lead | null;
+  leads: Lead[]; // Recebe a lista global para busca de concorrentes
+  competitorsList?: Lead[]; // Concorrentes reais vindos do radar (opcional)
+  niche: string; // Nicho atual para exibir no reporte
   onPrint: () => void;
 }
 
@@ -16,9 +19,58 @@ const TacticalModal: React.FC<TacticalModalProps> = ({
   isOpen,
   onClose,
   lead,
+  leads,
+  competitorsList = [],
+  niche,
   onPrint
 }) => {
+  // Busca concorrentes reais (Top 2 com as melhores notas no mesmo nicho/localidade)
+  const realCompetitors = React.useMemo(() => {
+    if (!lead) return [];
+    
+    // Se já tivermos a lista do radar (populada no useLeadsState), usamos ela
+    if (competitorsList.length > 0) {
+      return competitorsList.slice(0, 5);
+    }
+
+    // Função auxiliar para normalizar e extrair a cidade/bairro principal
+    const normalizeLoc = (loc?: string) => {
+      if (!loc) return "";
+      const normalized = loc.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      return normalized;
+    };
+
+    const targetLoc = normalizeLoc(lead.addressBase || lead.address || "");
+    const targetNiche = normalizeLoc(niche);
+    
+    // Busca na lista local (dashboard)
+    const candidates = leads.filter(l => {
+      if (l.id === lead.id || l.title === lead.title) return false;
+      
+      const lLoc = normalizeLoc(l.addressBase || l.address || "");
+      const lNiche = normalizeLoc(l.classificationMotivity || "");
+      
+      const matchesNiche = targetNiche === "geral" || lNiche.includes(targetNiche) || (lead.classificationMotivity && lNiche.includes(normalizeLoc(lead.classificationMotivity)));
+      const matchesLoc = targetLoc !== "" && (lLoc.includes(targetLoc) || targetLoc.includes(lLoc));
+      
+      return matchesNiche && (matchesLoc || leads.length < 5); // Relaxa se tiver poucos leads
+    });
+
+    // Ordena por rating e review count
+    return candidates
+      .sort((a, b) => {
+        const ratingA = parseFloat(String(a.rating || 0));
+        const ratingB = parseFloat(String(b.rating || 0));
+        if (ratingB !== ratingA) return ratingB - ratingA;
+        return parseInt(String(b.reviewCount || 0)) - parseInt(String(a.reviewCount || 0));
+      })
+      .slice(0, 5);
+  }, [lead, leads, competitorsList, niche]);
+
   if (!isOpen || !lead) return null;
+
+  // Frase de destaque (Pode vir de uma prop no futuro, mas por enquanto vamos passar um placeholder ou permitir customização)
+  const highlightPhrase = "O MERCADO DIGITAL NA SUA REGIÃO ESTÁ SENDO DOMINADO POR CONCORRENTES QUE JÁ UTILIZAM ESTRATÉGIAS DE CAPTURA GEOGRÁFICA.";
 
   return (
     <div className="fixed inset-0 z-200 overflow-y-auto bg-[#020617] print:bg-white">
@@ -31,14 +83,11 @@ const TacticalModal: React.FC<TacticalModalProps> = ({
       </button>
 
       <TacticalDossierHUD 
-        lead={{
-          name: lead.title,
-          city: lead.locality || "",
-          state: lead.region || "",
-          site: lead.url || "",
-          whatsapp: lead.phone || "",
-        }} 
-        onPrint={onPrint} 
+        lead={lead} 
+        competitors={realCompetitors}
+        nicho={niche}
+        onPrint={onPrint}
+        highlightPhrase={highlightPhrase}
       />
     </div>
   );

@@ -4,16 +4,25 @@ import React from 'react';
 import { 
   Terminal, Share2, Radar, Eye, MousePointer2, 
   CircleDollarSign, TriangleAlert, Timer,
-  Star, StarHalf, ChevronRight
+  Star, StarHalf, ExternalLink
 } from 'lucide-react';
 import { Lead } from '../../../types';
 
 interface TacticalDossierProps {
   lead?: Lead;
+  competitors?: Lead[];
+  nicho?: string;
   onPrint?: () => void;
+  highlightPhrase?: string;
 }
 
-const TacticalDossier: React.FC<TacticalDossierProps> = ({ lead, onPrint }) => {
+const TacticalDossier: React.FC<TacticalDossierProps> = ({ 
+  lead, 
+  competitors = [], 
+  nicho = 'Geral', 
+  onPrint,
+  highlightPhrase
+}) => {
 
   return (
     <div className="min-h-screen bg-[#130b18] text-[#f4defe] font-['Manrope'] selection:bg-[#d575ff] selection:text-[#390050] relative overflow-x-hidden">
@@ -133,16 +142,20 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({ lead, onPrint }) => {
               <h2 className="font-headline text-3xl md:text-5xl font-bold text-[#f4defe] mb-8 tracking-tight">
                 A Decisão do Cliente <br/><span className="text-[#d575ff]">Começa no Google</span>
               </h2>
-              <div className="space-y-6 text-[#b8a4c2] leading-relaxed text-lg">
-                <p>
-                  No cenário atual de saturação de informação, a primeira batalha pela atenção não ocorre no seu estabelecimento, mas nos resultados de busca. 
-                </p>
-                <p className="border-l-2 border-[#00dbe9] pl-6 italic bg-[#00dbe9]/5 py-4 text-[#f4defe]">
-                  "Hoje, a decisão de um cliente começa no Google. Se sua presença digital é invisível ou mal otimizada, você não existe para o mercado."
-                </p>
-                <p>
-                  Não se trata apenas de "ter um site". Trata-se de dominar as frequências onde o seu público está sintonizado. Este dossiê revela onde você está e quão longe seus concorrentes avançaram enquanto sua estação estava em silêncio.
-                </p>
+              <div className="grid md:grid-cols-2 gap-12 text-[#b8a4c2] font-body text-lg leading-relaxed border-t border-[#52425c]/30 pt-16">
+                <div className="space-y-6">
+                  <p>
+                    &quot;Sua frequência de rádio está em perigo. Os sinais ao lado são fortes e estão bloqueando sua recepção local.&quot;
+                  </p>
+                  <p className="border-l-2 border-[#00dbe9] pl-6 italic">
+                    &quot;Hoje, a decisão de um cliente começa no Google. Se sua presença digital é invisível ou mal otimizada, você não existe para o mercado.&quot;
+                  </p>
+                </div>
+                <div className="space-y-6">
+                  <p>
+                    Não se trata apenas de &quot;ter um site&quot;. Trata-se de dominar as frequências onde o seu público está sintonizado. Este dossiê revela onde você está e quão longe seus concorrentes avançaram enquanto sua estação estava em silêncio.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -153,14 +166,31 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({ lead, onPrint }) => {
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
               <div>
-                <span className="text-[#00dbe9] font-headline text-sm tracking-[0.4em] uppercase">Tactical Radar Scan</span>
-                <h2 className="font-headline text-4xl font-black uppercase tracking-tighter mt-2 text-[#f4defe]">Local Competitor Map</h2>
+                <span className="text-[#00dbe9] font-headline text-sm tracking-[0.4em] uppercase">Varredura Tática de Radar</span>
+                <h2 className="font-headline text-4xl font-black uppercase tracking-tighter mt-2 text-[#f4defe]">Mapa de Concorrência Local</h2>
               </div>
               <div className="text-[#b8a4c2] font-headline text-xs uppercase tracking-widest text-right">
-                Location: <span className="text-[#f4defe]">Lead Coordinates</span><br/>
-                Signal Strength: <span className="text-[#00dbe9]">Optimal</span>
+                Localização: <span className="text-[#f4defe] font-bold">{lead?.addressBase || 'Coordenadas do Lead'}</span><br/>
+                Força do Sinal: <span className="text-[#00dbe9]">Excelente</span>
               </div>
             </div>
+
+            {highlightPhrase && (
+              <div className="bg-[#d575ff]/10 border border-[#d575ff]/30 p-8 mb-12 relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-2 h-full bg-[#d575ff] shadow-[0_0_15px_rgba(213,117,255,0.8)]"></div>
+                <div className="flex items-center gap-4 mb-3">
+                  <TriangleAlert className="text-[#d575ff] w-6 h-6 animate-pulse" />
+                  <span className="text-[#d575ff] font-headline text-sm tracking-[0.3em] uppercase font-bold">Destaque da Análise Tática</span>
+                </div>
+                <p className="text-2xl md:text-3xl font-headline font-black italic uppercase leading-tight text-[#f4defe] text-glow-primary">
+                  &quot;{highlightPhrase}&quot;
+                </p>
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                  <Terminal className="w-24 h-24 text-[#d575ff]" />
+                </div>
+              </div>
+            )}
+
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 relative h-[500px] bg-[#2e2038] overflow-hidden">
                 <img 
@@ -173,50 +203,55 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({ lead, onPrint }) => {
                 <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-[#d575ff] rounded-full animate-pulse glow-primary"></div>
                 <div className="absolute bottom-1/3 right-1/4 w-4 h-4 bg-[#ffb1c3] rounded-full animate-pulse shadow-[0_0_10px_rgba(228,0,108,0.5)]"></div>
                 <div className="absolute bottom-4 left-4 glass-panel p-4 border-l-2 border-[#00dbe9]">
-                  <div className="text-[10px] text-[#00dbe9] font-headline uppercase mb-1">Status Report</div>
-                  <div className="text-xs text-[#f4defe] font-body leading-tight">3 Aggressive Competitors detected within <br/>a 2km radius of your coordinates.</div>
+                  <div className="text-[10px] text-[#00dbe9] font-headline uppercase mb-1">Relatório de Status</div>
+                  <div className="text-xs text-[#f4defe] font-body leading-tight">
+                    {competitors.length} Concorrentes Agressivos detectados num <br/>raio de 2km das suas coordenadas.
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col gap-4">
-                <div className="bg-[#201527] p-6 border-l-4 border-[#ffb1c3]">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-headline font-bold text-xl uppercase tracking-tighter text-[#f4defe]">Cyber_Dyne Tech</h3>
-                    <span className="bg-[#ffb1c3]/20 text-[#ffb1c3] px-2 py-0.5 text-[10px] font-headline">RANK 01</span>
+                {competitors.map((comp, idx) => (
+                  <div key={comp.id || idx} className="bg-[#201527] p-6 border-l-4" style={{ borderColor: idx === 0 ? '#ffb1c3' : '#00dbe9' }}>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-headline font-bold text-xl uppercase tracking-tighter text-[#f4defe] truncate pr-4">
+                          {comp.title}
+                        </h3>
+                        <p className="text-[10px] text-[#b8a4c2] font-body truncate mt-1">
+                          {comp.addressBase || 'Localização no Google Maps'}
+                        </p>
+                      </div>
+
+                    </div>
+                    <div className="flex gap-1 text-[#00dbe9] mb-4">
+                      {Array.from({ length: 5 }).map((_, i) => {
+                        const r = parseFloat(String(comp.rating || 0));
+                        if (i < Math.floor(r)) return <Star key={i} className="w-3.5 h-3.5 fill-[#00dbe9]" />;
+                        if (i === Math.floor(r) && r % 1 !== 0) return <StarHalf key={i} className="w-3.5 h-3.5 fill-[#00dbe9]" />;
+                        return <Star key={i} className="w-3.5 h-3.5" />;
+                      })}
+                      <span className="text-[#b8a4c2] text-xs ml-2 font-headline">{comp.rating || 'N/A'} ({comp.reviewCount || 0} reviews)</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs text-[#b8a4c2] font-headline border-t border-[#52425c]/30 pt-4">
+                      <span>Nicho: {nicho}</span>
+                      <a 
+                        href={comp.url || `https://www.google.com/search?q=${encodeURIComponent(comp.title || '')}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[#00dbe9] hover:underline flex items-center gap-1"
+                      >
+                        Site Oficial <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
                   </div>
-                  <div className="flex gap-1 text-[#00dbe9] mb-4">
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <StarHalf className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <span className="text-[#b8a4c2] text-xs ml-2 font-headline">4.8 (1.2k reviews)</span>
+                ))}
+                
+                <div className="bg-[#19101f] p-6 opacity-60 border-l-4 border-[#816f8b] relative">
+
+                  <div className="text-[#816f8b] font-headline font-bold text-xl uppercase tracking-tighter">
+                    {lead?.title || 'Sua Empresa'}
                   </div>
-                  <div className="flex justify-between text-xs text-[#b8a4c2] font-headline border-t border-[#52425c]/30 pt-4">
-                    <span>Distância: 0.4km</span>
-                    <span className="text-[#00dbe9]">Visibilidade: 98%</span>
-                  </div>
-                </div>
-                <div className="bg-[#201527] p-6 border-l-4 border-[#00dbe9]/50">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-headline font-bold text-xl uppercase tracking-tighter text-[#f4defe]">Neo-Tokyo Sol.</h3>
-                    <span className="bg-[#00dbe9]/20 text-[#00dbe9] px-2 py-0.5 text-[10px] font-headline">RANK 02</span>
-                  </div>
-                  <div className="flex gap-1 text-[#00dbe9] mb-4">
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5 fill-[#00dbe9]" />
-                    <Star className="w-3.5 h-3.5" />
-                    <span className="text-[#b8a4c2] text-xs ml-2 font-headline">4.1 (840 reviews)</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-[#b8a4c2] font-headline border-t border-[#52425c]/30 pt-4">
-                    <span>Distância: 1.2km</span>
-                    <span className="text-[#00dbe9]">Visibilidade: 72%</span>
-                  </div>
-                </div>
-                <div className="bg-[#19101f] p-6 opacity-60 border-l-4 border-[#816f8b]">
-                  <div className="text-[#816f8b] font-headline font-bold text-xl uppercase tracking-tighter">{lead?.title || 'Sua Empresa'}</div>
-                  <div className="text-[#b8a4c2] text-xs font-headline mt-4">Calculando métricas...</div>
+                  <div className="text-[#b8a4c2] text-xs font-headline mt-4">Calculando métricas de autoridade...</div>
                   <div className="w-full bg-[#52425c]/20 h-1 mt-2">
                     <div className="bg-[#d575ff] h-full w-1/4"></div>
                   </div>
@@ -339,7 +374,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({ lead, onPrint }) => {
               Sistema em <span className="text-[#ffb1c3] underline decoration-double">Estado de Alerta</span>
             </h2>
             <p className="text-xl md:text-2xl font-body text-[#b8a4c2] mb-12 leading-relaxed">
-              "Enquanto você está parado, seus concorrentes estão captando clientes todos os dias. Cada hora de inatividade digital é um cliente que entrou na porta do vizinho."
+              &quot;Enquanto você está parado, seus concorrentes estão captando clientes todos os dias. Cada hora de inatividade digital é um cliente que entrou na porta do vizinho.&quot;
             </p>
             <div className="inline-block glass-panel border border-[#ffb1c3]/40 px-8 py-4 asymmetric-clip">
               <div className="text-[#f4defe] font-headline font-bold uppercase tracking-widest flex items-center gap-3">
@@ -356,45 +391,24 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({ lead, onPrint }) => {
         <section className="py-32 px-6 lg:px-24 bg-[#130b18] relative overflow-hidden" id="conclusao">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#d575ff]/5 to-transparent"></div>
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid lg:grid-cols-2 gap-20 items-center">
-              <div>
-                <h2 className="font-headline text-5xl md:text-7xl font-black text-[#f4defe] mb-8 uppercase leading-[0.9] tracking-tighter">
-                  Hoje, não basta existir. <br/><span className="text-[#00dbe9] italic">É preciso ser encontrado.</span>
+            <div className="flex flex-col items-center text-center">
+              <div className="max-w-4xl">
+                <h2 className="font-headline text-6xl md:text-8xl font-black text-[#f4defe] mb-12 uppercase leading-[0.8] tracking-tighter shadow-sm">
+                  Hoje, não basta existir. <br/>
+                  <span className="text-[#00dbe9] italic text-glow-primary">É preciso ser encontrado.</span>
                 </h2>
-                <p className="text-[#b8a4c2] text-xl mb-12 leading-relaxed max-w-lg">
-                  O silêncio digital é a morte lenta de qualquer negócio moderno. Recupere o controle da sua frequência e domine o seu mercado local.
+                <p className="text-[#b8a4c2] text-2xl md:text-3xl mb-16 leading-relaxed font-light mx-auto max-w-3xl">
+                  O silêncio digital é a morte lenta de qualquer negócio moderno. 
+                  Recupere o controle da sua frequência e domine o seu mercado local.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-6">
-                  <button className="bg-[#00dbe9] text-[#00484d] font-headline font-black uppercase px-12 py-5 text-sm tracking-[0.2em] glow-secondary hover:-translate-y-1 transition-all duration-300">
+                <div className="flex flex-col sm:flex-row gap-8 justify-center">
+                  <button className="bg-[#00dbe9] text-[#00484d] font-headline font-black uppercase px-16 py-6 text-lg tracking-[0.2em] glow-secondary hover:-translate-y-1 transition-all duration-300">
                     Baixar Dossier PDF
                   </button>
-                  <button className="border-2 border-[#d575ff] text-[#d575ff] font-headline font-black uppercase px-12 py-5 text-sm tracking-[0.2em] hover:bg-[#d575ff]/10 transition-all duration-300">
+                  <button className="border-2 border-[#d575ff] text-[#d575ff] font-headline font-black uppercase px-16 py-6 text-lg tracking-[0.2em] hover:bg-[#d575ff]/10 transition-all duration-300">
                     Consultar Especialista
                   </button>
                 </div>
-              </div>
-              <div className="glass-panel p-10 border border-[#52425c]/30">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 bg-[#d575ff]/20 flex items-center justify-center">
-                    <ChevronRight className="text-[#d575ff] w-8 h-8" />
-                  </div>
-                  <h3 className="font-headline font-bold text-2xl uppercase text-[#f4defe]">Solicitar Briefing</h3>
-                </div>
-                <form className="space-y-6">
-                  <div>
-                    <label className="font-headline text-[10px] text-[#816f8b] uppercase tracking-widest mb-2 block">Cripto ID / Nome</label>
-                    <input className="w-full bg-[#201527] border-b border-[#52425c] focus:border-[#d575ff] focus:ring-0 text-[#f4defe] font-body p-3 placeholder:text-[#52425c]" placeholder="SEU NOME" type="text"/>
-                  </div>
-                  <div>
-                    <label className="font-headline text-[10px] text-[#816f8b] uppercase tracking-widest mb-2 block">Data Channel / Email</label>
-                    <input className="w-full bg-[#201527] border-b border-[#52425c] focus:border-[#d575ff] focus:ring-0 text-[#f4defe] font-body p-3 placeholder:text-[#52425c]" placeholder="EMAIL@CYBER.COM" type="email"/>
-                  </div>
-                  <div>
-                    <label className="font-headline text-[10px] text-[#816f8b] uppercase tracking-widest mb-2 block">Objective</label>
-                    <textarea className="w-full bg-[#201527] border-b border-[#52425c] focus:border-[#d575ff] focus:ring-0 text-[#f4defe] font-body p-3 placeholder:text-[#52425c]" placeholder="QUAL O SEU DESAFIO ATUAL?" rows={3}></textarea>
-                  </div>
-                  <button className="w-full bg-[#d575ff] text-[#390050] font-headline font-bold uppercase py-4 tracking-widest glow-primary hover:brightness-110 transition-all" type="submit">Transmitir Mensagem</button>
-                </form>
               </div>
             </div>
           </div>

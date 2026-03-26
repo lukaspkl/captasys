@@ -19,7 +19,7 @@
         "stitch": {
             "serverUrl": "https://stitch.googleapis.com/mcp",
             "headers": {
-                "X-Goog-Api-Key": "AQ.Ab8RN6JQkk6oRoutT4-frhCX0SOJQle13E8F2hKPLl0h_xkvdg"
+                "X-Goog-Api-Key": "AQ.Ab8RN6IabPSPEoVPh_YW5TzjicnKyiwwN7TmWohd_oVNweMfHA"
             }
         }
         //other mcp servers

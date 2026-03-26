@@ -91,6 +91,7 @@ export default function DashboardPage() {
     isDossierModalOpen,
     setIsDossierModalOpen,
     dossierLead,
+    competitorsList,
     activeProjects,
     isProjectSettingsOpen,
     setIsProjectSettingsOpen,
@@ -389,6 +390,9 @@ export default function DashboardPage() {
         isOpen={isDossierModalOpen}
         onClose={() => setIsDossierModalOpen(false)}
         lead={dossierLead}
+        leads={leads}
+        competitorsList={competitorsList}
+        niche={nicho}
         onPrint={() => window.print()}
       />
 
