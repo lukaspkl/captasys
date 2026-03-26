@@ -13,6 +13,7 @@ import {
   PieChart,
   Lock,
   TrendingDown,
+  Rocket,
 } from 'lucide-react';
 import { Lead } from '../../../types';
 
@@ -129,8 +130,11 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
       <nav className="border-b border-white/5 px-6 py-4 flex justify-between items-center bg-black/40 backdrop-blur-md sticky top-1 z-50">
         <div className="flex items-center gap-6">
           <div className="flex flex-col">
-            <span className="text-white font-black italic tracking-tighter text-xl leading-none">SITEPROX_AUDIT</span>
-            <span className="text-[8px] font-mono text-secondary tracking-[0.3em] uppercase">Tactical_Intelligence_V7</span>
+            <div className="flex items-center gap-2">
+              <Rocket className="w-5 h-5 text-white fill-current" />
+              <span className="text-white font-black italic tracking-tighter text-xl leading-none">SITEPROX</span>
+            </div>
+            <span className="text-[8px] font-mono text-secondary tracking-[0.3em] uppercase">No caos da web, nós somos a ordem!</span>
           </div>
           <div className="hidden md:flex items-center gap-4 pl-6 border-l border-white/10 font-mono text-[9px] uppercase tracking-widest text-slate-500">
             <span className="text-secondary">SYSTEM_CONNECTED</span>
@@ -317,22 +321,25 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                <div className="glass p-12 border-white/5 flex flex-col group hover:bg-white/5 transition-all text-left">
                   <div className="font-mono text-[9px] text-slate-500 mb-8 uppercase tracking-widest flex items-center gap-2 font-bold">
                     <span className="w-2 h-2 bg-slate-500 rounded-full"></span>
-                    STP_ESSENTIAL_CORE
+                    STP_PRESENCA_CORE
                   </div>
-                  <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Essential</h3>
+                  <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter text-glow-primary">Plano Presença</h3>
                   <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
                     <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>100<span className="text-sm font-normal text-slate-500">/mês</span>
                   </div>
                   <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest">
                     <li className="flex items-center gap-4 text-slate-500 group-hover:text-white transition-colors">
-                      <span className="text-secondary">&gt;</span> Landing Page Autoridade
+                      <span className="text-secondary">&gt;</span> Site One-Page Moderno
                     </li>
                     <li className="flex items-center gap-4 text-slate-500 group-hover:text-white transition-colors">
-                      <span className="text-secondary">&gt;</span> Cloud Hosting Seguro
+                      <span className="text-secondary">&gt;</span> Foco em Leads WhatsApp
+                    </li>
+                    <li className="flex items-center gap-4 text-slate-500 group-hover:text-white transition-colors">
+                      <span className="text-secondary">&gt;</span> Stack Vessel 2025
                     </li>
                   </ul>
                   <button className="w-full py-5 border border-white/10 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                    Initialize_STP_01
+                    Initialize_STP_PRESENCA
                   </button>
                </div>
 
@@ -343,25 +350,25 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                   </div>
                   <div className="font-mono text-[9px] text-primary mb-8 uppercase tracking-widest flex items-center gap-2 font-black">
                     <span className="w-2 h-2 bg-primary rounded-full animate-ping"></span>
-                    STP_PRO_SYSTEM_OVERRIDE
+                    STP_AUTORIDADE_OVERRIDE
                   </div>
-                  <h3 className="text-4xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter neon-glow-pink">Pro Core</h3>
+                  <h3 className="text-4xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter neon-glow-pink">Autoridade</h3>
                   <div className="text-7xl font-headline font-black text-white mb-12 tracking-tighter">
                     <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>150<span className="text-sm font-normal text-slate-500">/mês</span>
                   </div>
                   <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest">
                     <li className="flex items-center gap-4 text-white">
-                      <span className="text-primary font-bold">#</span> Design Cyberpunk Premium
+                      <span className="text-primary font-bold">#</span> Site Multi-Page Completo
                     </li>
                     <li className="flex items-center gap-4 text-white">
-                      <span className="text-primary font-bold">#</span> Advanced SEO Tuning
+                      <span className="text-primary font-bold">#</span> Galeria de Fotos/Portfólio
                     </li>
                     <li className="flex items-center gap-4 text-white">
-                      <span className="text-primary font-bold">#</span> Radar Competitivo V7
+                      <span className="text-primary font-bold">#</span> SEO Local Otimizado
                     </li>
                   </ul>
                   <button className="w-full py-6 bg-primary text-white font-mono text-xs font-black uppercase tracking-[0.4em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all animate-pulse-neon">
-                    Execute_STP_PRO
+                    Execute_STP_AUTORIDADE
                   </button>
                </div>
 
@@ -369,19 +376,22 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                <div className="glass p-12 border-white/5 flex flex-col group hover:bg-white/5 transition-all text-left">
                   <div className="font-mono text-[9px] text-slate-500 mb-8 uppercase tracking-widest flex items-center gap-2 font-bold">
                     <span className="w-2 h-2 bg-slate-500 rounded-full"></span>
-                    STP_CUSTOM_DEPLOY
+                    STP_SAZONAL_UPGRADE
                   </div>
-                  <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Custom</h3>
-                  <div className="text-3xl font-headline font-black text-white mb-12 h-16 flex items-center uppercase tracking-tighter italic leading-[1.1]">
-                    Orcamento <br/> Sob Medida
+                  <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Upgrade Sazonal</h3>
+                  <div className="text-5xl font-headline font-black text-white mb-8 tracking-tighter">
+                    <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>50<span className="text-sm font-normal text-slate-500">_FIXO</span>
                   </div>
                   <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest">
                     <li className="flex items-center gap-4 text-slate-500 group-hover:text-white transition-colors">
-                      <span className="text-secondary">&gt;</span> Landing Pages de Lançamento
+                      <span className="text-secondary">&gt;</span> Natal / Black Friday
+                    </li>
+                    <li className="flex items-center gap-4 text-slate-500 group-hover:text-white transition-colors">
+                      <span className="text-secondary">&gt;</span> Festividades Nacionais
                     </li>
                   </ul>
                   <button className="w-full py-5 border border-white/10 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                    Contact_STP_EXE
+                    Initialize_UPGRADE
                   </button>
                </div>
             </div>
@@ -401,8 +411,7 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                     RECLAMAR MEU SITE
                  </button>
                  <p className="font-mono text-[9px] text-slate-600 uppercase tracking-[0.8em] pt-12">
-                   {/* SiteProx Networks // Tactical_Asset_ID: #8892-V7 */}
-                   SiteProx Networks // Tactical_Asset_ID: #8892-V7
+                   SiteProx Networks // No caos da web, nós somos a ordem!
                  </p>
               </div>
            </div>
@@ -412,8 +421,8 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
       <footer className="border-t border-white/5 py-12 px-6 bg-black/50">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-[9px] font-mono font-bold text-slate-600 uppercase tracking-[0.4em]">
            <div className="flex items-center gap-6">
-              <span className="text-white hover:text-primary transition-colors cursor-crosshair">SITEPROX_CORE</span>
-              <span className="hidden md:block">© 2024 Audit_System_V7 // Global_Infrastructure</span>
+              <span className="text-white hover:text-primary transition-colors cursor-crosshair">SITEPROX</span>
+              <span className="hidden md:block">© 2026 SiteProx_Labs // No caos da web, nós somos a ordem.</span>
            </div>
            <div className="flex gap-10">
               <a href="#" className="hover:text-secondary transition-colors">[ PRIVACY_PROT ]</a>

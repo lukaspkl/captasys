@@ -1,10 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { 
-  Terminal, Share2, Radar, Eye, MousePointer2, 
-  CircleDollarSign, TriangleAlert, Timer,
-  Star, StarHalf, ExternalLink
+  ShieldCheck, 
+  Radar, 
+  Target, 
+  ChevronRight,
+  Monitor,
+  Smartphone,
+  Zap,
+  ExternalLink,
+  Star,
+  StarHalf,
+  Rocket,
 } from 'lucide-react';
 import { Lead } from '../../../types';
 
@@ -23,411 +32,419 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
   onPrint,
   highlightPhrase
 }) => {
+  const [currentTime, setCurrentTime] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const dateStr = now.toISOString().replace('T', ' // ').split('.')[0].replace(/-/g, '.');
+      setCurrentTime(dateStr + '_UTC');
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#130b18] text-[#f4defe] font-['Manrope'] selection:bg-[#d575ff] selection:text-[#390050] relative overflow-x-hidden">
-      {/* SCANLINE / CRT OVERLAY (15%) */}
-      <div className="fixed inset-0 pointer-events-none z-100 opacity-[0.15] select-none" style={{ 
-        background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
-        backgroundSize: '100% 2px, 3px 100%'
-      }}></div>
-
+    <div className="min-h-screen bg-[#05010d] text-slate-300 font-['Manrope'] selection:bg-primary selection:text-white overflow-x-hidden">
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap');
         
-        .font-headline { font-family: 'Space Grotesk', sans-serif; }
-        .font-body { font-family: 'Manrope', sans-serif; }
-        
-        .glow-primary { box-shadow: 0 0 15px rgba(213, 117, 255, 0.4); }
-        .glow-secondary { box-shadow: 0 0 15px rgba(0, 219, 233, 0.4); }
-        .text-glow-primary { text-shadow: 0 0 8px rgba(213, 117, 255, 0.6); }
-        
-        .glass-panel {
-          backdrop-filter: blur(12px);
-          background: rgba(32, 21, 39, 0.6);
-        }
-        
-        .asymmetric-clip {
-          clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        :root {
+          --primary: #ff00ff;
+          --secondary: #00f3ff;
+          --accent: #9d4edd;
         }
 
-        .vertical-text {
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
+        .font-headline { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        
+        .glass {
+          background: rgba(13, 2, 31, 0.7);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .neon-glow-pink {
+          text-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.2);
+        }
+
+        .neon-glow-cyan {
+          text-shadow: 0 0 20px rgba(0, 243, 255, 0.5), 0 0 40px rgba(0, 243, 255, 0.2);
+        }
+
+        .cyber-grid {
+          background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+          background-size: 50px 50px;
+        }
+
+        @keyframes scanline {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+
+        .scanline-effect::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to bottom, transparent, rgba(0, 243, 255, 0.05), transparent);
+          animation: scanline 8s linear infinite;
+          pointer-events: none;
+          z-index: 50;
+        }
+
+        .chromatic-aberration {
+          text-shadow: 2px 0 0 rgba(255, 0, 0, 0.3), -2px 0 0 rgba(0, 0, 255, 0.3);
         }
 
         @media print {
           .no-print { display: none !important; }
+          body { background: white; color: black; }
+          .glass { background: white; border: 1px solid #eee; color: black; }
+          .text-white { color: black !important; }
+          .text-slate-300, .text-slate-400, .text-slate-500 { color: #333 !important; }
         }
-      `}} />
+      ` }} />
 
-      {/* Navigation Shell */}
-      <header className="fixed top-0 w-full z-50 rounded-none bg-[#130b18]/60 backdrop-blur-xl border-b border-[#52425c]/20 shadow-[0_4px_20px_rgba(185,10,252,0.15)] flex justify-between items-center px-8 h-20 no-print">
-        <div className="text-2xl font-black tracking-tighter text-[#d575ff] drop-shadow-[0_0_8px_rgba(213,117,255,0.5)] font-headline uppercase">
-          Tactical Dossier
-        </div>
-        <nav className="hidden md:flex gap-8 items-center">
-          <a className="text-[#00dbe9] border-b-2 border-[#00dbe9] pb-1 font-headline tracking-tighter uppercase text-sm" href="#capa">Capa</a>
-          <a className="text-[#b8a4c2] hover:text-[#f4defe] transition-colors font-headline tracking-tighter uppercase text-sm" href="#intro">Intro</a>
-          <a className="text-[#b8a4c2] hover:text-[#f4defe] transition-colors font-headline tracking-tighter uppercase text-sm" href="#concorrentes">Concorrentes</a>
-          <a className="text-[#b8a4c2] hover:text-[#f4defe] transition-colors font-headline tracking-tighter uppercase text-sm" href="#analise">Análise</a>
-          <a className="text-[#b8a4c2] hover:text-[#f4defe] transition-colors font-headline tracking-tighter uppercase text-sm" href="#insights">Insights</a>
-          <a className="text-[#b8a4c2] hover:text-[#f4defe] transition-colors font-headline tracking-tighter uppercase text-sm" href="#alerta">Alerta</a>
-          <a className="text-[#b8a4c2] hover:text-[#f4defe] transition-colors font-headline tracking-tighter uppercase text-sm" href="#conclusao">Conclusão</a>
-        </nav>
-        <div className="flex gap-4">
-          <button className="text-[#d575ff] p-2 hover:bg-[#362641]/50 transition-all duration-300">
-            <Terminal className="w-5 h-5" />
-          </button>
-          <button onClick={onPrint} className="text-[#d575ff] p-2 hover:bg-[#362641]/50 transition-all duration-300">
-            <Share2 className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="pt-20">
-        {/* SECTION 1: CAPA */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 lg:px-24" id="capa">
-          <div className="absolute inset-0 z-0">
-            <img 
-              className="w-full h-full object-cover opacity-30 grayscale contrast-125" 
-              alt="abstract grid" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf4YfRiWs_F8Zs10sc-hRio8O6OS04PzTzX6CN_hpY9TViC4KW0LzylGh0bYiHH2J0qU5SJf37YC7EukD6pdkUmOQyS9kAya4AEbZ1R8JJUwHwOuCaRiC-xWLtKWzanNsNeiHKg0TAxdF1-DaZnI-qr84V-eh8OJph2ZC7QTGTwlNpFcYFk98ol3WEVl6B6bwRy76Namuo-gkKPaHAoHga-mLYL8BmZjC2jhy7uwccRarsNPOZ7O0pBcE0nnKZ4kl4iVzt0meX6uo" 
-            />
-            <div className="absolute inset-0 bg-linear-to-b from-[#130b18]/80 via-[#130b18]/40 to-[#130b18]"></div>
-          </div>
-          <div className="relative z-10 max-w-5xl text-center">
-            <div className="inline-block px-4 py-1 bg-[#d575ff]/20 border-l-4 border-[#d575ff] text-[#d575ff] font-headline text-xs tracking-[0.3em] uppercase mb-6">
-              Intel System Online: Protocol 772
+      {/* Top Status Bar */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-linear-to-r from-primary via-secondary to-primary z-100 animate-pulse"></div>
+      
+      <nav className="border-b border-white/5 px-6 py-4 flex justify-between items-center bg-black/40 backdrop-blur-md sticky top-1 z-50">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <Rocket className="w-5 h-5 text-white fill-current" />
+              <span className="text-white font-black italic tracking-tighter text-xl leading-none">SITEPROX</span>
             </div>
-            <h1 className="font-headline text-5xl md:text-8xl font-black text-[#f4defe] tracking-tighter uppercase mb-6 drop-shadow-[0_0_20px_rgba(213,117,255,0.4)] leading-none">
-              Dossiê Tático de <br/><span className="text-[#00dbe9] italic">Presença Digital</span>
-            </h1>
-            <p className="text-[#b8a4c2] font-body text-xl md:text-2xl max-w-2xl mx-auto mb-10 leading-relaxed">
-              Análise estratégica de alta frequência sobre o impacto e autoridade de <span className="text-[#f4defe] font-bold">{lead?.title || 'sua organização'}</span> no ecossistema digital contemporâneo.
-            </p>
-            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-              <button className="bg-[#d575ff] text-[#390050] font-headline font-bold uppercase tracking-widest px-10 py-4 text-sm glow-primary hover:scale-105 transition-transform duration-300">
-                Iniciar Escaneamento
-              </button>
-              <div className="flex items-center gap-3 text-[#00ccd9] font-headline text-xs tracking-widest uppercase">
-                <Radar className="w-4 h-4 animate-pulse" />
-                Data Stream: Active
+            <span className="text-[8px] font-mono text-secondary tracking-[0.3em] uppercase">No caos da web, nós somos a ordem!</span>
+          </div>
+          <div className="hidden md:flex items-center gap-4 pl-6 border-l border-white/10 font-mono text-[9px] uppercase tracking-widest text-slate-500">
+            <span className="text-secondary">RADAR_ACTIVE</span>
+            <span>INTEL_STREAM_V7</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="font-mono text-[9px] text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 border border-white/5">
+            {currentTime}
+          </div>
+          <button 
+            onClick={onPrint}
+            className="px-6 py-2 bg-primary text-white font-headline text-[10px] font-black uppercase italic tracking-widest hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(255,0,255,0.3)] no-print"
+          >
+            Exportar_Inteligência
+          </button>
+        </div>
+      </nav>
+
+      <main className="max-w-[1400px] mx-auto px-6 py-12 space-y-24 relative">
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] -z-10 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[150px] -z-10"></div>
+
+        {/* Hero Section */}
+        <header className="relative py-20 overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-12">
+            <div className="space-y-6 relative z-10">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-none mb-4">
+                <Radar className="w-4 h-4 text-secondary animate-pulse" />
+                <span className="font-mono text-[10px] text-secondary font-black uppercase tracking-[0.4em]">Sector_Scan_Complete</span>
+              </div>
+              <h1 className="text-6xl md:text-8xl font-headline font-black italic text-white leading-[0.9] uppercase tracking-tighter chromatic-aberration">
+                Dossiê <br/>
+                <span className="text-secondary neon-glow-cyan underline decoration-white/10 underline-offset-8">Tático de Competição</span>
+              </h1>
+              <div className="max-w-xl h-0.5 bg-linear-to-r from-secondary to-transparent"></div>
+            </div>
+            
+            <div className="glass p-8 border-l-4 border-l-primary space-y-4 min-w-[320px]">
+              <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold">Identificação_Alvo</div>
+              <div className="text-4xl font-headline font-black text-white italic uppercase tracking-tighter">
+                {lead?.title || 'OBJETIVO_DESCONHECIDO'}
+              </div>
+              <div className="flex items-center gap-3 font-mono text-[9px] text-primary uppercase tracking-[0.2em]">
+                <ShieldCheck className="w-3 h-3" />
+                Nicho: {nicho}
               </div>
             </div>
           </div>
-          <div className="absolute bottom-10 left-10 hidden lg:block">
-            <div className="font-headline text-[10px] text-[#816f8b] tracking-[0.5em] uppercase vertical-text">
-              ID: 00-SYNC-992 // SECTOR 7G
-            </div>
-          </div>
-        </section>
+        </header>
 
-        {/* SECTION 2: INTRODUÇÃO */}
-        <section className="py-24 px-6 lg:px-24 bg-[#19101f] relative" id="intro">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-[#00dbe9]/10 rounded-none border border-[#00dbe9]/20 blur-xl"></div>
-              <img 
-                className="w-full h-[500px] object-cover border-l-8 border-[#00dbe9] grayscale hover:grayscale-0 transition-all duration-700" 
-                alt="cyberpunk office" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzBnfL6QQqudtmMQoXm21bdALDn1NhK7eFVGaxMGBOZnblKbRCDJnuT_NJhaAMc8F41XmeVPJSOPJ1rRIp13EHun-eMgQCXCOLuGAcDiN-6rVw1D--Zg11bwpS6Px0NrJ4vjok7UPwCG4BiqmjM0dFFz3Ud3NfNs7wHqaAUyg4qm7nolMeZdGJafuussh_s3ZqzS54aKqMAWjBALjiXrRqUmQXuWXicqLI8WMkHaF71a5GVtR-ojlQAjsxdeDcxvWkxKJRpJGo538" 
+        {/* Customer Decision Section - SiteProx V7 */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-20 border-b border-white/5">
+          <div className="relative group">
+            <div className="absolute -inset-4 bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+            <div className="relative overflow-hidden border border-white/10 rounded-none shadow-2xl aspect-square md:aspect-video lg:aspect-square">
+              <Image 
+                src="/tactical_decision.png" 
+                alt="Tactical Workstation" 
+                fill
+                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
               />
-              <div className="absolute bottom-4 right-4 bg-[#130b18] p-6 border-b-2 border-[#d575ff] shadow-2xl">
-                <div className="text-[#d575ff] font-headline text-4xl font-black">94%</div>
-                <div className="text-[#b8a4c2] text-[10px] uppercase tracking-tighter font-headline">dos clientes pesquisam antes</div>
+              <div className="absolute bottom-0 right-0 glass p-8 border-l-4 border-l-primary min-w-[200px] flex flex-col items-end">
+                <span className="text-5xl font-headline font-black text-white italic leading-none mb-2">94%</span>
+                <span className="text-[8px] font-mono text-slate-400 uppercase tracking-[0.2em] text-right font-bold leading-tight">DOS CLIENTES PESQUISAM <br/>ONLINE ANTES DA COMPRA</span>
               </div>
             </div>
-            <div>
-              <h2 className="font-headline text-3xl md:text-5xl font-bold text-[#f4defe] mb-8 tracking-tight">
-                A Decisão do Cliente <br/><span className="text-[#d575ff]">Começa no Google</span>
+            {/* Visual scan element */}
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-secondary/50 animate-[scanline_4s_linear_infinite] pointer-events-none"></div>
+          </div>
+
+          <div className="space-y-10">
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-6xl font-headline font-black text-white leading-[0.9] uppercase italic tracking-tighter">
+                A Decisão do Cliente <br/>
+                <span className="text-primary neon-glow-pink">Começa no Google</span>
               </h2>
-              <div className="grid md:grid-cols-2 gap-12 text-[#b8a4c2] font-body text-lg leading-relaxed border-t border-[#52425c]/30 pt-16">
-                <div className="space-y-6">
-                  <p>
-                    &quot;Sua frequência de rádio está em perigo. Os sinais ao lado são fortes e estão bloqueando sua recepção local.&quot;
-                  </p>
-                  <p className="border-l-2 border-[#00dbe9] pl-6 italic">
-                    &quot;Hoje, a decisão de um cliente começa no Google. Se sua presença digital é invisível ou mal otimizada, você não existe para o mercado.&quot;
-                  </p>
-                </div>
-                <div className="space-y-6">
-                  <p>
-                    Não se trata apenas de &quot;ter um site&quot;. Trata-se de dominar as frequências onde o seu público está sintonizado. Este dossiê revela onde você está e quão longe seus concorrentes avançaram enquanto sua estação estava em silêncio.
-                  </p>
-                </div>
-              </div>
             </div>
+            
+            <p className="text-xl text-slate-400 font-medium leading-relaxed max-w-xl font-headline italic">
+              No cenário atual de saturação de informação, a primeira batalha pela atenção não ocorre no seu estabelecimento, mas nos resultados de busca.
+            </p>
+
+            <div className="relative p-10 bg-white/5 border-l-4 border-l-secondary flex flex-col gap-4">
+               <span className="absolute -top-4 -left-4 text-6xl text-secondary opacity-20 font-serif font-black">&quot;</span>
+               <p className="italic text-white font-medium text-xl leading-relaxed relative z-10">
+                 Hoje, a decisão de um cliente começa no Google. Se sua presença digital é invisível ou mal otimizada, você não existe para o mercado.
+               </p>
+            </div>
+
+            <p className="text-slate-500 font-mono text-[11px] uppercase tracking-[0.3em] font-bold leading-loose">
+              Não se trata apenas de &quot;ter um site&quot;. Trata-se de dominar as frequências onde o seu público está sintonizado. Este dossiê revela onde você está e quão longe seus concorrentes avançaram enquanto sua estação estava em silêncio.
+            </p>
           </div>
         </section>
 
-        {/* SECTION 3: CONCORRENTES */}
-        <section className="py-24 px-6 lg:px-24 bg-[#130b18]" id="concorrentes">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
-              <div>
-                <span className="text-[#00dbe9] font-headline text-sm tracking-[0.4em] uppercase">Varredura Tática de Radar</span>
-                <h2 className="font-headline text-4xl font-black uppercase tracking-tighter mt-2 text-[#f4defe]">Mapa de Concorrência Local</h2>
-              </div>
-              <div className="text-[#b8a4c2] font-headline text-xs uppercase tracking-widest text-right">
-                Localização: <span className="text-[#f4defe] font-bold">{lead?.addressBase || 'Coordenadas do Lead'}</span><br/>
-                Força do Sinal: <span className="text-[#00dbe9]">Excelente</span>
-              </div>
-            </div>
+        {/* Highlight Phrase */}
+        {highlightPhrase && (
+          <section className="bg-primary/5 border border-primary/20 p-12 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-2 h-full bg-primary shadow-[0_0_20px_rgba(255,0,255,0.8)]"></div>
+            <h3 className="font-headline text-2xl md:text-4xl font-black italic uppercase text-white mb-4 leading-tight">
+              &quot;{highlightPhrase}&quot;
+            </h3>
+            <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em] font-black">Tactical_Assessment_Summary</p>
+          </section>
+        )}
 
-            {highlightPhrase && (
-              <div className="bg-[#d575ff]/10 border border-[#d575ff]/30 p-8 mb-12 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-2 h-full bg-[#d575ff] shadow-[0_0_15px_rgba(213,117,255,0.8)]"></div>
-                <div className="flex items-center gap-4 mb-3">
-                  <TriangleAlert className="text-[#d575ff] w-6 h-6 animate-pulse" />
-                  <span className="text-[#d575ff] font-headline text-sm tracking-[0.3em] uppercase font-bold">Destaque da Análise Tática</span>
-                </div>
-                <p className="text-2xl md:text-3xl font-headline font-black italic uppercase leading-tight text-[#f4defe] text-glow-primary">
-                  &quot;{highlightPhrase}&quot;
-                </p>
-                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                  <Terminal className="w-24 h-24 text-[#d575ff]" />
-                </div>
-              </div>
-            )}
-
-            <div className="grid lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 relative h-[500px] bg-[#2e2038] overflow-hidden">
-                <img 
-                  className="w-full h-full object-cover opacity-40 mix-blend-screen grayscale" 
-                  alt="schematic map" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIFLNn67ZFkbzSdhWCweqHgMLKqe7EbggkTGt0-NA6lsL_uMzYcyvg1iWNQoBVNHlbXC8JirU4ThoXg1BNyFe73raagRYmu2awFjHYiKbGomu_9cPG6qyL3tW4-z1TNHDrMf9p5Js77VkTuZBO9vgmZTEtSbLC0Xs5f3nYyf4yJL3SWF7qmvshohDGi86ugsx1Qdp-EXKIehRUcX-tWJpfTpBkIno3Gi4BV56oyvJS_boV5I6AzWyEKFOGjvJV4nz68eXmT8d_x4M" 
-                />
-                <div className="absolute inset-0 border border-[#52425c]/30"></div>
-                <div className="absolute top-1/4 left-1/3 w-4 h-4 bg-[#00dbe9] rounded-full animate-pulse glow-secondary"></div>
-                <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-[#d575ff] rounded-full animate-pulse glow-primary"></div>
-                <div className="absolute bottom-1/3 right-1/4 w-4 h-4 bg-[#ffb1c3] rounded-full animate-pulse shadow-[0_0_10px_rgba(228,0,108,0.5)]"></div>
-                <div className="absolute bottom-4 left-4 glass-panel p-4 border-l-2 border-[#00dbe9]">
-                  <div className="text-[10px] text-[#00dbe9] font-headline uppercase mb-1">Relatório de Status</div>
-                  <div className="text-xs text-[#f4defe] font-body leading-tight">
-                    {competitors.length} Concorrentes Agressivos detectados num <br/>raio de 2km das suas coordenadas.
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4">
-                {competitors.map((comp, idx) => (
-                  <div key={comp.id || idx} className="bg-[#201527] p-6 border-l-4" style={{ borderColor: idx === 0 ? '#ffb1c3' : '#00dbe9' }}>
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-headline font-bold text-xl uppercase tracking-tighter text-[#f4defe] truncate pr-4">
-                          {comp.title}
-                        </h3>
-                        <p className="text-[10px] text-[#b8a4c2] font-body truncate mt-1">
-                          {comp.addressBase || 'Localização no Google Maps'}
-                        </p>
-                      </div>
-
+        {/* Competitor Radar Grid */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-8">
+            <div className="glass p-10 relative overflow-hidden scanline-effect min-h-[500px]">
+              <h3 className="font-headline text-sm font-black text-secondary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
+                <Target className="w-5 h-5" /> VARREDURA_SETORIAL_ATIVIVA
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                {competitors.length > 0 ? competitors.map((comp, idx) => (
+                  <div key={idx} className="bg-white/5 border border-white/10 p-6 space-y-4 group hover:border-secondary/50 transition-all">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-headline font-bold text-lg text-white uppercase tracking-tighter truncate pr-4">{comp.title}</h4>
+                      <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-secondary transition-colors" />
                     </div>
-                    <div className="flex gap-1 text-[#00dbe9] mb-4">
+                    
+                    <div className="flex gap-1 text-secondary">
                       {Array.from({ length: 5 }).map((_, i) => {
                         const r = parseFloat(String(comp.rating || 0));
-                        if (i < Math.floor(r)) return <Star key={i} className="w-3.5 h-3.5 fill-[#00dbe9]" />;
-                        if (i === Math.floor(r) && r % 1 !== 0) return <StarHalf key={i} className="w-3.5 h-3.5 fill-[#00dbe9]" />;
+                        if (i < Math.floor(r)) return <Star key={i} className="w-3.5 h-3.5 fill-secondary" />;
+                        if (i === Math.floor(r) && r % 1 !== 0) return <StarHalf key={i} className="w-3.5 h-3.5 fill-secondary" />;
                         return <Star key={i} className="w-3.5 h-3.5" />;
                       })}
-                      <span className="text-[#b8a4c2] text-xs ml-2 font-headline">{comp.rating || 'N/A'} ({comp.reviewCount || 0} reviews)</span>
+                      <span className="text-slate-500 text-[10px] ml-2 font-mono uppercase">({comp.reviewCount || 0} reviews)</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs text-[#b8a4c2] font-headline border-t border-[#52425c]/30 pt-4">
-                      <span>Nicho: {nicho}</span>
-                      <a 
-                        href={comp.url || `https://www.google.com/search?q=${encodeURIComponent(comp.title || '')}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-[#00dbe9] hover:underline flex items-center gap-1"
-                      >
-                        Site Oficial <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="bg-[#19101f] p-6 opacity-60 border-l-4 border-[#816f8b] relative">
 
-                  <div className="text-[#816f8b] font-headline font-bold text-xl uppercase tracking-tighter">
-                    {lead?.title || 'Sua Empresa'}
+                    <div className="space-y-2">
+                       <div className="flex justify-between font-mono text-[9px] text-slate-500 uppercase">
+                          <span>Autoridade_Digital</span>
+                          <span className="text-secondary">{Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10).toFixed(0)}%</span>
+                       </div>
+                       <div className="h-1 w-full bg-white/5">
+                          <div className="h-full bg-secondary" style={{ width: `${Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10)}%` }}></div>
+                       </div>
+                    </div>
                   </div>
-                  <div className="text-[#b8a4c2] text-xs font-headline mt-4">Calculando métricas de autoridade...</div>
-                  <div className="w-full bg-[#52425c]/20 h-1 mt-2">
-                    <div className="bg-[#d575ff] h-full w-1/4"></div>
+                )) : (
+                  <div className="col-span-2 py-20 text-center border border-dashed border-white/10">
+                    <p className="font-mono text-xs uppercase tracking-widest text-slate-500">Nenhum concorrente direto detectado nesta zona.</p>
+                  </div>
+                )}
+
+                {/* Target Company (Loading/Intervention) card to fill the slot */}
+                <div className="bg-primary/5 border border-primary/40 p-6 space-y-4 relative overflow-hidden group shadow-[inset_0_0_20px_rgba(255,0,255,0.1)] flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 px-2 py-1 bg-primary text-white font-mono text-[7px] uppercase tracking-widest z-20 font-black italic">
+                    TARGET_ANALYSIS_REQUIRED
+                  </div>
+                  <div className="absolute inset-0 bg-linear-to-tr from-primary/5 to-transparent pointer-events-none"></div>
+                  
+                  <div className="space-y-4 relative z-10">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-headline font-bold text-lg text-white uppercase tracking-tighter truncate pr-4">{lead?.title || 'ALVO_PRIMÁRIO'}</h4>
+                      <Target className="w-4 h-4 text-primary animate-pulse" />
+                    </div>
+                    
+                    <div className="font-mono text-[10px] text-primary uppercase tracking-[0.2em] font-black italic">
+                      STATUS: INVISÍVEL
+                    </div>
+
+                    <div className="space-y-2">
+                       <div className="flex justify-between font-mono text-[9px] text-slate-500 uppercase font-bold">
+                          <span>Autoridade_Digital</span>
+                          <span className="text-primary animate-pulse font-black">DETECTANDO...</span>
+                       </div>
+                       <div className="h-1 w-full bg-white/5 relative overflow-hidden">
+                          <div className="h-full bg-primary w-1/4 animate-pulse shadow-[0_0_10px_rgba(255,0,255,0.8)]"></div>
+                       </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-primary/10 flex items-center gap-2 text-[8px] font-mono text-rose-500 uppercase tracking-widest font-black animate-pulse relative z-10">
+                    <Zap className="w-3 h-3" /> INTERVENÇÃO_IMEDIATA_V7
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-4 space-y-8">
+            <div className="glass p-10 h-full border-t-primary/40 flex flex-col justify-between">
+               <div className="space-y-8">
+                  <div className="w-16 h-16 bg-primary/10 flex items-center justify-center border border-primary/20 text-primary">
+                    <Target className="w-8 h-8" />
+                  </div>
+                  <h4 className="text-3xl font-headline font-black text-white italic uppercase tracking-tighter leading-none">
+                    Status de <br/> <span className="text-primary underline decoration-white/10">Invisibilidade</span>
+                  </h4>
+                  <p className="font-mono text-[11px] text-slate-400 leading-relaxed uppercase tracking-widest">
+                    Sua empresa está sendo filtrada pelos &quot;Invasores Digitais&quot;. Enquanto os concorrentes acima dominam os resultados locais, sua autoridade está evaporando.
+                  </p>
+               </div>
+               
+               <div className="pt-10 border-t border-white/5 space-y-4">
+                 <span className="text-[10px] font-mono text-primary uppercase tracking-widest font-black">Risco_Comercial</span>
+                 <div className="text-5xl font-headline font-black text-rose-500 italic tracking-tighter animate-pulse">
+                   CRÍTICO
+                 </div>
+               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 4: ANÁLISE */}
-        <section className="py-24 px-6 lg:px-24 bg-[#201527]" id="analise">
-          <div className="max-w-7xl mx-auto flex flex-col items-center">
-            <h2 className="font-headline text-4xl md:text-6xl font-black text-center mb-16 uppercase italic text-[#f4defe]">
-              <span className="text-[#d575ff]">Fluxo</span> de Captura Digital
-            </h2>
-            <div className="w-full grid md:grid-cols-3 gap-0 border border-[#52425c]/30">
-              <div className="p-12 border-r border-[#52425c]/30 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 font-headline text-[10px] text-[#00dbe9] opacity-30">001</div>
-                <Eye className="text-[#00dbe9] w-12 h-12 mb-8" />
-                <h3 className="font-headline text-2xl font-bold mb-4 uppercase text-[#f4defe]">Visualização</h3>
-                <p className="text-[#b8a4c2]">Esses negócios estão sendo vistos todos os dias por milhares de usuários locais.</p>
-                <div className="mt-12 h-20 flex items-end gap-1">
-                  <div className="bg-[#00dbe9]/40 w-full h-[40%]"></div>
-                  <div className="bg-[#00dbe9]/60 w-full h-[60%]"></div>
-                  <div className="bg-[#00dbe9]/80 w-full h-[90%]"></div>
-                  <div className="bg-[#00dbe9] w-full h-full glow-secondary"></div>
-                </div>
-              </div>
-              <div className="p-12 border-r border-[#52425c]/30 relative overflow-hidden bg-[#d575ff]/5">
-                <div className="absolute top-0 right-0 p-4 font-headline text-[10px] text-[#d575ff] opacity-30">002</div>
-                <MousePointer2 className="text-[#d575ff] w-12 h-12 mb-8" />
-                <h3 className="font-headline text-2xl font-bold mb-4 uppercase text-[#f4defe]">Interação</h3>
-                <p className="text-[#b8a4c2]">Cliques em rotas, chamadas e visitas ao site. A intenção de compra é imediata.</p>
-                <div className="mt-12 space-y-2">
-                  <div className="w-full bg-[#52425c]/20 h-2"><div className="bg-[#d575ff] h-full w-3/4"></div></div>
-                  <div className="w-full bg-[#52425c]/20 h-2"><div className="bg-[#d575ff] h-full w-1/2"></div></div>
-                  <div className="w-full bg-[#52425c]/20 h-2"><div className="bg-[#d575ff] h-full w-5/6"></div></div>
-                </div>
-              </div>
-              <div className="p-12 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 font-headline text-[10px] text-[#ffb1c3] opacity-30">003</div>
-                <CircleDollarSign className="text-[#ffb1c3] w-12 h-12 mb-8" />
-                <h3 className="font-headline text-2xl font-bold mb-4 uppercase text-[#f4defe]">Conversão</h3>
-                <p className="text-[#b8a4c2]">Visitantes transformados em receita real. O ciclo do domínio digital se completa.</p>
-                <div className="mt-12 flex justify-center">
-                  <div className="w-16 h-16 rounded-full border-4 border-[#ffb1c3] border-t-transparent animate-spin"></div>
-                  <div className="absolute flex flex-col items-center justify-center h-16 pt-0.5">
-                    <span className="text-[#ffb1c3] font-headline font-bold text-xl">$</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Comparison Pillars */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+           {[
+             { icon: Monitor, title: 'Presença Web', status: 'OBSOLET_v2', color: 'text-primary', desc: 'Arquitetura que falha em converter visitantes em leads qualificados.' },
+             { icon: Smartphone, title: 'Otimização Mobile', status: 'FAILED_SYNC', color: 'text-secondary', desc: 'Interface não responsiva que causa abandono imediato de usuários.' },
+             { icon: Zap, title: 'Velocidade Leads', status: 'OFFLINE', color: 'text-accent', desc: 'Tempo de resposta crítico, resultando em perda de oportunidade real.' },
+           ].map((pillar, idx) => (
+             <div key={idx} className="glass p-8 space-y-6 relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-white/5 uppercase">{pillar.status}</div>
+               <pillar.icon className={`w-12 h-12 ${pillar.color}`} />
+               <div className="space-y-4">
+                 <h4 className="text-xl font-headline font-black text-white uppercase italic tracking-tighter">{pillar.title}</h4>
+                 <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest leading-relaxed">
+                   {pillar.desc}
+                 </p>
+               </div>
+               <div className="flex items-center gap-2 text-[10px] font-black text-rose-500">
+                 REQUER_INTERVENÇÃO <ChevronRight className="w-3 h-3" />
+               </div>
+             </div>
+           ))}
         </section>
 
-        {/* SECTION 5: INSIGHTS */}
-        <section className="py-24 px-6 lg:px-24 bg-[#130b18]" id="insights">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-start">
-              <div>
-                <div className="bg-[#00dbe9]/10 border-l-2 border-[#00dbe9] p-4 mb-8 inline-block">
-                  <span className="text-[#00dbe9] font-headline uppercase text-xs tracking-widest">Neural Insights Core</span>
+        {/* Tactical Plans */}
+        <section className="py-20 bg-linear-to-b from-primary/5 to-transparent border-t border-white/5">
+           <div className="text-center mb-16 space-y-4">
+              <h2 className="text-4xl md:text-6xl font-headline font-black text-white italic uppercase tracking-tighter leading-none">Protocolos de Domínio</h2>
+              <p className="font-mono text-xs text-slate-500 uppercase tracking-widest leading-loose">Selecione sua arma estratégica para recuperar o mercado.</p>
+           </div>
+           
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+             {/* Plano Presença */}
+             <div className="glass p-12 border-white/5 group hover:border-primary/30 transition-all flex flex-col">
+                <div className="font-mono text-[9px] text-slate-500 mb-8 uppercase tracking-widest flex items-center gap-2 font-bold">
+                  STP_PRESENCA_CORE
                 </div>
-                <h2 className="font-headline text-5xl font-black mb-8 leading-tight uppercase tracking-tighter text-[#f4defe]">O que os dados <br/><span className="text-[#00dbe9]">estão gritando:</span></h2>
-                <div className="space-y-8">
-                  {[
-                    { id: 'A', title: 'Quem aparece mais → vende mais', text: 'A visibilidade é o novo petróleo. No ambiente digital, ser visto não é vaidade, é sobrevivência comercial.', color: '#00dbe9' },
-                    { id: 'B', title: 'Autoridade por Validação', text: '"Quem tem mais avaliações → transmite confiança". O cérebro humano busca atalhos; 5 estrelas é o maior atalho de vendas.', color: '#d575ff' },
-                    { id: 'C', title: 'Velocidade de Resposta', text: 'A conveniência de um botão "Ligar" ou "Como Chegar" reduz a fricção da venda a quase zero.', color: '#ffb1c3' }
-                  ].map((insight) => (
-                    <div key={insight.id} className="flex gap-6 group">
-                      <div 
-                        className="w-12 h-12 flex-shrink-0 bg-[#362641] flex items-center justify-center border border-[#52425c]/30 group-hover:border-current transition-colors"
-                        style={{ color: insight.color }}
-                      >
-                        <span className="font-headline font-bold">{insight.id}</span>
-                      </div>
-                      <div>
-                        <h4 className="font-headline font-bold text-xl text-[#f4defe] mb-2 uppercase">{insight.title}</h4>
-                        <p className="text-[#b8a4c2] leading-relaxed">{insight.text}</p>
-                      </div>
-                    </div>
-                  ))}
+                <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Plano Presença</h3>
+                <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
+                  <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>100<span className="text-sm font-normal text-slate-500">/mês</span>
                 </div>
-              </div>
-              <div className="relative mt-12 lg:mt-0">
-                <div className="absolute -inset-4 bg-linear-to-tr from-[#d575ff]/20 to-[#00dbe9]/20 blur-2xl opacity-30"></div>
-                <div className="relative bg-[#201527] p-8 border border-[#52425c]/20">
-                  <img 
-                    className="w-full aspect-square object-cover grayscale opacity-80 mb-8 border border-[#52425c]/30" 
-                    alt="financial dash" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMqRupAlrRL47e4US85nYHFTA9b7kwqPsrnNLGNq8uBvTAxzwD9cmIEzYG7JK2xS7qKGLTYMcSK4m-xlkTPo898gx-IePNz5Hi_qxQYbn_lhwqCoRGmSo9bDOdaFTv_qB5nM51cUORCcKliMidyWKU-Lz591hfFZQ2rLEO1bF_7lltMEvykarkeVWYRACSkj84AXhfM3A5v7ClUPsKZRS7uTetzEpUdyp7wrm6wxLDCswNYu_mVLb2qjcUfUNMg32_Bgd1Gcb-NKI" 
-                  />
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-[#130b18]">
-                      <div className="text-[10px] font-headline text-[#816f8b] uppercase">Dominância</div>
-                      <div className="text-2xl font-headline font-bold text-[#00dbe9]">LOW</div>
-                    </div>
-                    <div className="p-4 bg-[#130b18]">
-                      <div className="text-[10px] font-headline text-[#816f8b] uppercase">Risco</div>
-                      <div className="text-2xl font-headline font-bold text-[#ffb1c3]">CRITICAL</div>
-                    </div>
-                  </div>
+                <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-500 group-hover:text-slate-300">
+                  <li className="flex items-center gap-4 transition-colors">
+                    <span className="text-secondary">&gt;</span> Site One-Page Moderno
+                  </li>
+                  <li className="flex items-center gap-4 transition-colors">
+                    <span className="text-secondary">&gt;</span> Foco em Leads WhatsApp
+                  </li>
+                  <li className="flex items-center gap-4 transition-colors">
+                    <span className="text-secondary">&gt;</span> Stack Vessel 2025
+                  </li>
+                </ul>
+                <button className="w-full py-5 border border-white/10 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
+                  INITIALIZE_DEP_01
+                </button>
+             </div>
+
+             {/* Plano Autoridade */}
+             <div className="glass p-12 border-primary/50 bg-primary/5 group relative shadow-[0_0_80px_rgba(255,0,255,0.1)] flex flex-col scale-105 z-10">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-primary text-white font-black text-[9px] tracking-[0.4em] uppercase shadow-lg shadow-primary/40 animate-pulse">
+                  RECOMENDED_STRATEGY
                 </div>
-              </div>
-            </div>
-          </div>
+                <div className="font-mono text-[9px] text-primary mb-8 uppercase tracking-widest flex items-center gap-2 font-black">
+                  STP_AUTORIDADE_OVERRIDE
+                </div>
+                <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Autoridade</h3>
+                <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
+                  <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>150<span className="text-sm font-normal text-slate-500">/mês</span>
+                </div>
+                <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
+                  <li className="flex items-center gap-4">
+                    <span className="text-primary font-bold">#</span> Site Multi-Page Completo
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <span className="text-primary font-bold">#</span> Galeria de Fotos/Portfólio
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <span className="text-primary font-bold">#</span> SEO Local Otimizado
+                  </li>
+                </ul>
+                <button className="w-full py-5 bg-primary text-white font-mono text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all">
+                  EXECUTE_PROTOCOL
+                </button>
+             </div>
+           </div>
         </section>
 
-        {/* SECTION 6: ALERTA */}
-        <section className="py-20 px-6 lg:px-24 bg-[#130b18] border-y-2 border-[#ffb1c3]/30 relative overflow-hidden" id="alerta">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(228,0,108,0.1),transparent_70%)]"></div>
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 rounded-none border-2 border-[#ffb1c3] flex items-center justify-center animate-pulse">
-                <TriangleAlert className="text-[#ffb1c3] w-10 h-10" />
+        {/* Final CTA */}
+        <section className="py-24 text-center">
+           <div className="max-w-4xl mx-auto glass p-20 relative overflow-hidden rounded-[2rem] border-white/10 group">
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+              <div className="relative z-10 space-y-12">
+                 <p className="font-mono text-secondary text-xs tracking-[0.6em] mb-4">TACTICAL_TRANSMISSION_COMPLETE</p>
+                 <h2 className="text-5xl md:text-8xl font-headline font-black mb-16 italic uppercase leading-none text-white chromatic-aberration">
+                    RECLAMAR MEU <br/><span className="text-secondary neon-glow-cyan">TERRITÓRIO</span>
+                 </h2>
+                 <button className="inline-flex items-center gap-8 px-16 py-10 bg-white text-black font-headline text-3xl font-black uppercase italic tracking-tighter hover:scale-110 transition-all shadow-[0_0_80px_rgba(255,255,255,0.2)] active:scale-95">
+                    DOMINAR AGORA
+                 </button>
+                 <p className="font-mono text-[9px] text-slate-600 uppercase tracking-[0.8em] pt-12">
+                   SiteProx Networks // No caos da web, nós somos a ordem!
+                 </p>
               </div>
-            </div>
-            <h2 className="font-headline text-4xl md:text-6xl font-black text-[#f4defe] uppercase mb-8 tracking-tighter">
-              Sistema em <span className="text-[#ffb1c3] underline decoration-double">Estado de Alerta</span>
-            </h2>
-            <p className="text-xl md:text-2xl font-body text-[#b8a4c2] mb-12 leading-relaxed">
-              &quot;Enquanto você está parado, seus concorrentes estão captando clientes todos os dias. Cada hora de inatividade digital é um cliente que entrou na porta do vizinho.&quot;
-            </p>
-            <div className="inline-block glass-panel border border-[#ffb1c3]/40 px-8 py-4 asymmetric-clip">
-              <div className="text-[#f4defe] font-headline font-bold uppercase tracking-widest flex items-center gap-3">
-                <Timer className="text-[#ffb1c3] w-5 h-5" />
-                TEMPO RESTANTE PARA REAÇÃO: ESTIMATIVA <span className="text-[#ffb1c3]">LIMITADA</span>
-              </div>
-            </div>
-          </div>
-          <div className="absolute top-0 left-0 w-full h-1 bg-[repeating-linear-gradient(45deg,#e4006c,#e4006c_10px,#130b18_10px,#130b18_20px)]"></div>
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-[repeating-linear-gradient(45deg,#e4006c,#e4006c_10px,#130b18_10px,#130b18_20px)]"></div>
-        </section>
-
-        {/* SECTION 7: CONCLUSÃO & CTA */}
-        <section className="py-32 px-6 lg:px-24 bg-[#130b18] relative overflow-hidden" id="conclusao">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#d575ff]/5 to-transparent"></div>
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="flex flex-col items-center text-center">
-              <div className="max-w-4xl">
-                <h2 className="font-headline text-6xl md:text-8xl font-black text-[#f4defe] mb-12 uppercase leading-[0.8] tracking-tighter shadow-sm">
-                  Hoje, não basta existir. <br/>
-                  <span className="text-[#00dbe9] italic text-glow-primary">É preciso ser encontrado.</span>
-                </h2>
-                <p className="text-[#b8a4c2] text-2xl md:text-3xl mb-16 leading-relaxed font-light mx-auto max-w-3xl">
-                  O silêncio digital é a morte lenta de qualquer negócio moderno. 
-                  Recupere o controle da sua frequência e domine o seu mercado local.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-8 justify-center">
-                  <button className="bg-[#00dbe9] text-[#00484d] font-headline font-black uppercase px-16 py-6 text-lg tracking-[0.2em] glow-secondary hover:-translate-y-1 transition-all duration-300">
-                    Baixar Dossier PDF
-                  </button>
-                  <button className="border-2 border-[#d575ff] text-[#d575ff] font-headline font-black uppercase px-16 py-6 text-lg tracking-[0.2em] hover:bg-[#d575ff]/10 transition-all duration-300">
-                    Consultar Especialista
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+           </div>
         </section>
       </main>
 
-      {/* Footer Shell */}
-      <footer className="w-full border-t-2 border-[#d575ff]/30 bg-[#201527] flex flex-col md:flex-row justify-between items-center py-12 px-10 relative">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] pointer-events-none opacity-20"></div>
-        <div className="z-10 text-lg font-bold text-[#d575ff] font-headline uppercase mb-6 md:mb-0">
-          Neon Syndicate Intel
-        </div>
-        <div className="z-10 text-[#00dbe9] font-headline text-[10px] tracking-[0.2em] uppercase text-center md:text-left">
-          © 2024 NEON SYNDICATE INTEL. ALL RIGHTS RESERVED.
-        </div>
-        <div className="z-10 flex gap-8 mb-6 md:mb-0">
-          <a className="text-[#b8a4c2] hover:text-[#ffb1c3] transition-colors font-headline text-[10px] tracking-[0.2em] uppercase" href="#">Privacy</a>
-          <a className="text-[#b8a4c2] hover:text-[#ffb1c3] transition-colors font-headline text-[10px] tracking-[0.2em] uppercase" href="#">Terminal Access</a>
-          <a className="text-[#b8a4c2] hover:text-[#ffb1c3] transition-colors font-headline text-[10px] tracking-[0.2em] uppercase" href="#">Support</a>
+      <footer className="border-t border-white/5 py-12 px-6 bg-black/50">
+        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-[9px] font-mono font-bold text-slate-600 uppercase tracking-[0.4em]">
+           <div className="flex items-center gap-6">
+              <span className="text-white hover:text-primary transition-colors cursor-crosshair">SITEPROX</span>
+              <span className="hidden md:block">© 2026 SiteProx_Labs // No caos da web, nós somos a ordem.</span>
+           </div>
+           <div className="flex gap-10">
+              <span className="hover:text-secondary cursor-pointer">[ ENCRYPTION: V7 ]</span>
+              <span className="hover:text-secondary cursor-pointer">[ SECTOR: GEOLOCAL ]</span>
+           </div>
         </div>
       </footer>
     </div>
