@@ -328,7 +328,7 @@ const SiteProxPage = () => {
                                 DOSSIÊ_DE_AUDITORIA_360º
                              </h4>
                              <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
-                                Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas. Você recebe um link de acesso estratégico com validade de 48h para agir com precisão cirúrgica.
+                                Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas. Você recebe um link de acesso estratégico para agir com precisão cirúrgica.
                              </p>
                              <div className="pt-8 border-t border-white/5 space-y-4">
                                 <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
