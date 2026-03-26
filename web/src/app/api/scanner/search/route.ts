@@ -138,6 +138,7 @@ export async function POST(req: Request) {
               mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.title + " " + (place.address || ""))}`,
               rating: place.rating,
               reviews: reviewCount,
+              reviewCount: reviewCount, // Adicionado para compatibilidade com o dossiê tático
               category: place.category || place.type,
               latitude: place.latitude,
               longitude: place.longitude,

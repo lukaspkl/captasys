@@ -256,10 +256,14 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                     <div className="space-y-2">
                        <div className="flex justify-between font-mono text-[9px] text-slate-500 uppercase">
                           <span>Autoridade_Digital</span>
-                          <span className="text-secondary">{Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10).toFixed(0)}%</span>
+                          <span className="text-secondary font-bold">{(Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10)).toFixed(0)}%</span>
                        </div>
-                       <div className="h-1 w-full bg-white/5">
-                          <div className="h-full bg-secondary" style={{ width: `${Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10)}%` }}></div>
+                       <div className="h-1 w-full bg-white/5 relative overflow-hidden">
+                          <div 
+                            className="h-full bg-secondary shadow-[0_0_10px_rgba(0,243,255,0.4)] transition-all duration-1000 ease-out" 
+                            style={{ width: `${Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10)}%` }}
+                          ></div>
+                          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent w-1/4 animate-[scanline_2s_linear_infinite]"></div>
                        </div>
                     </div>
                   </div>
