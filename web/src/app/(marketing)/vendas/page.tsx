@@ -303,24 +303,24 @@ const SiteProxPage = () => {
                        </div>
 
                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-stretch">
-                          <div className="space-y-10 group flex flex-col justify-between">
-                             <div className="space-y-8">
-                                <div className="space-y-4">
-                                   <h3 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
-                                      <div className="w-1 h-5 bg-emerald-500" />
-                                      DOSSIÊ_TÁTICO_PREMIUM
+                          <div className="space-y-12 group flex flex-col justify-between">
+                             <div className="space-y-10">
+                                <div className="space-y-6">
+                                   <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight flex items-center gap-3">
+                                      <div className="w-1 h-5 bg-emerald-500 rounded-full" />
+                                      DOSSIÊ TÁTICO PREMIUM
                                    </h3>
-                                   <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed italic border-l-2 border-emerald-500/20 pl-6">
-                                      Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-white font-black underline decoration-emerald-500/50 underline-offset-8">predadores no mercado local.</span>
+                                   <p className="text-2xl md:text-3xl text-white font-bold leading-[1.15] tracking-tight max-w-xl">
+                                      Não iniciamos um pixel sequer sem antes entender quem são seus <span className="text-emerald-400">predadores</span> no mercado local.
                                    </p>
                                 </div>
-                                <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-bold uppercase tracking-widest max-w-md">
-                                   Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado.
+                                <p className="text-sm md:text-base text-slate-400 leading-relaxed font-medium max-w-sm">
+                                   Cada cliente SiteProx recebe uma varredura completa da concorrência, mapeamento de falhas de mercado e um plano de ataque documentado para dominar a região.
                                 </p>
                              </div>
-                             <div className="flex flex-wrap gap-3 pt-6">
-                                <span className="px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded-lg">Análise de Concorrência</span>
-                                <span className="px-5 py-2.5 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] font-black uppercase tracking-widest rounded-lg">Mapa de Oportunidades</span>
+                             <div className="flex flex-wrap gap-3 pt-4">
+                                <span className="px-4 py-2 bg-emerald-500/5 border border-emerald-500/10 text-emerald-500/70 text-[10px] font-bold uppercase tracking-widest rounded-md">Análise de Concorrência</span>
+                                <span className="px-4 py-2 bg-cyan-500/5 border border-cyan-500/10 text-cyan-400/70 text-[10px] font-bold uppercase tracking-widest rounded-md">Mapa de Oportunidades</span>
                              </div>
                           </div>
 
