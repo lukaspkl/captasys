@@ -125,7 +125,23 @@ export async function createIntelDossier(payload: {
     title: string;
     type: 'audit' | 'tactical' | 'renewal';
     data: Record<string, unknown>;
-    leadData?: any; // Dados completos para auto-save se não existir
+    leadData?: {
+        title?: string;
+        address?: string;
+        addressBase?: string;
+        phone?: string;
+        url?: string;
+        mapsUrl?: string;
+        rating?: number | string;
+        reviewCount?: number | string;
+        reviews?: number | string;
+        category?: string;
+        classificationMotivity?: string;
+        niche?: string;
+        city?: string;
+        score?: number;
+        temperature?: string;
+    };
 }) {
     const supabase = await createClient();
     
@@ -158,7 +174,7 @@ export async function createIntelDossier(payload: {
         const { data: newLead, error: saveError } = await supabase
             .from('prospecting_leads')
             .insert([{
-                title: payload.leadData.title,
+                title: payload.leadData.title || payload.title || 'Empresa Sem Nome',
                 address: payload.leadData.address || payload.leadData.addressBase,
                 phone: payload.leadData.phone,
                 website: payload.leadData.url,
@@ -213,12 +229,10 @@ export async function getIntelBySlug(slug: string) {
         .from('intel_dossiers')
         .select('*, prospecting_leads(*)')
         .eq('slug', slug)
-        .eq('is_active', true)
-        .gt('expires_at', new Date().toISOString())
         .single();
 
     if (error) {
-        return { error: "Dossiê não encontrado ou expirado." };
+        return { error: "Dossiê não encontrado no sistema." };
     }
 
     return { success: true, dossier: data };

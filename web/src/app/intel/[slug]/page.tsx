@@ -4,13 +4,16 @@ import AuditDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitc
 import TacticalDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/TacticalDossier";
 import RenewalDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/RenewalDossier";
 import { ShieldAlert, Rocket, Clock } from "lucide-react";
-import Link from "next/link";
 
 export default async function IntelDossierPage({ params }: { params: { slug: string } }) {
     const { slug } = params;
     const result = await getIntelBySlug(slug);
 
-    if (result.error || !result.dossier) {
+    const isExpired = result.dossier && (new Date(result.dossier.expires_at) < new Date() || !result.dossier.is_active);
+    const sellerWhatsapp = result.dossier?.data?.seller_whatsapp || "5511999999999";
+    const whatsappLink = `https://wa.me/${sellerWhatsapp}?text=Olá! Vi o meu dossiê SiteProx mas ele expirou. Gostaria de reativar o acesso ao Protocolo [ID: ${slug}]`;
+
+    if (result.error || !result.dossier || isExpired) {
         return (
             <div className="min-h-screen bg-[#020617] text-white flex flex-col items-center justify-center p-6 font-outfit">
                 <div className="w-20 h-20 bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(244,63,94,0.1)]">
@@ -25,12 +28,14 @@ export default async function IntelDossierPage({ params }: { params: { slug: str
                 <div className="mt-12 p-8 border border-white/5 bg-white/5 backdrop-blur-sm max-w-sm text-center">
                    <p className="text-xs font-bold text-white uppercase mb-4 tracking-tighter italic">&quot;No caos da web, nós somos a ordem!&quot;</p>
                    <p className="text-[10px] text-slate-500 mb-8 font-mono tracking-widest">Contate o comando SiteProx para reativar este dossiê ou solicitar uma nova análise.</p>
-                   <Link 
-                        href="/" 
-                        className="inline-block px-10 py-4 bg-primary text-black font-black uppercase italic text-xs tracking-[0.2em] hover:bg-white transition-all"
+                   <a 
+                        href={whatsappLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block px-10 py-4 bg-[#25D366] text-black font-black uppercase italic text-xs tracking-[0.2em] hover:bg-white transition-all shadow-[0_0_20px_rgba(37,211,102,0.3)]"
                    >
-                        VOLTAR_ AO_SITE_PRINCIPAL
-                   </Link>
+                        FALAR_COM_COMANDO_ZAP
+                   </a>
                 </div>
             </div>
         );

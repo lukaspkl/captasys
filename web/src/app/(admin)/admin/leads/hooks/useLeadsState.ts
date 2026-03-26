@@ -120,6 +120,7 @@ export const useLeadsState = () => {
 
   const [templateConfig, setTemplateConfig] = useState<TemplateConfig>({
     sellerName: "Hacker",
+    sellerWhatsapp: "5531982188309", // Número oficial do Lukas
     basePrice: "R$ 149,00",
     installments: "3",
     installmentValue: "R$ 49,66",
@@ -775,7 +776,10 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
         lead_id: undefined, 
         title: selectedLeadDetails.title || "Empresa Sem Nome",
         type,
-        data: dossierData,
+        data: { 
+          ...dossierData,
+          seller_whatsapp: templateConfig.sellerWhatsapp 
+        },
         leadData: { 
           ...selectedLeadDetails, 
           niche: nicho, 

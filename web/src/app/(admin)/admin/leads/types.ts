@@ -79,6 +79,7 @@ export interface ProjectSettings {
 // ─── TEMPLATE CONFIG ────────────────────────────────────────────────────────
 export interface TemplateConfig {
   sellerName: string;
+  sellerWhatsapp: string;
   basePrice: string;
   installments: string;
   installmentValue: string;
