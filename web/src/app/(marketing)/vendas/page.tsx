@@ -63,7 +63,7 @@ const WhatsAppButton = () => (
       >
         <MessageCircle className="w-7 h-7 md:w-10 md:h-10 text-white fill-current" />
         <div className="absolute right-24 top-1/2 -translate-y-1/2 bg-black/90 backdrop-blur-3xl border border-emerald-500/50 px-6 py-4 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl">
-           <p className="text-white text-xs font-black uppercase tracking-widest italic">Falar_com_especialista_agora</p>
+           <p className="text-white text-xs font-black uppercase tracking-widest italic">Falar com especialista agora</p>
            <p className="text-[#25D366] text-[9px] font-bold uppercase mt-1 tracking-widest animate-pulse">● Resposta em minutos</p>
         </div>
       </motion.a>
@@ -125,7 +125,7 @@ const PlanCard = ({ plan }: { plan: Plan }) => (
       href={`https://wa.me/5531982188309?text=Olá!%20Gostaria%20de%20assinar%20o%20${encodeURIComponent(plan.name)}.`}
       target="_blank"
       className={`mt-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all text-center block ${plan.featured ? 'bg-black text-white hover:bg-emerald-600 shadow-xl' : 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-xl'}`}>
-       Quero_Meu_Site_Agora
+       Quero Meu Site Agora
     </a>
   </motion.div>
 );
