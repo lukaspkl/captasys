@@ -23,6 +23,7 @@ import LeadDetailsModal from "./components/modals/LeadDetailsModal";
 import ProjectSettingsModal from "./components/modals/ProjectSettingsModal";
 import TacticalModal from "./components/modals/TacticalModal";
 import RenewalModal from "./components/modals/RenewalModal";
+import ShareLinkModal from "./components/modals/ShareLinkModal";
 
 // VIEWS
 import DashboardHeader from "./components/views/DashboardHeader";
@@ -66,6 +67,9 @@ export default function DashboardPage() {
     minReviewsCount,
     setMinReviewsCount,
     numResults,
+    isShareModalOpen,
+    setIsShareModalOpen,
+    generatedShareLink,
     setNumResults,
     mapsLink,
     setMapsLink,
@@ -482,6 +486,11 @@ export default function DashboardPage() {
         lead={selectedLeadDetails}
         onPrint={() => window.print()}
         onShare={generateShareLink}
+      />
+      <ShareLinkModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        link={generatedShareLink}
       />
     </>
   );

@@ -125,6 +125,7 @@ export async function createIntelDossier(payload: {
     title: string;
     type: 'audit' | 'tactical' | 'renewal';
     data: Record<string, unknown>;
+    leadData?: any; // Dados completos para auto-save se não existir
 }) {
     const supabase = await createClient();
     
@@ -140,26 +141,52 @@ export async function createIntelDossier(payload: {
     const id = crypto.randomUUID().split("-")[0];
     const slug = `${baseSlug}-${payload.type}-${id}`;
 
-    // Tentar encontrar o ID do lead na tabela se não foi passado
+    // Tentar encontrar o ID do lead na tabela
     let leadId = payload.lead_id;
-    if (!leadId) {
-        const { data: leadData } = await supabase
+    
+    const { data: leadFound } = await supabase
+        .from('prospecting_leads')
+        .select('id')
+        .eq('title', payload.title)
+        .limit(1)
+        .single();
+    
+    if (leadFound) {
+        leadId = leadFound.id;
+    } else if (payload.leadData) {
+        // Se não encontrou e temos os dados, fazemos o auto-save
+        const { data: newLead, error: saveError } = await supabase
             .from('prospecting_leads')
-            .select('id')
-            .eq('title', payload.title)
-            .limit(1)
+            .insert([{
+                title: payload.leadData.title,
+                address: payload.leadData.address || payload.leadData.addressBase,
+                phone: payload.leadData.phone,
+                website: payload.leadData.url,
+                maps_url: payload.leadData.mapsUrl,
+                rating: payload.leadData.rating,
+                review_count: payload.leadData.reviewCount || payload.leadData.reviews,
+                category: payload.leadData.category || payload.leadData.classificationMotivity,
+                niche: payload.leadData.niche || 'EXTRAÇÃO',
+                city: payload.leadData.city || 'LOCAL',
+                score: payload.leadData.score || 0,
+                temperature: payload.leadData.temperature || 'Morno',
+                classification_motivity: payload.leadData.classificationMotivity
+            }])
+            .select()
             .single();
         
-        if (leadData) leadId = leadData.id;
+        if (saveError) {
+            console.error('[AUTO_SAVE_LEAD_ERROR]', saveError);
+            return { error: `Erro ao salvar lead: ${saveError.message}` };
+        }
+        leadId = newLead.id;
     }
 
     if (!leadId) {
-        // Se ainda não tem ID, precisamos criar o lead no vault primeiro ou falhar elegantemente
-        // Por enquanto, vamos assumir que o lead já foi salvo no cofre antes de gerar o dossiê
-        return { error: "Lead não encontrado no cofre. Salve o lead primeiro." };
+        return { error: "Lead não encontrado. Tente salvar no cofre primeiro ou forneça dados." };
     }
 
-    const { data, error } = await supabase
+    const { data: dossier, error } = await supabase
         .from('intel_dossiers')
         .insert([{
             slug,
@@ -176,7 +203,7 @@ export async function createIntelDossier(payload: {
         return { error: error.message };
     }
 
-    return { success: true, slug: data.slug };
+    return { success: true, slug: dossier.slug };
 }
 
 export async function getIntelBySlug(slug: string) {

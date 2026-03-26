@@ -62,6 +62,8 @@ export const useLeadsState = () => {
   const [minReviewsCount, setMinReviewsCount] = useState<number>(10);
   const [numResults, setNumResults] = useState<number>(20);
   const [mapsLink, setMapsLink] = useState("");
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [generatedShareLink, setGeneratedShareLink] = useState("");
 
   const [isSearching, setIsSearching] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -449,6 +451,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
 
   const generateTacticalDossier = async (lead: Lead) => {
     if (!lead) return;
+    setSelectedLeadDetails(lead);
     setDossierLead(lead);
     setIsDossierModalOpen(true);
     setIsDossierLoading(true);
@@ -503,13 +506,11 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
   };
 
   const generateAuditDossier = (lead: Lead) => {
-    if (!lead) return;
     setSelectedLeadDetails(lead);
     setIsAuditModalOpen(true);
   };
 
   const generateRenewalDossier = (lead: Lead) => {
-    if (!lead) return;
     setSelectedLeadDetails(lead);
     setIsRenewalModalOpen(true);
   };
@@ -771,18 +772,24 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
       setStatusText(`Gerando protocolo ${type.toUpperCase()}...`);
       
       const payload = {
-        lead_id: undefined, // O action vai tentar achar pelo título
+        lead_id: undefined, 
         title: selectedLeadDetails.title || "Empresa Sem Nome",
         type,
-        data: dossierData
+        data: dossierData,
+        leadData: { 
+          ...selectedLeadDetails, 
+          niche: nicho, 
+          city: cidade 
+        } // Envia dados completos para auto-save se necessário
       };
   
       const result = await createIntelDossier(payload);
   
       if (result.success && result.slug) {
         const link = `${window.location.origin}/intel/${result.slug}`;
-        navigator.clipboard.writeText(link);
-        setStatusText("Link Gerado e Copiado!");
+        setGeneratedShareLink(link);
+        setIsShareModalOpen(true);
+        setStatusText("Protocolo Tático Prontificado!");
         setTimeout(() => setStatusText("Dashboard Ativo."), 3000);
         return link;
       } else {
@@ -940,6 +947,8 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     manualInput, setManualInput,
     editingProject, setEditingProject,
     projectSettings, setProjectSettings,
+    isShareModalOpen, setIsShareModalOpen,
+    generatedShareLink, setGeneratedShareLink,
     whatsappPreviewMessage, setWhatsappPreviewMessage,
     isTemplatePreviewOpen, setIsTemplatePreviewOpen,
     isLovableModalOpen, setIsLovableModalOpen,
