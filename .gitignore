@@ -35,6 +35,8 @@ yarn-error.log*
 # Agent logs/backups
 .agent/logs/
 .agent/temp/
+.agent/mcp_config.json
+.agent/mcp_config.json.tmp
 _git_backup/
 .git_backup/
 **/_web_git_backup/
