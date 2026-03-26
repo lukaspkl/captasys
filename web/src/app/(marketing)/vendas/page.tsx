@@ -331,13 +331,13 @@ const SiteProxPage = () => {
                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                                 </div>
-                                <h4 className="text-lg font-black uppercase tracking-widest flex items-center gap-4 mb-6">
-                                   <History className="w-5 h-5 text-emerald-500 animate-spin-slow" />
-                                   AUDITORIA_PERFORMANCE_360º
-                                </h4>
-                                <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest leading-loose">
-                                   Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas. 
-                                </p>
+                                 <h4 className="text-sm font-black uppercase tracking-widest flex items-center gap-3 mb-4">
+                                    <History className="w-4 h-4 text-emerald-500 animate-spin-slow" />
+                                    AUDITORIA PERFORMANCE 360º
+                                 </h4>
+                                 <p className="text-[11px] md:text-xs text-slate-400 leading-relaxed font-medium">
+                                    Uma varredura completa no seu ecossistema digital. Identificamos gargalos de carregamento, falhas de segurança e buracos no seu funil de vendas para garantir performance absoluta.
+                                 </p>
                              </div>
                              <div className="pt-10 mt-10 border-t border-white/5 space-y-5">
                                 <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
