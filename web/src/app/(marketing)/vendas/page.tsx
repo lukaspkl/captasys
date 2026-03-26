@@ -94,7 +94,7 @@ interface Plan {
 const PlanCard = ({ plan }: { plan: Plan }) => (
   <motion.div 
     whileHover={{ y: -10 }}
-    className={`relative p-10 rounded-[2.5rem] border backdrop-blur-3xl transition-all duration-700 flex flex-col justify-between group ${plan.featured ? 'bg-white text-black border-white shadow-[0_0_80px_rgba(236,72,153,0.1)] scale-105 z-20' : 'bg-black/40 border-white/10 text-white'}`}
+    className={`relative p-10 rounded-[2.5rem] border backdrop-blur-3xl transition-all duration-700 flex flex-col justify-between group h-full ${plan.featured ? 'bg-white text-black border-white shadow-[0_0_80px_rgba(236,72,100,0.2)] z-20' : 'bg-black/40 border-white/10 text-white'}`}
   >
     <div className="relative space-y-8">
        <div className="flex justify-between items-start">
@@ -124,7 +124,7 @@ const PlanCard = ({ plan }: { plan: Plan }) => (
     <a 
       href={`https://wa.me/5531982188309?text=Olá!%20Gostaria%20de%20assinar%20o%20${encodeURIComponent(plan.name)}.`}
       target="_blank"
-      className={`mt-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all text-center block ${plan.featured ? 'bg-black text-white hover:bg-emerald-600' : 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-xl'}`}>
+      className={`mt-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all text-center block ${plan.featured ? 'bg-black text-white hover:bg-emerald-600 shadow-xl' : 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-xl'}`}>
        Quero_Meu_Site_Agora
     </a>
   </motion.div>
@@ -483,7 +483,7 @@ const SiteProxPage = () => {
       <section className="py-40 z-10 relative">
         <div className="container mx-auto px-6 text-center space-y-32">
            <h2 className={`text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-none ${sora.className}`}>Escolha Sua <span className="text-[#ec4899]">Arma.</span></h2>
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto items-stretch">
              {plansData.map((plan, idx) => ( <PlanCard key={idx} plan={plan} /> ))}
            </div>
         </div>
