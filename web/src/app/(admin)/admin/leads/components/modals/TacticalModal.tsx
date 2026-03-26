@@ -75,7 +75,7 @@ const TacticalModal: React.FC<TacticalModalProps> = ({
   const highlightPhrase = "O MERCADO DIGITAL NA SUA REGIÃO ESTÁ SENDO DOMINADO POR CONCORRENTES QUE JÁ UTILIZAM ESTRATÉGIAS DE CAPTURA GEOGRÁFICA.";
 
   return (
-    <div className="fixed inset-0 z-[200] overflow-y-auto bg-[#020617] print:bg-white">
+    <div className="fixed inset-0 z-200 overflow-y-auto bg-[#020617] print:bg-white">
       <div className="fixed top-6 right-6 z-[100] flex items-center gap-3 no-print">
         <button 
           onClick={() => onShare('tactical', { 

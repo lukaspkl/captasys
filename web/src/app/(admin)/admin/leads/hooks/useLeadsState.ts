@@ -166,6 +166,8 @@ export const useLeadsState = () => {
         if (params.cidadeId) setCidadeId(params.cidadeId);
         if (params.bairro) setBairro(params.bairro);
         if (params.searchMode) setSearchMode(params.searchMode);
+        if (params.mapsLink) setMapsLink(params.mapsLink);
+        if (params.customBairro) setCustomBairro(params.customBairro);
       } catch { }
     }
   }, []);
@@ -177,9 +179,9 @@ export const useLeadsState = () => {
 
   useEffect(() => {
     localStorage.setItem("capta_search_params_v4", JSON.stringify({
-      nicho, estado, cidade, cidadeId, bairro, searchMode, mapsLink
+      nicho, estado, cidade, cidadeId, bairro, searchMode, mapsLink, customBairro
     }));
-  }, [nicho, estado, cidade, cidadeId, bairro, searchMode, mapsLink]);
+  }, [nicho, estado, cidade, cidadeId, bairro, searchMode, mapsLink, customBairro]);
 
   useEffect(() => {
     localStorage.setItem("capta_vault_v4", JSON.stringify(vaultLeads));
@@ -726,7 +728,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
       });
     }, [sortedLeads, filterMode]);
   
-    const generateShareLink = async (type: 'audit' | 'tactical' | 'renewal', dossierData: any) => {
+    const generateShareLink = async (type: 'audit' | 'tactical' | 'renewal', dossierData: Record<string, unknown>) => {
       if (!selectedLeadDetails) {
         setStatusText("Selecione um lead primeiro.");
         return null;

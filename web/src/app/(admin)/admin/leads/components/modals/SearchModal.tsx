@@ -90,7 +90,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                 EXTRAÇÃO DIRETA (Link do Google Maps / Link Curto)
               </label>
               <Input
-                value={mapsLink}
+                value={mapsLink || ""}
                 onChange={(e) => setMapsLink(e.target.value)}
                 placeholder="https://maps.app.goo.gl/..."
                 className="bg-pink-500/5 border border-pink-500/20 rounded-none h-12 text-xs font-bold text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all font-mono placeholder:text-pink-500/20"
@@ -216,7 +216,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                   Digite o Nome do Bairro
                 </label>
                 <Input
-                  value={customBairro}
+                  value={customBairro || ""}
                   onChange={(e) => setCustomBairro(e.target.value)}
                   placeholder="EX: SAVASSI, CENTRO, ALPHAVILLE..."
                   className="bg-black/40 border border-pink-500/40 rounded-none h-12 text-xs font-bold text-white uppercase focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all font-mono placeholder:text-pink-900/50"
@@ -230,7 +230,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                   Modo de Varredura
                 </label>
                 <select
-                  value={searchMode}
+                  value={searchMode || "web"}
                   onChange={(e) => setSearchMode(e.target.value as "web" | "maps")}
                   className="w-full bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                 >
@@ -248,7 +248,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                 </label>
                 <Input
                   type="number"
-                  value={minReviewsCount}
+                  value={minReviewsCount ?? 10}
                   onChange={(e) => setMinReviewsCount(Number(e.target.value))}
                   className="bg-black/40 border border-cyan-500/20 rounded-none h-12 text-xs font-bold text-white uppercase focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                   placeholder="10"
@@ -260,7 +260,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
                 </label>
                 <Input
                   type="number"
-                  value={numResults}
+                  value={numResults ?? 20}
                   onChange={(e) =>
                     setNumResults(Math.min(100, Math.max(1, Number(e.target.value))))
                   }
