@@ -67,6 +67,8 @@ export default function DashboardPage() {
     setMinReviewsCount,
     numResults,
     setNumResults,
+    mapsLink,
+    setMapsLink,
     isDetailsModalOpen,
     setIsDetailsModalOpen,
     selectedLeadDetails,

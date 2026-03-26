@@ -864,6 +864,7 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     searchMode, setSearchMode,
     minReviewsCount, setMinReviewsCount,
     numResults, setNumResults,
+    mapsLink, setMapsLink,
     isSearching, setIsSearching,
     progress, setProgress,
     statusText, setStatusText,
