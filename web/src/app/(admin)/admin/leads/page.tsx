@@ -156,6 +156,7 @@ export default function DashboardPage() {
     recoverLead,
     clearQuarantine,
     savePreview,
+    generateShareLink,
   } = useLeadsState();
 
   return (
@@ -394,6 +395,7 @@ export default function DashboardPage() {
         competitorsList={competitorsList}
         niche={nicho}
         onPrint={() => window.print()}
+        onShare={generateShareLink}
       />
 
       <SearchModal
@@ -467,6 +469,7 @@ export default function DashboardPage() {
         fluxoMensal={fluxoMensal}
         conversaoAtual={auditConversion}
         onPrint={() => window.print()}
+        onShare={generateShareLink}
       />
 
       <RenewalModal
@@ -474,6 +477,7 @@ export default function DashboardPage() {
         onClose={() => setIsRenewalModalOpen(false)}
         lead={selectedLeadDetails}
         onPrint={() => window.print()}
+        onShare={generateShareLink}
       />
     </>
   );

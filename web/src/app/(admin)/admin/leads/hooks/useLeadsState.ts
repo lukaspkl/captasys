@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { updateProjectStatus } from "@/app/actions/nodes";
 import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
+import { createIntelDossier } from "@/app/actions/prospecting";
 import type { Lead, StitchConfig, ProjectSettings, TemplateConfig, ActiveProject, MarketingTemplate, LeadAnalysis, View } from "../types";
 import { NICHE_CONFIG } from "../types";
 
@@ -681,18 +682,47 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     setIsTemplatePreviewOpen(true);
   };
 
-  const sortedLeads = useMemo(() => {
-    return [...leads].sort((a, b) => (b.score || 0) - (a.score || 0));
-  }, [leads]);
-
-  const filteredLeads = useMemo(() => {
-    return sortedLeads.filter((lead) => {
-      if (filterMode === "no-site") return !lead.url || lead.url.includes("google.com");
-      return true;
-    });
-  }, [sortedLeads, filterMode]);
-
-  // --- IBGE API (Cidades e Bairros) ---
+    const sortedLeads = useMemo(() => {
+      return [...leads].sort((a, b) => (b.score || 0) - (a.score || 0));
+    }, [leads]);
+  
+    const filteredLeads = useMemo(() => {
+      return sortedLeads.filter((lead) => {
+        if (filterMode === "no-site") return !lead.url || lead.url.includes("google.com");
+        return true;
+      });
+    }, [sortedLeads, filterMode]);
+  
+    const generateShareLink = async (type: 'audit' | 'tactical' | 'renewal', dossierData: any) => {
+      if (!selectedLeadDetails) {
+        setStatusText("Selecione um lead primeiro.");
+        return null;
+      }
+  
+      setStatusText(`Gerando protocolo ${type.toUpperCase()}...`);
+      
+      const payload = {
+        lead_id: undefined, // O action vai tentar achar pelo título
+        title: selectedLeadDetails.title || "Empresa Sem Nome",
+        type,
+        data: dossierData
+      };
+  
+      const result = await createIntelDossier(payload);
+  
+      if (result.success && result.slug) {
+        const link = `${window.location.origin}/intel/${result.slug}`;
+        navigator.clipboard.writeText(link);
+        setStatusText("Link Gerado e Copiado!");
+        setTimeout(() => setStatusText("Dashboard Ativo."), 3000);
+        return link;
+      } else {
+        setStatusText(`Erro: ${result.error}`);
+        return null;
+      }
+    };
+  
+    // --- IBGE API (Cidades e Bairros) ---
   useEffect(() => {
     let active = true;
     if (!estado || estado.length !== 2) {
@@ -887,5 +917,6 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
     deleteActiveProject,
     savePreview,
     generateBundle,
+    generateShareLink,
   };
 };

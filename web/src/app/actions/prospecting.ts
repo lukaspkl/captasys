@@ -119,3 +119,80 @@ export async function getAllLeadsFromVault() {
         analysisStatus: "FROM_VAULT"
     }));
 }
+
+export async function createIntelDossier(payload: {
+    lead_id?: string;
+    title: string;
+    type: 'audit' | 'tactical' | 'renewal';
+    data: Record<string, unknown>;
+}) {
+    const supabase = await createClient();
+    
+    // Normalizar slug: nome-da-empresa-tipo-random
+    const baseSlug = payload.title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    const id = crypto.randomUUID().split("-")[0];
+    const slug = `${baseSlug}-${payload.type}-${id}`;
+
+    // Tentar encontrar o ID do lead na tabela se não foi passado
+    let leadId = payload.lead_id;
+    if (!leadId) {
+        const { data: leadData } = await supabase
+            .from('prospecting_leads')
+            .select('id')
+            .eq('title', payload.title)
+            .limit(1)
+            .single();
+        
+        if (leadData) leadId = leadData.id;
+    }
+
+    if (!leadId) {
+        // Se ainda não tem ID, precisamos criar o lead no vault primeiro ou falhar elegantemente
+        // Por enquanto, vamos assumir que o lead já foi salvo no cofre antes de gerar o dossiê
+        return { error: "Lead não encontrado no cofre. Salve o lead primeiro." };
+    }
+
+    const { data, error } = await supabase
+        .from('intel_dossiers')
+        .insert([{
+            slug,
+            lead_id: leadId,
+            type: payload.type,
+            data: payload.data,
+            expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
+        }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('[CREATE_INTEL_ERROR]', error);
+        return { error: error.message };
+    }
+
+    return { success: true, slug: data.slug };
+}
+
+export async function getIntelBySlug(slug: string) {
+    const supabase = await createClient();
+    
+    const { data, error } = await supabase
+        .from('intel_dossiers')
+        .select('*, prospecting_leads(*)')
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+    if (error) {
+        return { error: "Dossiê não encontrado ou expirado." };
+    }
+
+    return { success: true, dossier: data };
+}
