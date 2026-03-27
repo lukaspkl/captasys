@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShieldCheck, 
   Activity, 
@@ -47,10 +46,16 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  // Cálculos de Impacto (Lógica V7)
-  const faturamentoAtual = (fluxoMensal * (conversaoAtual / 100)) * ticketMedio;
-  const conversaoAlvo = 12.5; // Meta SiteProx V7
+  // Garantindo que a conversão seja tratada como número e evite 0 se necessário
+  const ConversaoSanitized = Number(conversaoAtual) || 0.01;
+
+  // Cálculos de Impacto (Lógica V7.1 - Dinâmica)
+  const faturamentoAtual = (fluxoMensal * (ConversaoSanitized / 100)) * ticketMedio;
+  
+  // Se a conversão atual já for alta (ex: > 10%), a meta deve ser proporcionalmente maior para mostrar ROI
+  const conversaoAlvo = ConversaoSanitized >= 10 ? Number((ConversaoSanitized * 1.5).toFixed(1)) : 12.5;
   const faturamentoAlvo = (fluxoMensal * (conversaoAlvo / 100)) * ticketMedio;
+  
   const lucroPerdido = Math.max(0, faturamentoAlvo - faturamentoAtual);
   const perdaAnual = lucroPerdido * 12;
 
@@ -208,10 +213,11 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                       <span className="text-xs font-normal text-slate-500 uppercase mb-2">/mês</span>
                     </div>
                     <div className="h-2 w-full bg-white/5 relative overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${Math.min(100, (conversaoAtual/conversaoAlvo)*100)}%` }}
-                        transition={{ duration: 1.5, ease: "circOut" }}
+                      <div 
+                        style={{ 
+                          width: `${Math.min(100, (conversaoAtual/conversaoAlvo)*100)}%`,
+                          transition: 'width 1.5s cubic-bezier(0.19, 1, 0.22, 1)'
+                        }}
                         className="h-full bg-rose-500 shadow-[0_0_15px_#f43f5e]" 
                       />
                     </div>
@@ -227,10 +233,11 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                       <span className="text-[10px] md:text-xs font-normal text-slate-500 uppercase mb-2">/mês</span>
                     </div>
                     <div className="h-2 w-full bg-white/5 relative overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        whileInView={{ width: '100%' }}
-                        transition={{ duration: 1.5, ease: "circOut", delay: 0.3 }}
+                      <div 
+                        style={{ 
+                          width: '100%',
+                          transition: 'width 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.3s'
+                        }}
                         className="h-full bg-secondary shadow-[0_0_20px_#00f3ff]" 
                       />
                     </div>
