@@ -96,6 +96,15 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
           text-shadow: 2px 0 0 rgba(255, 0, 0, 0.3), -2px 0 0 rgba(0, 0, 255, 0.3);
         }
 
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+
         @media print {
           .no-print { display: none !important; }
           body { background: white; color: black; }
@@ -280,8 +289,11 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                   <h2 className="text-3xl md:text-8xl font-headline font-black mb-8 md:mb-16 italic uppercase leading-tight md:leading-none text-white chromatic-aberration">
                      RENOVAR MEU <br/><span className="text-primary neon-glow-pink">PODER DIGITAL</span>
                   </h2>
-                  <button className="inline-flex items-center gap-4 md:gap-8 px-8 md:px-16 py-6 md:py-10 bg-white text-black font-headline text-xl md:text-3xl font-black uppercase italic tracking-tighter hover:scale-105 md:hover:scale-110 transition-all shadow-[0_0_80px_rgba(255,255,255,0.2)] active:scale-95 w-full md:w-auto justify-center">
-                     MODERNIZAR AGORA
+                  <button className="group relative inline-flex items-center gap-4 md:gap-8 px-8 md:px-20 py-8 md:py-12 bg-primary text-white font-headline text-2xl md:text-5xl font-black uppercase italic tracking-tighter transition-all duration-500 hover:bg-white hover:text-black shadow-[0_0_60px_rgba(255,0,255,0.4)] hover:shadow-[0_0_100px_rgba(0,243,255,0.5)] active:scale-95 w-full md:w-auto justify-center overflow-hidden">
+                    <span className="relative z-10 flex items-center gap-4">
+                      MODERNIZAR AGORA <Zap className="w-8 h-8 md:w-12 md:h-12 fill-current animate-pulse" />
+                    </span>
+                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
                   </button>
                  <p className="font-mono text-[9px] text-slate-600 uppercase tracking-[0.8em] pt-12">
                    SiteProx Networks // No caos da web, nós somos a ordem!
