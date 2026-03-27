@@ -217,7 +217,7 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
               <h2 className="text-4xl md:text-7xl font-headline font-black text-white italic uppercase tracking-tighter leading-none">Escolha Sua <span className="text-primary">Arma.</span></h2>
               <div className="w-24 h-2 bg-primary mb-4"></div>
               <p className="font-mono text-xs md:text-sm text-slate-400 uppercase tracking-widest leading-relaxed font-bold px-6">
-                <span className="text-secondary"># Protocolo de Fidelidade Ativo:</span> Este desconto de 30% é um benefício exclusivo para manter sua operação digital <span className="text-white">Segura, Rápida, Viva e Moderna.</span> Estamos comprometidos com a evolução contínua da sua autoridade no mercado.
+                <span className="text-secondary"># Protocolo de Fidelidade Ativo:</span> Este desconto de 30% é um benefício exclusivo válido pelos <span className="text-white">primeiros 3 meses</span> para manter sua operação digital Segura, Rápida, Viva e Moderna.
               </p>
             </div>
            
@@ -232,6 +232,7 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                      <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>70<span className="text-sm font-normal text-slate-500">/mês</span>
                      <span className="bg-secondary/20 text-secondary text-xs px-3 py-1 font-black animate-pulse rounded-full border border-secondary/30">30% OFF</span>
                    </div>
+                   <div className="text-[8px] font-mono text-secondary uppercase tracking-[0.2em] mt-1 font-black underline decoration-white/20 underline-offset-2">* VÁLIDO PELA TRIMESTRALIDADE INICIAL</div>
                  </div>
                  <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-400">
                    <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Landing Page (One-Page V7)</li>
@@ -256,6 +257,7 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                      <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>105<span className="text-sm font-normal text-slate-500">/mês</span>
                      <span className="bg-primary/20 text-primary text-xs px-3 py-1 font-black animate-pulse rounded-full border border-primary/30">30% OFF</span>
                    </div>
+                   <div className="text-[8px] font-mono text-primary uppercase tracking-[0.2em] mt-1 font-black underline decoration-white/20 underline-offset-2">* VÁLIDO PELA TRIMESTRALIDADE INICIAL</div>
                  </div>
                  <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
                    <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> Multi-Page (Autoridade Total)</li>

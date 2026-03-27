@@ -39,6 +39,14 @@
 
 ---
 
+## 💎 Benefício Fidelidade (Retenção)
+Para clientes em fase de renovação ou migração estratégica, aplicamos o **Protocolo de Fidelidade**:
+- **Desconto**: 30% OFF em qualquer plano.
+- **Duração**: Válido por um ciclo de **3 meses** (Trimestralidade Inicial).
+- **Objetivo**: Garantir que o cliente veja o ROI real do novo ecossistema antes da normalização da mensalidade.
+
+---
+
 ## 📈 Próximas Melas (Waitlist):
 - [ ] Dash de Leads integrado no Painel SiteProx.
 - [ ] Automação de E-mail Marketing simplificada para a base de clientes do autoridade.
