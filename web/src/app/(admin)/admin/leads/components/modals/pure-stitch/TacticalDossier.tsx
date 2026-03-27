@@ -23,6 +23,7 @@ interface TacticalDossierProps {
   nicho?: string;
   onPrint?: () => void;
   highlightPhrase?: string;
+  slug?: string;
 }
 
 const TacticalDossier: React.FC<TacticalDossierProps> = ({ 
@@ -30,7 +31,8 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
   competitors = [], 
   nicho = 'Geral', 
   onPrint,
-  highlightPhrase
+  highlightPhrase,
+  slug
 }) => {
   const [currentTime, setCurrentTime] = useState('');
 
@@ -112,29 +114,23 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
       <div className="fixed top-0 left-0 w-full h-1 bg-linear-to-r from-primary via-secondary to-primary z-100 animate-pulse"></div>
       
       <nav className="border-b border-white/5 px-6 py-4 flex justify-between items-center bg-black/40 backdrop-blur-md sticky top-1 z-50">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 md:gap-6">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <Rocket className="w-5 h-5 text-white fill-current" />
-              <span className="text-white font-black italic tracking-tighter text-xl leading-none">SITEPROX</span>
+              <Rocket className="w-4 h-4 md:w-5 md:h-5 text-white fill-current" />
+              <span className="text-white font-black italic tracking-tighter text-lg md:text-xl leading-none">SITEPROX</span>
             </div>
-            <span className="text-[8px] font-mono text-secondary tracking-[0.3em] uppercase">No caos da web, nós somos a ordem!</span>
+            <span className="text-[7px] md:text-[8px] font-mono text-secondary tracking-[0.2em] md:tracking-[0.3em] uppercase">No caos da web, nós somos a ordem!</span>
           </div>
           <div className="hidden md:flex items-center gap-4 pl-6 border-l border-white/10 font-mono text-[9px] uppercase tracking-widest text-slate-500">
-            <span className="text-secondary">RADAR_ACTIVE</span>
-            <span>INTEL_STREAM_V7</span>
+            <span className="text-secondary">Radar Ativo</span>
+            <span>Intel Stream V7</span>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="font-mono text-[9px] text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 border border-white/5">
+        <div className="flex items-center">
+          <div className="font-mono text-[9px] md:text-[11px] text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 md:px-4 md:py-2 border border-white/5">
             {currentTime}
           </div>
-          <button 
-            onClick={onPrint}
-            className="px-6 py-2 bg-primary text-white font-headline text-[10px] font-black uppercase italic tracking-widest hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(255,0,255,0.3)] no-print"
-          >
-            Exportar_Inteligência
-          </button>
         </div>
       </nav>
 
@@ -144,26 +140,29 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[150px] -z-10"></div>
 
         {/* Hero Section */}
-        <header className="relative py-20 overflow-hidden">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-12">
-            <div className="space-y-6 relative z-10">
+        <header className="relative py-12 md:py-20 overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-12 text-center md:text-left">
+            <div className="space-y-6 relative z-10 w-full flex flex-col items-center md:items-start">
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-none mb-4">
                 <Radar className="w-4 h-4 text-secondary animate-pulse" />
-                <span className="font-mono text-[10px] text-secondary font-black uppercase tracking-[0.4em]">Sector_Scan_Complete</span>
+                <span className="font-mono text-[10px] text-secondary font-black uppercase tracking-[0.4em]">Sector Scan Complete</span>
               </div>
-              <h1 className="text-6xl md:text-8xl font-headline font-black italic text-white leading-[0.9] uppercase tracking-tighter chromatic-aberration">
+              <h1 className="text-4xl xs:text-5xl md:text-8xl font-headline font-black italic text-white leading-[0.9] uppercase tracking-tighter chromatic-aberration">
                 Dossiê <br/>
                 <span className="text-secondary neon-glow-cyan underline decoration-white/10 underline-offset-8">Tático de Competição</span>
               </h1>
-              <div className="max-w-xl h-0.5 bg-linear-to-r from-secondary to-transparent"></div>
+              <div className="w-full max-w-xl h-0.5 bg-linear-to-r from-transparent via-secondary md:from-secondary md:via-secondary to-transparent"></div>
             </div>
             
-            <div className="glass p-8 border-l-4 border-l-primary space-y-4 min-w-[320px]">
-              <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold">Identificação_Alvo</div>
-              <div className="text-4xl font-headline font-black text-white italic uppercase tracking-tighter">
+            <div className="glass p-6 md:p-8 border-l-4 border-l-primary space-y-4 min-w-full md:min-w-[320px] w-full md:w-auto text-left">
+              <div className="text-[9px] md:text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold flex justify-between items-center gap-4">
+                <span>Identificação do Alvo</span>
+                {slug && <span className="opacity-30 text-[7px] md:text-[8px] tracking-normal font-normal">ID: {slug}</span>}
+              </div>
+              <div className="text-3xl md:text-4xl font-headline font-black text-white italic uppercase tracking-tighter">
                 {lead?.title || 'OBJETIVO_DESCONHECIDO'}
               </div>
-              <div className="flex items-center gap-3 font-mono text-[9px] text-primary uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-3 font-mono text-[8px] md:text-[9px] text-primary uppercase tracking-[0.2em]">
                 <ShieldCheck className="w-3 h-3" />
                 Nicho: {nicho}
               </div>
@@ -192,8 +191,8 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
           </div>
 
           <div className="space-y-10">
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-6xl font-headline font-black text-white leading-[0.9] uppercase italic tracking-tighter">
+            <div className="space-y-4 text-center md:text-left">
+              <h2 className="text-3xl xs:text-4xl md:text-6xl font-headline font-black text-white leading-[0.9] uppercase italic tracking-tighter">
                 A Decisão do Cliente <br/>
                 <span className="text-primary neon-glow-pink">Começa no Google</span>
               </h2>
@@ -223,7 +222,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
             <h3 className="font-headline text-2xl md:text-4xl font-black italic uppercase text-white mb-4 leading-tight">
               &quot;{highlightPhrase}&quot;
             </h3>
-            <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em] font-black">Tactical_Assessment_Summary</p>
+            <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em] font-black">Resumo da Avaliação Tática</p>
           </section>
         )}
 
@@ -232,7 +231,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
           <div className="lg:col-span-8 space-y-8">
             <div className="glass p-10 relative overflow-hidden scanline-effect min-h-[500px]">
               <h3 className="font-headline text-sm font-black text-secondary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
-                <Target className="w-5 h-5" /> VARREDURA_SETORIAL_ATIVIVA
+                <Target className="w-5 h-5" /> Varredura Setorial Ativa
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
@@ -255,7 +254,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
 
                     <div className="space-y-2">
                        <div className="flex justify-between font-mono text-[9px] text-slate-500 uppercase">
-                          <span>Autoridade_Digital</span>
+                          <span>Autoridade Digital</span>
                           <span className="text-secondary font-bold">{(Math.min(100, Number(comp.reviewCount || 0) * 0.5 + Number(comp.rating || 0) * 10)).toFixed(0)}%</span>
                        </div>
                        <div className="h-1 w-full bg-white/5 relative overflow-hidden">
@@ -276,13 +275,13 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                 {/* Target Company (Loading/Intervention) card to fill the slot */}
                 <div className="bg-primary/5 border border-primary/40 p-6 space-y-4 relative overflow-hidden group shadow-[inset_0_0_20px_rgba(255,0,255,0.1)] flex flex-col justify-between">
                   <div className="absolute top-0 right-0 px-2 py-1 bg-primary text-white font-mono text-[7px] uppercase tracking-widest z-20 font-black italic">
-                    TARGET_ANALYSIS_REQUIRED
+                    Análise do Alvo Requerida
                   </div>
                   <div className="absolute inset-0 bg-linear-to-tr from-primary/5 to-transparent pointer-events-none"></div>
                   
                   <div className="space-y-4 relative z-10">
                     <div className="flex justify-between items-start">
-                      <h4 className="font-headline font-bold text-lg text-white uppercase tracking-tighter truncate pr-4">{lead?.title || 'ALVO_PRIMÁRIO'}</h4>
+                      <h4 className="font-headline font-bold text-lg text-white uppercase tracking-tighter truncate pr-4">{lead?.title || 'Alvo Primário'}</h4>
                       <Target className="w-4 h-4 text-primary animate-pulse" />
                     </div>
                     
@@ -292,7 +291,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
 
                     <div className="space-y-2">
                        <div className="flex justify-between font-mono text-[9px] text-slate-500 uppercase font-bold">
-                          <span>Autoridade_Digital</span>
+                          <span>Autoridade Digital</span>
                           <span className="text-primary animate-pulse font-black">DETECTANDO...</span>
                        </div>
                        <div className="h-1 w-full bg-white/5 relative overflow-hidden">
@@ -302,7 +301,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                   </div>
                   
                   <div className="pt-4 border-t border-primary/10 flex items-center gap-2 text-[8px] font-mono text-rose-500 uppercase tracking-widest font-black animate-pulse relative z-10">
-                    <Zap className="w-3 h-3" /> INTERVENÇÃO_IMEDIATA_V7
+                    <Zap className="w-3 h-3" /> Intervenção Imediata V7
                   </div>
                 </div>
               </div>
@@ -324,7 +323,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                </div>
                
                <div className="pt-10 border-t border-white/5 space-y-4">
-                 <span className="text-[10px] font-mono text-primary uppercase tracking-widest font-black">Risco_Comercial</span>
+                 <span className="text-[10px] font-mono text-primary uppercase tracking-widest font-black">Risco Comercial</span>
                  <div className="text-5xl font-headline font-black text-rose-500 italic tracking-tighter animate-pulse">
                    CRÍTICO
                  </div>
@@ -336,8 +335,8 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
         {/* Comparison Pillars */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
            {[
-             { icon: Monitor, title: 'Presença Web', status: 'OBSOLET_v2', color: 'text-primary', desc: 'Arquitetura que falha em converter visitantes em leads qualificados.' },
-             { icon: Smartphone, title: 'Otimização Mobile', status: 'FAILED_SYNC', color: 'text-secondary', desc: 'Interface não responsiva que causa abandono imediato de usuários.' },
+             { icon: Monitor, title: 'Presença Web', status: 'Obsoleto v2', color: 'text-primary', desc: 'Arquitetura que falha em converter visitantes em leads qualificados.' },
+             { icon: Smartphone, title: 'Otimização Mobile', status: 'Sincronização Falha', color: 'text-secondary', desc: 'Interface não responsiva que causa abandono imediato de usuários.' },
              { icon: Zap, title: 'Velocidade Leads', status: 'OFFLINE', color: 'text-accent', desc: 'Tempo de resposta crítico, resultando em perda de oportunidade real.' },
            ].map((pillar, idx) => (
              <div key={idx} className="glass p-8 space-y-6 relative overflow-hidden group">
@@ -350,7 +349,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                  </p>
                </div>
                <div className="flex items-center gap-2 text-[10px] font-black text-rose-500">
-                 REQUER_INTERVENÇÃO <ChevronRight className="w-3 h-3" />
+                 Requer Intervenção <ChevronRight className="w-3 h-3" />
                </div>
              </div>
            ))}
@@ -358,8 +357,9 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
 
         {/* Tactical Plans */}
         <section className="py-20 bg-linear-to-b from-primary/5 to-transparent border-t border-white/5">
-           <div className="text-center mb-16 space-y-4">
+           <div className="text-center mb-16 space-y-4 flex flex-col items-center">
               <h2 className="text-4xl md:text-6xl font-headline font-black text-white italic uppercase tracking-tighter leading-none">Protocolos de Domínio</h2>
+              <div className="w-24 h-2 bg-primary mb-4"></div>
               <p className="font-mono text-xs text-slate-500 uppercase tracking-widest leading-loose">Selecione sua arma estratégica para recuperar o mercado.</p>
            </div>
            
@@ -367,7 +367,7 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
              {/* Plano Presença */}
              <div className="glass p-12 border-white/5 group hover:border-primary/30 transition-all flex flex-col">
                 <div className="font-mono text-[9px] text-slate-500 mb-8 uppercase tracking-widest flex items-center gap-2 font-bold">
-                  STP_PRESENCA_CORE
+                   STP Presença Core
                 </div>
                 <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Plano Presença</h3>
                 <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
@@ -384,18 +384,18 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                     <span className="text-secondary">&gt;</span> Stack Vessel 2025
                   </li>
                 </ul>
-                <button className="w-full py-5 border border-white/10 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                  INITIALIZE_DEP_01
+                 <button className="w-full py-5 border border-white/10 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
+                  Iniciar Protocolo
                 </button>
              </div>
 
              {/* Plano Autoridade */}
              <div className="glass p-12 border-primary/50 bg-primary/5 group relative shadow-[0_0_80px_rgba(255,0,255,0.1)] flex flex-col scale-105 z-10">
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-primary text-white font-black text-[9px] tracking-[0.4em] uppercase shadow-lg shadow-primary/40 animate-pulse">
-                  RECOMENDED_STRATEGY
+                   Estratégia Recomendada
                 </div>
                 <div className="font-mono text-[9px] text-primary mb-8 uppercase tracking-widest flex items-center gap-2 font-black">
-                  STP_AUTORIDADE_OVERRIDE
+                   STP Autoridade Override
                 </div>
                 <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Autoridade</h3>
                 <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
@@ -412,23 +412,23 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                     <span className="text-primary font-bold">#</span> SEO Local Otimizado
                   </li>
                 </ul>
-                <button className="w-full py-5 bg-primary text-white font-mono text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all">
-                  EXECUTE_PROTOCOL
+                 <button className="w-full py-5 bg-primary text-white font-mono text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all">
+                  Executar Protocolo
                 </button>
              </div>
            </div>
         </section>
 
         {/* Final CTA */}
-        <section className="py-24 text-center">
-           <div className="max-w-4xl mx-auto glass p-20 relative overflow-hidden rounded-[2rem] border-white/10 group">
+        <section className="py-12 md:py-24 text-center">
+           <div className="max-w-4xl mx-auto glass p-8 md:p-20 relative overflow-hidden rounded-[2rem] border-white/10 group">
               <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-              <div className="relative z-10 space-y-12">
-                 <p className="font-mono text-secondary text-xs tracking-[0.6em] mb-4">TACTICAL_TRANSMISSION_COMPLETE</p>
-                 <h2 className="text-5xl md:text-8xl font-headline font-black mb-16 italic uppercase leading-none text-white chromatic-aberration">
+              <div className="relative z-10 space-y-8 md:space-y-12">
+                 <p className="font-mono text-secondary text-[8px] md:text-xs tracking-[0.3em] md:tracking-[0.6em] mb-4">TACTICAL_TRANSMISSION_COMPLETE</p>
+                 <h2 className="text-3xl md:text-8xl font-headline font-black mb-8 md:mb-16 italic uppercase leading-tight md:leading-none text-white chromatic-aberration">
                     RECLAMAR MEU <br/><span className="text-secondary neon-glow-cyan">TERRITÓRIO</span>
                  </h2>
-                 <button className="inline-flex items-center gap-8 px-16 py-10 bg-white text-black font-headline text-3xl font-black uppercase italic tracking-tighter hover:scale-110 transition-all shadow-[0_0_80px_rgba(255,255,255,0.2)] active:scale-95">
+                 <button className="inline-flex items-center gap-4 md:gap-8 px-8 md:px-16 py-6 md:py-10 bg-white text-black font-headline text-xl md:text-3xl font-black uppercase italic tracking-tighter hover:scale-105 md:hover:scale-110 transition-all shadow-[0_0_80px_rgba(255,255,255,0.2)] active:scale-95 w-full md:w-auto justify-center">
                     DOMINAR AGORA
                  </button>
                  <p className="font-mono text-[9px] text-slate-600 uppercase tracking-[0.8em] pt-12">
@@ -440,14 +440,14 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
       </main>
 
       <footer className="border-t border-white/5 py-12 px-6 bg-black/50">
-        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-[9px] font-mono font-bold text-slate-600 uppercase tracking-[0.4em]">
-           <div className="flex items-center gap-6">
-              <span className="text-white hover:text-primary transition-colors cursor-crosshair">SITEPROX</span>
-              <span className="hidden md:block">© 2026 SiteProx_Labs // No caos da web, nós somos a ordem.</span>
+        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12 text-[9px] font-mono font-bold text-slate-600 uppercase tracking-[0.4em] text-center md:text-left">
+           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+              <span className="text-white hover:text-primary transition-colors cursor-crosshair text-lg md:text-[9px]">SITEPROX</span>
+              <span className="max-w-[250px] md:max-w-none">© 2026 SiteProx_Labs // No caos da web, nós somos a ordem.</span>
            </div>
-           <div className="flex gap-10">
-              <span className="hover:text-secondary cursor-pointer">[ ENCRYPTION: V7 ]</span>
-              <span className="hover:text-secondary cursor-pointer">[ SECTOR: GEOLOCAL ]</span>
+           <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+              <span className="hover:text-secondary cursor-pointer border border-white/5 md:border-none p-4 md:p-0">[ ENCRYPTION: V7 ]</span>
+              <span className="hover:text-secondary cursor-pointer border border-white/5 md:border-none p-4 md:p-0">[ SECTOR: GEOLOCAL ]</span>
            </div>
         </div>
       </footer>

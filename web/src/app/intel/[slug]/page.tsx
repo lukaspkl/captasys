@@ -1,12 +1,34 @@
-
 import { getIntelBySlug } from "@/app/actions/prospecting";
 import AuditDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/AuditDossier";
 import TacticalDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/TacticalDossier";
 import RenewalDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/RenewalDossier";
 import { ShieldAlert, Rocket, Clock } from "lucide-react";
+import { Metadata } from "next";
 
-export default async function IntelDossierPage({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const result = await getIntelBySlug(slug);
+    
+    if (!result.success || !result.dossier) {
+        return {
+            title: "Acesso Negado | SiteProx Intelligence",
+            robots: "noindex, nofollow"
+        };
+    }
+
+    const businessName = result.dossier.prospecting_leads?.title || "Empresa";
+    const type = result.dossier.type === 'audit' ? 'Auditoria' : 
+                   result.dossier.type === 'tactical' ? 'Dossiê Tático' : 'Renovação';
+
+    return {
+        title: `${type}: ${businessName} | SiteProx Labs`,
+        description: `Análise estratégica de performance digital e posicionamento local para ${businessName}. Protocolo de segurança nível 7 ativo.`,
+        robots: "noindex, nofollow" // Dossiers are private intelligence and expire
+    };
+}
+
+export default async function IntelDossierPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     const result = await getIntelBySlug(slug);
 
     const isExpired = result.dossier && (new Date(result.dossier.expires_at) < new Date() || !result.dossier.is_active);
@@ -34,7 +56,7 @@ export default async function IntelDossierPage({ params }: { params: { slug: str
                         rel="noopener noreferrer"
                         className="inline-block px-10 py-4 bg-[#25D366] text-black font-black uppercase italic text-xs tracking-[0.2em] hover:bg-white transition-all shadow-[0_0_20px_rgba(37,211,102,0.3)]"
                    >
-                        FALAR_COM_COMANDO_ZAP
+                        FALAR COM COMANDO SITEPROX
                    </a>
                 </div>
             </div>
@@ -56,21 +78,35 @@ export default async function IntelDossierPage({ params }: { params: { slug: str
                 </div>
             </div>
 
-            {/* Countdown de Expiração Flutuante */}
-            <div className="fixed bottom-8 left-8 z-100 flex items-center gap-3 glass p-4 border-l-2 border-l-secondary">
-                <Clock className="w-4 h-4 text-secondary animate-pulse" />
-                <div className="flex flex-col">
-                    <span className="text-[7px] font-mono text-slate-500 uppercase tracking-widest">Dossiê Exclui em:</span>
-                    <span className="text-[10px] font-headline font-black text-white italic uppercase tracking-tighter">
-                        CONEXÃO_TEMPORÁRIA_ [48H]
-                    </span>
+            {/* Global HUD Ticker (Mobile & Desktop) */}
+            <div className="fixed top-0 left-0 w-full z-[150] bg-black/95 backdrop-blur-xl border-b border-secondary/20 py-2 px-6 flex items-center justify-between no-print shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-secondary animate-ping rounded-full"></div>
+                        <span className="text-[7px] md:text-[9px] font-mono text-slate-400 tracking-[0.3em] uppercase">SECURE_HUD_v2</span>
+                    </div>
+                    <div className="hidden md:flex items-center gap-3 border-l border-white/10 pl-4">
+                        <span className="text-[7px] font-mono text-slate-500 uppercase tracking-widest italic">Encrypted Stream Protocol // V7.ALPHA</span>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4 md:gap-8">
+                    <div className="hidden lg:flex items-center gap-2 text-[8px] font-mono text-slate-500 uppercase tracking-widest">
+                        <span className="text-secondary/50">STATUS:</span>
+                        <span className="text-white animate-pulse">CONNECTION_STABLE</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-secondary/10 px-3 py-1 border border-secondary/20">
+                        <Clock className="w-3 h-3 text-secondary animate-pulse" />
+                        <span className="text-[9px] md:text-[11px] font-headline font-black text-white italic uppercase tracking-tighter">
+                            CONEXÃO_EXPIRA: <span className="text-secondary neon-glow-cyan">[48H]</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <div className="intel-content max-w-screen-2xl mx-auto py-20 px-4">
-                {type === 'audit' && <AuditDossier {...data} onPrint={() => window.print()} />}
-                {type === 'tactical' && <TacticalDossier {...data} onPrint={() => window.print()} />}
-                {type === 'renewal' && <RenewalDossier {...data} onPrint={() => window.print()} />}
+                {type === 'audit' && <AuditDossier {...data} slug={slug} />}
+                {type === 'tactical' && <TacticalDossier {...data} slug={slug} />}
+                {type === 'renewal' && <RenewalDossier {...data} slug={slug} />}
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `
