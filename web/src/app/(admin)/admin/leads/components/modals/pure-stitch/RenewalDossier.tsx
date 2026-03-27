@@ -223,9 +223,13 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
              <div className="glass p-12 border-white/5 flex flex-col hover:border-white/20 transition-all">
                 <div className="font-mono text-[9px] text-slate-500 mb-8 uppercase tracking-widest font-black">STP Presença V7</div>
                 <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Plano Presença</h3>
-                <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
-                  <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>100<span className="text-sm font-normal text-slate-500">/mês</span>
-                </div>
+                 <div className="flex flex-col mb-12">
+                   <div className="text-[10px] font-mono text-slate-500 line-through opacity-50 mb-1 tracking-widest font-bold">R$ 100/mês</div>
+                   <div className="text-6xl font-headline font-black text-white tracking-tighter flex items-center gap-3">
+                     <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>70<span className="text-sm font-normal text-slate-500">/mês</span>
+                     <span className="bg-secondary/20 text-secondary text-[8px] px-2 py-1 font-black animate-pulse rounded-full">30% OFF</span>
+                   </div>
+                 </div>
                  <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-400">
                    <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Landing Page (One-Page V7)</li>
                    <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Subdom&iacute;nio Presen&ccedil;a Ativo</li>
@@ -243,9 +247,13 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                 </div>
                 <div className="font-mono text-[9px] text-primary mb-8 uppercase tracking-widest font-black">STP Autoridade V7</div>
                 <h3 className="text-3xl font-headline font-black mb-10 uppercase italic text-white tracking-tighter">Autoridade</h3>
-                <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
-                  <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>150<span className="text-sm font-normal text-slate-500">/mês</span>
-                </div>
+                 <div className="flex flex-col mb-12">
+                   <div className="text-[10px] font-mono text-primary line-through opacity-50 mb-1 tracking-widest font-bold">R$ 150/mês</div>
+                   <div className="text-6xl font-headline font-black text-white tracking-tighter flex items-center gap-3">
+                     <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>105<span className="text-sm font-normal text-slate-500">/mês</span>
+                     <span className="bg-primary/20 text-primary text-[8px] px-2 py-1 font-black animate-pulse rounded-full">30% OFF</span>
+                   </div>
+                 </div>
                  <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
                    <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> Multi-Page (Autoridade Total)</li>
                    <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> Galeria Premium (At&eacute; 15 fotos)</li>
