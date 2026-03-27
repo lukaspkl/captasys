@@ -24,6 +24,7 @@ import ProjectSettingsModal from "./components/modals/ProjectSettingsModal";
 import TacticalModal from "./components/modals/TacticalModal";
 import RenewalModal from "./components/modals/RenewalModal";
 import ShareLinkModal from "./components/modals/ShareLinkModal";
+import LovableModal from "./components/modals/LovableModal";
 
 // VIEWS
 import DashboardHeader from "./components/views/DashboardHeader";
@@ -94,6 +95,9 @@ export default function DashboardPage() {
     isRenewalModalOpen,
     setIsRenewalModalOpen,
     generatedMessage,
+    isLovableModalOpen,
+    setIsLovableModalOpen,
+    lovablePromptText,
     isDossierModalOpen,
     setIsDossierModalOpen,
     dossierLead,
@@ -492,6 +496,13 @@ export default function DashboardPage() {
         onClose={() => setIsShareModalOpen(false)}
         link={generatedShareLink}
       />
+      
+      <LovableModal 
+        isOpen={isLovableModalOpen}
+        onClose={() => setIsLovableModalOpen(false)}
+        promptText={lovablePromptText}
+      />
     </>
+
   );
 }
