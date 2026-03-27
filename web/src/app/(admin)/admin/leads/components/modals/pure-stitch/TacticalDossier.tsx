@@ -384,9 +384,9 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                     <span className="text-secondary">&gt;</span> Stack Vessel 2025
                   </li>
                 </ul>
-                 <button className="w-full py-5 border border-white/10 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                  Iniciar Protocolo
-                </button>
+                  <button className="w-full py-5 border border-white/20 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black hover:border-white transition-all duration-300 cursor-pointer">
+                    Iniciar Protocolo
+                  </button>
              </div>
 
              {/* Plano Autoridade */}
@@ -412,9 +412,9 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                     <span className="text-primary font-bold">#</span> SEO Local Otimizado
                   </li>
                 </ul>
-                 <button className="w-full py-5 bg-primary text-white font-mono text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all">
-                  Executar Protocolo
-                </button>
+                  <button className="w-full py-6 bg-primary text-white font-mono text-xs font-black uppercase tracking-[0.4em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all duration-300 animate-pulse-neon cursor-pointer">
+                    Executar Protocolo
+                  </button>
              </div>
            </div>
         </section>

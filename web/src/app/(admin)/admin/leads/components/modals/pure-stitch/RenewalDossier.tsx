@@ -229,8 +229,11 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                 <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-400">
                   <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Site One-Page Moderno</li>
                   <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Foco em Leads WhatsApp</li>
-                  <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Stack Vessel 2025</li>
-                </ul>
+                   <li className="flex items-center gap-4"><ChevronRight className="w-3 h-3 text-secondary" /> Stack Vessel 2025</li>
+                 </ul>
+                 <button className="w-full py-5 border border-white/20 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black hover:border-white transition-all duration-300 cursor-pointer">
+                   Manter Plano Presença
+                 </button>
              </div>
 
              {/* Plano Autoridade */}
@@ -246,8 +249,11 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                 <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
                   <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> Site Multi-Page Completo</li>
                   <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> Galeria de Fotos/Portfólio</li>
-                  <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> SEO Local Otimizado</li>
-                </ul>
+                   <li className="flex items-center gap-4 text-white"><ChevronRight className="w-3 h-3 text-primary" /> SEO Local Otimizado</li>
+                 </ul>
+                 <button className="w-full py-6 bg-primary text-white font-mono text-xs font-black uppercase tracking-[0.4em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all duration-300 animate-pulse-neon cursor-pointer">
+                   Upgrade para Autoridade
+                 </button>
              </div>
            </div>
         </section>
