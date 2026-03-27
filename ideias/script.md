@@ -66,6 +66,28 @@ Qual dessas faz mais sentido para o momento atual da [Nome da Empresa]?"
 
 ---
 
+## 🚀 5. VARIANTE: Exposição Direta (One-Shot)
+*Ideal para quem prefere uma abordagem mais rápida e decisiva, entregando todo o valor de uma vez.*
+
+**Script:**
+"Olá, [Responsável]! Sou o [Seu Nome] da **SiteProx**. Tudo bem? 
+
+Estava realizando uma **Varredura Tática no Google** para o nicho de [Nicho] em [Cidade] e identifiquei uma falha crítica de presença digital na [Nome da Empresa] que está beneficiando diretamente seus concorrentes regionais.
+
+Para facilitar sua visualização do problema e da solução, gerei dois links exclusivos e privados para você:
+
+1. 🛡️ **Relatório de Concorrência (Dossiê Intel):** [LINK_DO_DOSSIE]
+*(Este link mostra exatamente quem está ganhando o tráfego que deveria ser seu agora)*
+
+2. ✨ **Projeção de Presença (Seu Novo Site):** [LINK_DO_PREVIEW]
+*(Fiz uma demonstração ativa de como seria seu novo portal SiteProx focado em performance)*
+
+**IMPORTANTE:** O link de demonstração é privado e expira em **48 horas** devido ao tráfego do servidor. 
+
+Dá uma olhada, principalmente na velocidade do site no seu celular, e me diz se faz sentido para vocês dominarem essa região hoje?"
+
+---
+
 ### 📝 Resumo PM para o Vendedor:
 1. **Dossiê primeiro**: Ele gera autoridade e medo de perder espaço (FOMO).
 2. **Preview depois**: Ele gera desejo e tangibilidade.
