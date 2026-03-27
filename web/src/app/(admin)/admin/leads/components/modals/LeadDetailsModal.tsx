@@ -287,7 +287,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                   onClick={onGenerateLovablePrompt}
                   className="w-full h-12 bg-white text-black font-black italic tracking-widest hover:bg-[#06b6d4] hover:text-black transition-all"
                 >
-                  GERAR_PROMPT_LOVABLE_GPT
+                  GERAR_PROMPT
                 </Button>
 
                 {selectedLeadDetails?.url && (

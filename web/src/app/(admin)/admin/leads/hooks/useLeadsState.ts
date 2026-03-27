@@ -518,8 +518,27 @@ IMPORTANTE: Mantenha a estética original em 100%. NÃO adapte para o estilo Cyb
 
   const generateLovablePrompt = () => {
     if (!selectedLeadDetails) return "";
-    const lostRev = (fluxoMensal * 0.3 * ticketMedio).toLocaleString("pt-BR");
-    const prompt = `# LOVABLE BUILD REQUEST - ${selectedLeadDetails.title}\nImpacto: R$ ${lostRev}/mês.`;
+    
+    const details = [
+      `# FICHA TÉCNICA DO CLIENTE - PARA STITCH / LOVABLE`,
+      `EMPRESA: ${selectedLeadDetails.title}`,
+      `NICHO: ${nicho}`,
+      `LOCAL: ${cidade}, ${estado}`,
+      `ENDEREÇO: ${selectedLeadDetails.address || 'N/A'}`,
+      `TELEFONE: ${selectedLeadDetails.phone || 'N/A'}`,
+      `RATING: ${selectedLeadDetails.rating || 'N/A'} (${selectedLeadDetails.reviewCount || 0} avaliações)`,
+      `WEBSITE: ${selectedLeadDetails.url || 'AUSENTE'}`,
+      `MAPS: ${selectedLeadDetails.mapsUrl || 'N/A'}`,
+    ];
+
+    if (selectedLeadDetails.socials) {
+      if (selectedLeadDetails.socials.instagram) details.push(`INSTAGRAM: ${selectedLeadDetails.socials.instagram}`);
+      if (selectedLeadDetails.socials.facebook) details.push(`FACEBOOK: ${selectedLeadDetails.socials.facebook}`);
+    }
+
+    if (isSiteOutdated) details.push(`STATUS: SITE DESATUALIZADO / LENTO Detectado`);
+
+    const prompt = details.join('\n');
     navigator.clipboard.writeText(prompt);
     setLovablePromptText(prompt);
     setIsLovableModalOpen(true);
