@@ -373,17 +373,17 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                 <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
                   <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>100<span className="text-sm font-normal text-slate-500">/mês</span>
                 </div>
-                <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-500 group-hover:text-slate-300">
-                  <li className="flex items-center gap-4 transition-colors">
-                    <span className="text-secondary">&gt;</span> Site One-Page Moderno
-                  </li>
-                  <li className="flex items-center gap-4 transition-colors">
-                    <span className="text-secondary">&gt;</span> Foco em Leads WhatsApp
-                  </li>
-                  <li className="flex items-center gap-4 transition-colors">
-                    <span className="text-secondary">&gt;</span> Stack Vessel 2025
-                  </li>
-                </ul>
+                 <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-500 group-hover:text-slate-300">
+                   <li className="flex items-center gap-4 transition-colors">
+                     <span className="text-secondary">&gt;</span> Landing Page (One-Page V7)
+                   </li>
+                   <li className="flex items-center gap-4 transition-colors">
+                     <span className="text-secondary">&gt;</span> Subdom&iacute;nio Presen&ccedil;a Gr&aacute;tis
+                   </li>
+                   <li className="flex items-center gap-4 transition-colors">
+                     <span className="text-secondary">&gt;</span> QR Code Presen&ccedil;a Exclusivo
+                   </li>
+                 </ul>
                   <button className="w-full py-5 border border-white/20 text-white font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black hover:border-white transition-all duration-300 cursor-pointer">
                     Iniciar Protocolo
                   </button>
@@ -401,17 +401,17 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
                 <div className="text-6xl font-headline font-black text-white mb-12 tracking-tighter">
                   <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>150<span className="text-sm font-normal text-slate-500">/mês</span>
                 </div>
-                <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
-                  <li className="flex items-center gap-4">
-                    <span className="text-primary font-bold">#</span> Site Multi-Page Completo
-                  </li>
-                  <li className="flex items-center gap-4">
-                    <span className="text-primary font-bold">#</span> Galeria de Fotos/Portfólio
-                  </li>
-                  <li className="flex items-center gap-4">
-                    <span className="text-primary font-bold">#</span> SEO Local Otimizado
-                  </li>
-                </ul>
+                 <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
+                   <li className="flex items-center gap-4">
+                     <span className="text-primary font-bold">#</span> Multi-Page (Autoridade Total)
+                   </li>
+                   <li className="flex items-center gap-4">
+                     <span className="text-primary font-bold">#</span> Galeria Premium (At&eacute; 15 fotos)
+                   </li>
+                   <li className="flex items-center gap-4">
+                     <span className="text-primary font-bold">#</span> Indexa&ccedil;&atilde;o Google Maps (SEO Local)
+                   </li>
+                 </ul>
                   <button className="w-full py-6 bg-primary text-white font-mono text-xs font-black uppercase tracking-[0.4em] shadow-[0_0_40px_rgba(255,0,255,0.4)] hover:bg-white hover:text-primary transition-all duration-300 animate-pulse-neon cursor-pointer">
                     Executar Protocolo
                   </button>
