@@ -217,7 +217,7 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
               <h2 className="text-4xl md:text-7xl font-headline font-black text-white italic uppercase tracking-tighter leading-none">Escolha Sua <span className="text-primary">Arma.</span></h2>
               <div className="w-24 h-2 bg-primary mb-4"></div>
               <p className="font-mono text-xs md:text-sm text-slate-400 uppercase tracking-widest leading-relaxed font-bold px-6">
-                <span className="text-secondary"># Protocolo de Fidelidade Ativo:</span> Este desconto de 30% é um subsídio estratégico para parceiros que exigem um ecossistema digital <span className="text-white">Seguro, Rápido, Vivo e Absolutamente Moderno.</span> No caos da web, sua autoridade é nossa prioridade.
+                <span className="text-secondary"># Protocolo de Fidelidade Ativo:</span> Este desconto de 30% é um benefício exclusivo para manter sua operação digital <span className="text-white">Segura, Rápida, Viva e Moderna.</span> Estamos comprometidos com a evolução contínua da sua autoridade no mercado.
               </p>
             </div>
            
