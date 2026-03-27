@@ -213,9 +213,12 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
 
         {/* Pricing Strategy */}
         <section className="py-20">
-            <div className="text-center mb-16 space-y-4 flex flex-col items-center">
+            <div className="text-center mb-16 space-y-4 flex flex-col items-center max-w-3xl mx-auto">
               <h2 className="text-4xl md:text-7xl font-headline font-black text-white italic uppercase tracking-tighter leading-none">Escolha Sua <span className="text-primary">Arma.</span></h2>
-              <div className="w-24 h-2 bg-primary"></div>
+              <div className="w-24 h-2 bg-primary mb-4"></div>
+              <p className="font-mono text-xs md:text-sm text-slate-400 uppercase tracking-widest leading-relaxed font-bold px-6">
+                <span className="text-secondary"># Protocolo de Fidelidade Ativo:</span> Este desconto de 30% é um subsídio estratégico para parceiros que exigem um ecossistema digital <span className="text-white">Seguro, Rápido, Vivo e Absolutamente Moderno.</span> No caos da web, sua autoridade é nossa prioridade.
+              </p>
             </div>
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
@@ -227,7 +230,7 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                    <div className="text-[10px] font-mono text-slate-500 line-through opacity-50 mb-1 tracking-widest font-bold">R$ 100/mês</div>
                    <div className="text-6xl font-headline font-black text-white tracking-tighter flex items-center gap-3">
                      <span className="text-sm font-normal text-slate-500 uppercase align-top mt-2 inline-block">R$</span>70<span className="text-sm font-normal text-slate-500">/mês</span>
-                     <span className="bg-secondary/20 text-secondary text-[8px] px-2 py-1 font-black animate-pulse rounded-full">30% OFF</span>
+                     <span className="bg-secondary/20 text-secondary text-xs px-3 py-1 font-black animate-pulse rounded-full border border-secondary/30">30% OFF</span>
                    </div>
                  </div>
                  <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-slate-400">
@@ -251,7 +254,7 @@ const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) 
                    <div className="text-[10px] font-mono text-primary line-through opacity-50 mb-1 tracking-widest font-bold">R$ 150/mês</div>
                    <div className="text-6xl font-headline font-black text-white tracking-tighter flex items-center gap-3">
                      <span className="text-sm font-normal text-primary uppercase align-top mt-2 inline-block">R$</span>105<span className="text-sm font-normal text-slate-500">/mês</span>
-                     <span className="bg-primary/20 text-primary text-[8px] px-2 py-1 font-black animate-pulse rounded-full">30% OFF</span>
+                     <span className="bg-primary/20 text-primary text-xs px-3 py-1 font-black animate-pulse rounded-full border border-primary/30">30% OFF</span>
                    </div>
                  </div>
                  <ul className="space-y-6 mb-12 grow font-mono text-[10px] uppercase tracking-widest text-white/80">
