@@ -247,7 +247,7 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                 <div className="flex flex-col justify-end">
                    <div className="bg-primary/5 border-l-4 border-primary p-8 space-y-6">
                       <p className="text-xs font-bold text-slate-400 leading-relaxed uppercase tracking-wider">
-                        A cada 100 visitantes qualificados em <span className="text-white">{lead?.site || 'seu ecossistema'}</span>, cerca de <span className="text-primary font-black">{(100 - conversaoAtual).toFixed(0)} EVADEM</span> instantaneamente devido a fricoes de UI/UX e falta de posicionamento estrat&eacute;gico.
+                        A cada 100 visitantes qualificados em <span className="text-white">{lead?.site || 'seu ecossistema'}</span>, cerca de <span className="text-primary font-black">{(100 - ConversaoSanitized).toFixed(0)} EVADEM</span> instantaneamente devido a fricoes de UI/UX e falta de posicionamento estrat&eacute;gico.
                       </p>
                       <div className="pt-6 border-t border-primary/10">
                         <span className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2 block font-black">Capital Perdido Mensal</span>
@@ -257,6 +257,17 @@ const AuditDossier: React.FC<AuditDossierProps> = ({
                       </div>
                    </div>
                 </div>
+              </div>
+
+              {/* Cálculo Legend - Transparência para o Cliente */}
+              <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center gap-6 opacity-60 hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-3 bg-secondary/5 px-4 py-2 border border-secondary/10">
+                  <PieChart className="w-4 h-4 text-secondary" />
+                  <span className="text-[9px] font-mono text-secondary uppercase tracking-[0.2em] font-black">Audit_Logic_v7.1</span>
+                </div>
+                <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest leading-relaxed text-center md:text-left">
+                  Como chegamos a esse valor? Multiplicamos seu <span className="text-slate-300">Fluxo Mensal ({fluxoMensal} visitas)</span> pela <span className="text-slate-300">Diferen&ccedil;a de Efici&ecirc;ncia</span> técnica e pelo seu <span className="text-slate-300">Ticket M&eacute;dio (R$ {ticketMedio})</span>. O resultado &eacute; o lucro que voc&ecirc; j&aacute; deveria estar recebendo se seu site n&atilde;o estivesse &quot;vazando&quot; autoridade.
+                </p>
               </div>
             </div>
           </div>
