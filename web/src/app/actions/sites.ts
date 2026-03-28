@@ -94,3 +94,37 @@ export async function checkSubdomain(subdomain: string) {
       .single()
     return !!data
 }
+
+export async function getSiteById(id: string) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('site_projects')
+      .select('*')
+      .eq('id', id)
+      .single()
+    return { data, error }
+}
+
+export async function updateSiteContent(id: string, content: Record<string, unknown>) {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('site_projects')
+      .update({ content, updated_at: new Date().toISOString() })
+      .eq('id', id)
+    
+    if (error) return { success: false, error }
+    revalidatePath(`/admin/sites/${id}/edit`)
+    return { success: true }
+}
+
+export async function updateSiteBilling(id: string, updates: Record<string, unknown>) {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('site_projects')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+    
+    if (error) return { success: false, error }
+    revalidatePath(`/admin/sites/${id}/edit`)
+    return { success: true }
+}
