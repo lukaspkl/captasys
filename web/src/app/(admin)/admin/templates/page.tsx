@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Layout, Plus, Trash2, Globe, Loader2, Sparkles, FolderTree, FlaskConical, Code2, Copy, Check, Zap, UploadCloud, X } from "lucide-react";
+import Image from "next/image";
 import { addTemplate, deleteTemplate, generateStitchPreview } from "@/app/actions/templates";
 import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
 import { createClient } from "@/utils/supabase/client";
@@ -310,7 +311,7 @@ export default function AdminTemplatesPage() {
   
                       <div className="mt-4 aspect-video bg-slate-900 border border-white/5 overflow-hidden relative">
                          {t.preview_url ? (
-                           <img src={t.preview_url} alt={t.name} className="w-full h-full object-cover opacity-50 contrast-125" />
+                           <Image src={t.preview_url} alt={t.name} fill className="w-full h-full object-cover opacity-50 contrast-125" />
                          ) : (
                            <div className="w-full h-full flex items-center justify-center opacity-10">
                               <Globe className="w-10 h-10" />

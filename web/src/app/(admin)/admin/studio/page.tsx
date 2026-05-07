@@ -19,6 +19,7 @@ import {
   Zap
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { generateStitchLayout, saveGeneratedTemplate } from "@/app/actions/ai-content";
 
 // Simulação de histórico de versões (depois vindo do banco)
@@ -169,7 +170,7 @@ export default function StitchStudioPage() {
                 'w-[375px] aspect-[9/19]'
               }`}>
                 {previewUrl ? (
-                   <img src={previewUrl} className="w-full h-full object-cover" alt="Preview Design" />
+                   <Image src={previewUrl} className="w-full h-full object-cover" alt="Preview Design" fill />
                 ) : (
                    <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center gap-6 opacity-30">
                       <Zap className="w-16 h-16 text-cyan-500 animate-pulse" />
