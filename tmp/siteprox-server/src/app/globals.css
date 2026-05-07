@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "var(--font-geist-sans)", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "var(--font-geist-mono)", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  --color-brand: #38BDF8;
+  --color-surface-950: #050505;
+  --color-surface-900: #0A0A0A;
+  --color-surface-800: #141414;
+}
+
+:root {
+  --background: #050505;
+  --foreground: #F9FAFB;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Base Grain Background */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  filter: contrast(150%) brightness(100%);
+}
+
+/* Custom Bezel Architecture (Double-Bezel) */
+.glass-panel {
+  @apply relative bg-surface-900/50 border border-white/10 rounded-[2rem] overflow-hidden;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.glass-inner {
+  @apply relative p-6 md:p-8 rounded-[calc(2rem-2px)];
+}
+
+/* Magnetic Interaction Transitions */
+.magnetic-transition {
+  transition: all 0.7s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Typography Enhancements */
+h1, h2, h3 {
+  @apply tracking-tighter leading-none font-medium;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
