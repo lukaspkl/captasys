@@ -1,3 +1,6 @@
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import { getIntelBySlug } from "@/app/actions/prospecting";
 import AuditDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/AuditDossier";
 import TacticalDossier from "@/app/(admin)/admin/leads/components/modals/pure-stitch/TacticalDossier";

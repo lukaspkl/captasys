@@ -1,3 +1,6 @@
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import SegurancaV2 from "../templates/segurança-v2";
 import SegurançaV1 from "../templates/Segurança_v1";
 import SwipeGenGrupoAlianAMonitoramento24hETerceirizaODeServiOs6391 from "../templates/swipe_gen_grupo_alian_a___monitoramento_24h_e_terceiriza__o_de_servi_os_6391";
@@ -8,6 +11,7 @@ import { notFound } from "next/navigation";
 import { ShieldAlert } from "lucide-react";
 import MecanicaAlpha01 from "../templates/mecanica_alpha_01";
 import MecanicaSlickV2 from "../templates/mecanica_slick_v2";
+import MobitechTemplate from "../templates/bespoke/mobitech";
 
 import { Metadata } from "next";
 
@@ -44,6 +48,7 @@ const TEMPLATE_MAP: Record<string, any> = {
   'default': MecanicaAlpha01,
   'mecanica_alpha_01': MecanicaAlpha01,
   'mecanica_slick_v2': MecanicaSlickV2,
+  'mobitech': MobitechTemplate,
 };
 
 export default async function TenantPage({ params }: { params: Promise<{ slug: string }> }) {

@@ -651,7 +651,8 @@ export default function AdminProjectEditor() {
           background: #334155;
         }
         .cyber-grid {
-          background-image: linear-gradient(
+          background-image:
+            linear-gradient(
               to right,
               rgba(0, 243, 255, 0.1) 1px,
               transparent 1px

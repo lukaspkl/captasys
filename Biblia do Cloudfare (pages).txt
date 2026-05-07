@@ -1,0 +1,79 @@
+# 🚀 GUIA DEFINITIVO: DEPLOY NEXT.JS (FULL-STACK) - CLOUDFLARE PAGES
+
+Este documento serve como a "Bíblia Técnica" para subir aplicações Next.js que utilizam Autenticação (Supabase), Banco de Dados e Rotas Dinâmicas no ecossistema da Cloudflare.
+
+---
+
+## 🏗️ 1. O Adaptador Oficial: @cloudflare/next-on-pages
+
+Para que o site funcione com funções dinâmicas (Full-Stack) e não como um site estático comum, a Cloudflare exige o adaptador oficial.
+
+### Instalação e Versões:
+O adaptador oficial é sensível às versões do Next.js. Se ocorrer erro `ERESOLVE`, verifique se o `@cloudflare/next-on-pages` suporta a versão do seu Next.js.
+*   **Versão Estável Recomendada:** Next.js `15.5.2` com adaptador `^1.13.7`.
+
+### Script de Build Indestrutível (package.json):
+Se o painel da Cloudflare estiver travado em uma pasta específica (como `.open-next`), use este script camaleão:
+```json
+"pages:build": "npx @cloudflare/next-on-pages && rm -rf .open-next && mv .vercel/output/static .open-next"
+```
+*O que ele faz:* Executa o build oficial e renomeia a pasta de saída para a que o painel da Cloudflare espera.
+
+---
+
+## 📡 2. O Segredo do Edge Runtime (Vital)
+
+Ao contrário do Vercel, a Cloudflare Cloud exige que **todas** as suas rotas de API dinâmicas (que acessam DB, enviam dados, etc.) declarem explicitamente o uso do **Edge Runtime**.
+
+**Em cada arquivo `route.ts` dinâmico, adicione no TOPO:**
+```typescript
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+```
+Sem isso, o build vai falhar avisando que as rotas não foram configuradas corretamente.
+
+---
+
+## 🔐 3. Configuração do wrangler.jsonc
+
+O arquivo `wrangler.jsonc` (ou `wrangler.json`) é o cérebro que guia o deploy.
+
+```jsonc
+{
+  "name": "nome-do-seu-projeto",
+  "pages_build_output_dir": ".open-next", // Ou a pasta que você escolheu
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": [
+    "nodejs_compat" // OBRIGATÓRIO para usar Supabase/Node libs na Edge
+  ]
+}
+```
+
+---
+
+## 🕵️‍♂️ 4. Solução de Problemas (Troubleshooting)
+
+### Erro 404 no CSS e Imagens:
+Acontece quando os arquivos estáticos ficam "escondidos" em subpastas. 
+*   **Solução:** Use o `@cloudflare/next-on-pages`. Ele garante que a pasta `_next` fique na raiz do diretório de saída.
+
+### Erro "You cannot tail a static site":
+Isso ocorre quando a Cloudflare acha que seu site é apenas HTML estático. 
+*   **Causa:** Falta de um arquivo `_worker.js` no build ou falta da flag `runtime = 'edge'` nas APIs. 
+*   **Solução:** O adaptador oficial gera o `_worker.js` automaticamente.
+
+### Erro de Binários (ast-grep, etc):
+Ocorre em conflitos entre Windows (localhost) e Linux (Cloudflare Build). 
+*   **Solução:** Deletar `package-lock.json` e `node_modules` e rodar `npm install` de novo localmente para limpar a árvore de dependências.
+
+---
+
+## 🛠️ 5. Checklist de Deploy Diário
+
+1.  [ ] Verifique se todas as APIs têm `export const runtime = 'edge';`.
+2.  [ ] Garanta que `compatibility_flags: ["nodejs_compat"]` está no `wrangler.jsonc`.
+3.  [ ] Verifique as variáveis de ambiente (Supabase URL/Key) no painel da Cloudflare.
+4.  [ ] Rode `npm run pages:build` localmente antes de subir para testar o empacotamento.
+
+---
+**Documentação mantida pela Equipe Técnica de Desenvolvimento CyberJogosBR** 🏁🚀🏾
