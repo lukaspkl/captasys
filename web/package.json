@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "pages:build": "npx @cloudflare/next-on-pages && rm -rf .open-next && mv .vercel/output/static .open-next"
+    "pages:build": "npx @cloudflare/next-on-pages && rm -rf .open-next && cp -r .vercel/output/static/. .open-next/"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
