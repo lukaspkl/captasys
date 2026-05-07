@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Rocket, ShieldAlert, Target, Zap } from "lucide-react";
+import { Rocket, ShieldAlert, Target } from "lucide-react";
 
 /**
  * DOSSIER DESIGN SYSTEM - BASED ON STITCH PROJECTS:
@@ -114,7 +114,7 @@ export const DossierSectionHeader = ({
   title, 
   theme 
 }: { 
-  icon: any; 
+  icon: React.ElementType; 
   title: string; 
   theme: "tactical" | "audit" | "renewal";
 }) => (

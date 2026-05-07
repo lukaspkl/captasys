@@ -4,14 +4,15 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { getLeadsBySite } from "@/app/actions/leads";
 
-export default async function LeadsManagementPage({ searchParams }: { searchParams: { siteId?: string } }) {
+export default async function LeadsManagementPage({ searchParams }: { searchParams: Promise<{ siteId?: string }> }) {
+  const { siteId } = await searchParams;
   const supabase = await createClient();
   
   // Verify user is owner (simplified check, the action already does RLS checks)
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return <div>Acesso negado.</div>;
 
-  const siteId = searchParams.siteId;
+  // const siteId = searchParams.siteId; (removido pois j&aacute; foi extra&iacute;do acima)
   const leads = siteId ? await getLeadsBySite(siteId) : [];
 
   // Fetch site info for the header if siteId exists

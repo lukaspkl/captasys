@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       console.log(`[SCANNER_API] Executando varredura: "${searchQuery}"`);
       
       try {
-        const serperBody: any = { q: searchQuery, gl: "br", hl: "pt-br", num: num || 20 };
+        const serperBody: Record<string, unknown> = { q: searchQuery, gl: "br", hl: "pt-br", num: num || 20 };
         if (location) serperBody.location = location;
 
         const response = await fetch("https://google.serper.dev/maps", {

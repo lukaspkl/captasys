@@ -30,7 +30,6 @@ const TacticalDossier: React.FC<TacticalDossierProps> = ({
   lead, 
   competitors = [], 
   nicho = 'Geral', 
-  onPrint,
   highlightPhrase,
   slug
 }) => {

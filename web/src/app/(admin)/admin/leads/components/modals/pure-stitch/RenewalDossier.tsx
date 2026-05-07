@@ -5,12 +5,8 @@ import {
   ShieldCheck, 
   RefreshCw, 
   Cpu, 
-  Smartphone, 
-  Monitor, 
   Zap, 
   Clock, 
-  TrendingUp,
-  Target,
   Rocket,
   ChevronRight,
 } from 'lucide-react';
@@ -28,7 +24,7 @@ interface RenewalDossierProps {
   slug?: string;
 }
 
-const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, onPrint, slug }) => {
+const RenewalDossier: React.FC<RenewalDossierProps> = ({ lead, slug }) => {
   const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {

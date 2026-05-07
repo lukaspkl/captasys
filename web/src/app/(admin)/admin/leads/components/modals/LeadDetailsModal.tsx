@@ -2,7 +2,7 @@
 
 import React from "react";
 import { 
-  X, Globe, MapPin, ExternalLink, ShieldAlert, Activity, Zap, Check, Sparkles, Radar, Database, Target
+  X, Globe, MapPin, ExternalLink, ShieldAlert, Activity, Zap, Check, Sparkles, Database, Target
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

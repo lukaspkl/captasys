@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 const fs = require('fs');
 const contents = fs.readFileSync('d:\\DEV\\capta-sites\\web\\src\\app\\(admin)\\admin\\leads\\page.tsx', 'utf-8');
 const lines = contents.split('\n');
